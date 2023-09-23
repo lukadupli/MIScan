@@ -1,0 +1,20 @@
+# ninja log v5
+1	809	716929343	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp.o	e4a9522e8fab84bd
+6	95	716929469	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/helpers.cpp.o	ecafab9657b6ec1c
+12	154	716929469	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/line.cpp.o	c1d469d2afbafe4c
+32	224	716929469	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/vector.cpp.o	2011b7b5c76fc307
+18	713	716929469	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/plane.cpp.o	b3339243be53a0f
+714	1038	716929469	libbasic_linear.a	d21b5d3868657d1d
+1039	1203	716929470	C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/arm64-v8a/libstraighten.so	7308cfcbf4eb0f6f
+20	2570	716931490	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp.o	e4a9522e8fab84bd
+2570	2827	716931490	C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/arm64-v8a/libstraighten.so	7308cfcbf4eb0f6f
+41	422	716933275	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/vector.cpp.o	2011b7b5c76fc307
+422	801	716933275	libbasic_linear.a	d21b5d3868657d1d
+22	1118	716933276	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp.o	e4a9522e8fab84bd
+1118	1307	716933276	C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/arm64-v8a/libstraighten.so	7308cfcbf4eb0f6f
+25	1007	716933506	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp.o	e4a9522e8fab84bd
+1008	1252	716933506	C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/arm64-v8a/libstraighten.so	7308cfcbf4eb0f6f
+45	2785	716933750	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp.o	e4a9522e8fab84bd
+2787	3338	716933750	C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/arm64-v8a/libstraighten.so	7308cfcbf4eb0f6f
+36	1473	716934124	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp.o	e4a9522e8fab84bd
+1474	1803	716934124	C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/arm64-v8a/libstraighten.so	7308cfcbf4eb0f6f
