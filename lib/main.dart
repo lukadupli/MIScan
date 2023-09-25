@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'transform_page.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,7 +37,7 @@ class MyHomePage extends StatelessWidget {
     final xfile = await picker.pickImage(source: ImageSource.camera);
     if(xfile == null) return null;
 
-    return await xfile.readAsBytes();
+    return await (await FlutterExifRotation.rotateImage(path: xfile.path)).readAsBytes();
   }
 
   @override

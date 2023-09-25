@@ -5,6 +5,8 @@ class Glider extends StatefulHookWidget {
   final Widget child;
   final Offset startPosition;
   final Offset positionOffset;
+  final Size size;
+  final Rect boundary;
   final void Function(Offset)? onDragStart;
   final void Function(Offset)? onPositionChange;
   final void Function()? onDragEnd;
@@ -13,7 +15,9 @@ class Glider extends StatefulHookWidget {
     super.key, 
     required this.child, 
     this.startPosition = Offset.zero, 
-    this.positionOffset = Offset.zero, 
+    this.positionOffset = Offset.zero,
+    required this.size,
+    required this.boundary,
     this.onDragStart,
     this.onPositionChange, 
     this.onDragEnd,
@@ -24,25 +28,12 @@ class Glider extends StatefulHookWidget {
 }
 
 class _GliderState extends State<Glider>{
-  final _globalKey = GlobalKey();
-  RenderBox? _renderBox;
-
-@override
-void initState(){
-  WidgetsBinding.instance.addPostFrameCallback((_) => _renderBox = _globalKey.currentContext!.findRenderObject() as RenderBox);
-  super.initState();
-}
-
   @override
   Widget build(BuildContext context) {
-    final position = useState(widget.startPosition - widget.positionOffset);
+    final position = useState(widget.startPosition + widget.boundary.topLeft - widget.positionOffset);
     final delta = useState(Offset.zero);
 
-    Offset bottomRight = Offset.infinite;
-    if(_renderBox != null) bottomRight = _renderBox!.size.bottomRight(Offset.zero);
-
     return GestureDetector(
-      key: _globalKey,
       onPanDown:(details) {
         delta.value = details.globalPosition - position.value - widget.positionOffset;
       },
@@ -51,22 +42,29 @@ void initState(){
       },
       onPanUpdate:(details) {
         var t = details.globalPosition - delta.value;
-        Offset temp = Offset(t.dx.clamp(0.0, bottomRight.dx), t.dy.clamp(0.0, bottomRight.dy));
+        Offset temp = Offset(
+          t.dx.clamp(widget.boundary.topLeft.dx, widget.boundary.bottomRight.dx), 
+          t.dy.clamp(widget.boundary.topLeft.dy, widget.boundary.bottomRight.dy)
+        );
 
-        if(widget.onPositionChange != null) widget.onPositionChange!(temp);
+        if(widget.onPositionChange != null) widget.onPositionChange!(temp - widget.boundary.topLeft);
         position.value = temp - widget.positionOffset;
       },
       onPanEnd: (details){
         if(widget.onDragEnd != null) widget.onDragEnd!();
       },
-      child: Stack(
-        children: [
-          Positioned(
-            left: position.value.dx,
-            top: position.value.dy,
-            child: widget.child,
-          )
-        ],
+      child: SizedBox(
+        width: widget.size.width,
+        height: widget.size.height,
+        child: Stack(
+          children: [
+            Positioned(
+              left: position.value.dx,
+              top: position.value.dy,
+              child: widget.child,
+            )
+          ],
+        ),
       ),
     );
   }

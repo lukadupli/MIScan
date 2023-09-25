@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.4.1)  
- 
+
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -O3")
+
 add_library(
     basic_linear
     STATIC

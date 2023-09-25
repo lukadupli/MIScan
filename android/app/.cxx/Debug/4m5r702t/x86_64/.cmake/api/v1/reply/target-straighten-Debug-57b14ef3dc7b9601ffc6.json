@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/x86/libstraighten.so"
+			"path" : "C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/x86_64/libstraighten.so"
 		}
 	],
 	"backtrace" : 1,
@@ -25,13 +25,13 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 11,
+				"line" : 13,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 17,
+				"line" : 19,
 				"parent" : 0
 			}
 		]
@@ -42,7 +42,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
+					"fragment" : "-Wall -Wextra -O3 -fno-limit-debug-info  -fPIC"
 				}
 			],
 			"defines" : 

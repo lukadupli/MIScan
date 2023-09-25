@@ -45,25 +45,25 @@ build cmake_object_order_depends_target_basic_linear: phony || CMakeFiles/basic_
 
 build CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/helpers.cpp.o: CXX_COMPILER__basic_linear_Debug C$:/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/helpers.cpp || cmake_object_order_depends_target_basic_linear
   DEP_FILE = CMakeFiles\basic_linear.dir\C_\Users\lukad\Desktop\flutterapps\straighten\native\basic_linear\helpers.cpp.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC
+  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
   OBJECT_DIR = CMakeFiles\basic_linear.dir
   OBJECT_FILE_DIR = CMakeFiles\basic_linear.dir\C_\Users\lukad\Desktop\flutterapps\straighten\native\basic_linear
 
 build CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/line.cpp.o: CXX_COMPILER__basic_linear_Debug C$:/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/line.cpp || cmake_object_order_depends_target_basic_linear
   DEP_FILE = CMakeFiles\basic_linear.dir\C_\Users\lukad\Desktop\flutterapps\straighten\native\basic_linear\line.cpp.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC
+  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
   OBJECT_DIR = CMakeFiles\basic_linear.dir
   OBJECT_FILE_DIR = CMakeFiles\basic_linear.dir\C_\Users\lukad\Desktop\flutterapps\straighten\native\basic_linear
 
 build CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/plane.cpp.o: CXX_COMPILER__basic_linear_Debug C$:/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/plane.cpp || cmake_object_order_depends_target_basic_linear
   DEP_FILE = CMakeFiles\basic_linear.dir\C_\Users\lukad\Desktop\flutterapps\straighten\native\basic_linear\plane.cpp.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC
+  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
   OBJECT_DIR = CMakeFiles\basic_linear.dir
   OBJECT_FILE_DIR = CMakeFiles\basic_linear.dir\C_\Users\lukad\Desktop\flutterapps\straighten\native\basic_linear
 
 build CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/vector.cpp.o: CXX_COMPILER__basic_linear_Debug C$:/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/vector.cpp || cmake_object_order_depends_target_basic_linear
   DEP_FILE = CMakeFiles\basic_linear.dir\C_\Users\lukad\Desktop\flutterapps\straighten\native\basic_linear\vector.cpp.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC
+  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
   OBJECT_DIR = CMakeFiles\basic_linear.dir
   OBJECT_FILE_DIR = CMakeFiles\basic_linear.dir\C_\Users\lukad\Desktop\flutterapps\straighten\native\basic_linear
 
@@ -76,7 +76,7 @@ build CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/
 # Link the static library libbasic_linear.a
 
 build libbasic_linear.a: CXX_STATIC_LIBRARY_LINKER__basic_linear_Debug CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/helpers.cpp.o CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/line.cpp.o CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/plane.cpp.o CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/vector.cpp.o
-  LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info
+  LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
   OBJECT_DIR = CMakeFiles\basic_linear.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
@@ -106,7 +106,7 @@ build cmake_object_order_depends_target_straighten: phony || cmake_object_order_
 build CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp.o: CXX_COMPILER__straighten_Debug C$:/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp || cmake_object_order_depends_target_straighten
   DEFINES = -Dstraighten_EXPORTS
   DEP_FILE = CMakeFiles\straighten.dir\C_\Users\lukad\Desktop\flutterapps\straighten\native\straighten\straighten.cpp.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC
+  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
   OBJECT_DIR = CMakeFiles\straighten.dir
   OBJECT_FILE_DIR = CMakeFiles\straighten.dir\C_\Users\lukad\Desktop\flutterapps\straighten\native\straighten
 
@@ -119,7 +119,7 @@ build CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/na
 # Link the shared library C:\Users\lukad\Desktop\flutterapps\straighten\build\app\intermediates\cxx\Debug\4m5r702t\obj\armeabi-v7a\libstraighten.so
 
 build C$:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/armeabi-v7a/libstraighten.so: CXX_SHARED_LIBRARY_LINKER__straighten_Debug CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp.o | libbasic_linear.a || libbasic_linear.a
-  LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info
+  LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
   LINK_FLAGS = -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments
   LINK_LIBRARIES = libbasic_linear.a  -latomic -lm
   OBJECT_DIR = CMakeFiles\straighten.dir

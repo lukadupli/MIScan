@@ -25,7 +25,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 3,
+				"line" : 5,
 				"parent" : 0
 			}
 		]
@@ -36,7 +36,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
+					"fragment" : "-Wall -Wextra -O3 -fno-limit-debug-info  -fPIC"
 				}
 			],
 			"language" : "CXX",
