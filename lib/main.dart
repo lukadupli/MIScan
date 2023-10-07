@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'transform_page.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -18,11 +20,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(brightness: Brightness.light, seedColor: Colors.blue),
         useMaterial3: true,
         textTheme: Theme.of(context).textTheme.apply(),
       ),
       home: MyHomePage(title: 'Home'),
+      builder: EasyLoading.init(),
     );
   }
 }
@@ -44,7 +47,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.background,
         title: Text(title),
       ),
       floatingActionButton: FloatingActionButton(

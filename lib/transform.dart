@@ -2,8 +2,8 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'dart:io';
 
-import 'dart:typed_data';
 import 'package:bitmap/bitmap.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 final DynamicLibrary dll = Platform.isAndroid ? DynamicLibrary.open("libstraighten.so") : DynamicLibrary.process();
@@ -20,19 +20,24 @@ dll.lookupFunction<
   void Function(Pointer<Uint8>, int, int, int, Pointer<Uint8>, bool)>
 ("ProcessBitmapData");
 
-Future<Uint8List?> transform(Uint8List imageData, Offset a, Offset b, Offset c, Offset d) async{
+Uint8List? _transform(List<dynamic> list){
+  final srcList = list[0] as Uint8List;
+  final width = list[1] as int;
+  final height = list[2] as int;
+  final a = list[3] as Offset;
+  final b = list[4] as Offset;
+  final c = list[5] as Offset;
+  final d = list[6] as Offset;
+
   if(!loadCornerCoordinates(a.dx, a.dy, b.dx, b.dy, c.dx, c.dy, d.dx, d.dy)) return null;
 
-  final bitmap = await Bitmap.fromProvider(MemoryImage(imageData));
-
-  final srcList = bitmap.content;
   final src = malloc.allocate<Uint8>(srcList.length);
   src.asTypedList(srcList.length).setAll(0, srcList);
 
   int neww = getWidth(), newh = getHeight();
   final dst = malloc.allocate<Uint8>(neww * newh * 4); //RGBA
 
-  processBitmapData(src, bitmap.width, bitmap.height, 4, dst, true);
+  processBitmapData(src, width, height, 4, dst, true);
 
   final dstList = dst.asTypedList(neww * newh * 4);
 
@@ -45,3 +50,7 @@ Future<Uint8List?> transform(Uint8List imageData, Offset a, Offset b, Offset c, 
   return result;
 }
 
+Future<Uint8List?> transform(Uint8List imageData, Offset a, Offset b, Offset c, Offset d) async{
+  final bitmap = await Bitmap.fromProvider(MemoryImage(imageData));
+  return await compute(_transform, [bitmap.content, bitmap.width, bitmap.height, a, b, c, d]);
+}

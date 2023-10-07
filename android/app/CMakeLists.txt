@@ -11,9 +11,9 @@ add_library(
     ../../native/basic_linear/vector.cpp
 )
 add_library( 
-            straighten
-            SHARED
-            ../../native/straighten/straighten.cpp
+    straighten
+    SHARED
+    ../../native/straighten/straighten.cpp
 )
 
 target_link_libraries(

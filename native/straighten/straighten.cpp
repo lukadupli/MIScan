@@ -7,7 +7,6 @@
 
 #include <assert.h>
 #include <cmath>
-#include <iostream>
 
 struct Bitmap {
 	unsigned int stride, width, height, channels;
@@ -21,7 +20,6 @@ struct Bitmap {
         return x < width && y < height && channel < channels;
     }
 	unsigned char& operator()(unsigned int x, unsigned int y, unsigned int channel) {
-        if (!in_range(x, y, channel)) throw std::out_of_range("Straighten.cpp: Bitmap index out of range!");
 		return data[y * stride + x * channels + channel];
 	}
 };
