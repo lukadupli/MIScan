@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'frame.dart';
 import 'transform.dart';
 import 'package:image_size_getter/image_size_getter.dart' as isg;
@@ -59,7 +58,6 @@ class _TransformPageState extends State<TransformPage> {
 
   @override
   Widget build(BuildContext context){
-    EasyLoading.show();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -77,10 +75,9 @@ class _TransformPageState extends State<TransformPage> {
           Frame(
             controller: fController,
             cornerSize: frameCornerDimension,
-            margin: const EdgeInsets.symmetric(vertical: frameCornerDimension / 2),
+            margin: const EdgeInsets.fromLTRB(frameCornerDimension / 4, frameCornerDimension / 2, frameCornerDimension / 4, frameCornerDimension / 2),
             whenLoaded: (){
               double ratio = imageSize.width / fController.childSize.width;
-              EasyLoading.dismiss();
               for(int i = 0; i < 4; i++){
                 notifiers[i].value = fController.corners[i] * ratio;
               }
@@ -93,7 +90,6 @@ class _TransformPageState extends State<TransformPage> {
           ),
           IconButton(icon: const Icon(Icons.transform), onPressed: () {
             double ratio = imageSize.width / fController.childSize.width;
-            EasyLoading.show();
             transform(
               widget.imageData, 
               fController.corners[0] * ratio, 
@@ -102,7 +98,6 @@ class _TransformPageState extends State<TransformPage> {
               fController.corners[3] * ratio,
             )
             .then((result) {
-              EasyLoading.dismiss();
               Navigator.push(context, MaterialPageRoute(builder: (context) => PostTransformPage(imageData: result!)));
             });
           })

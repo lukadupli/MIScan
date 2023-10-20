@@ -44,7 +44,6 @@ dependencies:
   image_size_getter: ^2.1.2
   flutter_exif_rotation: ^0.5.1
   image_gallery_saver: ^2.0.3
-  flutter_easyloading: ^3.0.5
 
 dev_dependencies:
   flutter_test:
