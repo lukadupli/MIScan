@@ -44,6 +44,7 @@ Uint8List? _transform(List<dynamic> list){
   processBitmapData(src, width, height, 4, dst, true);
 
   final dstList = dst.asTypedList(neww * newh * 4);
+  
   final resultBmp = Bitmap.fromHeadless(neww, newh, dstList);
   final result = resultBmp.buildHeaded();
 

@@ -48,7 +48,7 @@ class Frame extends StatefulWidget{
   final void Function()? whenLoaded;
   final void Function(int)? onDragStart;
   final void Function(int)? onPositionChange;
-  final void Function()? onDragEnd;
+  final void Function(int)? onDragEnd;
   final Widget child;
 
   const Frame({
@@ -101,7 +101,7 @@ class _FrameState extends State<Frame>{
         }
       },
       onDragEnd: (){
-        if(widget.onDragEnd != null) widget.onDragEnd!();
+        if(widget.onDragEnd != null) widget.onDragEnd!(index);
       },
       child: Container(
         width: widget.cornerSize,
