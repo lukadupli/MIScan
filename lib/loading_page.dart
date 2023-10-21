@@ -15,7 +15,7 @@ class LoadingPage extends StatelessWidget{
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(width: 60.0, height: 60.0, child: CircularProgressIndicator()),
-            Text("Loading"),
+            Padding(padding: EdgeInsets.all(10.0), child: Text("Loading")),
           ],
         ),
       )

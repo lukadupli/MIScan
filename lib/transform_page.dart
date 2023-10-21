@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'frame.dart';
+import 'loading_page.dart';
 import 'transform.dart';
 import 'package:image_size_getter/image_size_getter.dart' as isg;
 import 'dart:typed_data';
@@ -31,15 +32,17 @@ class _TransformPageState extends State<TransformPage> {
   final fController = FrameController();
   late final isg.Size imageSize;
   late final List<ValueNotifier<Offset>> notifiers;
+  late final double ratio;
 
   static const double frameCornerDimension = 50.0;
-  static const double showcaseDimension = 60.0;
+  static const double showcaseSizeDimension = 60.0;
+  static const double showcaseSegmentDimension = 200.0;
 
   Widget buildShowcase(int index){
     return CornerShowcase(
-      size: const Size(showcaseDimension, showcaseDimension),
+      size: const Size(showcaseSizeDimension, showcaseSizeDimension),
       imageData: widget.imageData,
-      imageSegmentSize: const Size(showcaseDimension, showcaseDimension),
+      imageSegmentSize: const Size(showcaseSegmentDimension, showcaseSegmentDimension),
       positionNotifier: notifiers[index],
     );
   }
@@ -77,29 +80,27 @@ class _TransformPageState extends State<TransformPage> {
             cornerSize: frameCornerDimension,
             margin: const EdgeInsets.fromLTRB(frameCornerDimension / 4, frameCornerDimension / 2, frameCornerDimension / 4, frameCornerDimension / 2),
             whenLoaded: (){
-              double ratio = imageSize.width / fController.childSize.width;
+              ratio = imageSize.width / fController.childSize.width;
               for(int i = 0; i < 4; i++){
                 notifiers[i].value = fController.corners[i] * ratio;
               }
             },
             onPositionChange: (index) {
-              double ratio = imageSize.width / fController.childSize.width;
               notifiers[index].value = fController.corners[index] * ratio;
             },
             child: Image.memory(widget.imageData)
           ),
           IconButton(icon: const Icon(Icons.transform), onPressed: () {
-            double ratio = imageSize.width / fController.childSize.width;
-            transform(
-              widget.imageData, 
-              fController.corners[0] * ratio, 
-              fController.corners[1] * ratio, 
-              fController.corners[2] * ratio,
-              fController.corners[3] * ratio,
-            )
-            .then((result) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => PostTransformPage(imageData: result!)));
-            });
+            Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
+              future: transform(
+                widget.imageData, 
+                fController.corners[0] * ratio, 
+                fController.corners[1] * ratio, 
+                fController.corners[2] * ratio,
+                fController.corners[3] * ratio,
+              ),
+              builder: (context, snapshot) => snapshot.hasData ? PostTransformPage(imageData: snapshot.data!) : const LoadingPage(),
+            )));
           })
         ]
       ),
@@ -107,20 +108,21 @@ class _TransformPageState extends State<TransformPage> {
   }
 }
 
-class CornerPainter extends CustomPainter{
+class ShowcasePainter extends CustomPainter{
   ui.Image? image;
-  final Size cornerSize;
+  final Size imageSegmentSize;
+  final Size size;
   final ValueNotifier<Offset> position;
 
-  CornerPainter(Uint8List imageData, {required this.cornerSize, required this.position}) : super(repaint: position){
+  ShowcasePainter(Uint8List imageData, {required this.size, required this.imageSegmentSize, required this.position}) : super(repaint: position){
     bytesToImage(imageData).then((value) => image = value);
   }
 
   @override
   void paint(Canvas canvas, Size size){
     if(image == null) return;
-    final src = Offset(position.value.dx - cornerSize.width / 2, position.value.dy - cornerSize.height / 2) & cornerSize;
-    canvas.drawImageRect(image!, src, Offset.zero & cornerSize, Paint());
+    final src = Offset(position.value.dx - imageSegmentSize.width / 2, position.value.dy - imageSegmentSize.height / 2) & imageSegmentSize;
+    canvas.drawImageRect(image!, src, Offset.zero & size, Paint());
   }
 
   @override
@@ -150,7 +152,7 @@ class CornerShowcase extends StatelessWidget {
       ),
       child: ClipOval(
         child: CustomPaint(
-          painter: CornerPainter(imageData, cornerSize: imageSegmentSize, position: positionNotifier),
+          painter: ShowcasePainter(imageData, size: size, imageSegmentSize: imageSegmentSize, position: positionNotifier),
           child: SizedBox(
             width: size.width,
             height: size.height, 

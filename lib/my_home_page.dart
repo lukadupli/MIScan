@@ -12,12 +12,6 @@ class MyHomePage extends StatelessWidget {
   final String title;
   final picker = ImagePicker();
   
-  Future<Uint8List?> pickImageData(ImageSource source) async{
-    final xfile = await picker.pickImage(source: source);
-    if(xfile == null) return null;
-
-    return await (await FlutterExifRotation.rotateImage(path: xfile.path)).readAsBytes();
-  }
   Future<Uint8List?> crossFileToImageData(XFile? xfile) async{
     if(xfile == null) return null;
     return await (await FlutterExifRotation.rotateImage(path: xfile.path)).readAsBytes();
