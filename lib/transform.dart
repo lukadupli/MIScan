@@ -6,6 +6,10 @@ import 'package:bitmap/bitmap.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'dart:ui' as ui;
+
+import 'helpers.dart';
+
 final DynamicLibrary dll = Platform.isAndroid ? DynamicLibrary.open("libstraighten.so") : DynamicLibrary.process();
 
 final bool Function(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3) loadCornerCoordinates = 
@@ -40,7 +44,6 @@ Uint8List? _transform(List<dynamic> list){
   processBitmapData(src, width, height, 4, dst, true);
 
   final dstList = dst.asTypedList(neww * newh * 4);
-
   final resultBmp = Bitmap.fromHeadless(neww, newh, dstList);
   final result = resultBmp.buildHeaded();
 
@@ -50,7 +53,12 @@ Uint8List? _transform(List<dynamic> list){
   return result;
 }
 
-Future<Uint8List?> transform(Uint8List imageData, Offset a, Offset b, Offset c, Offset d) async{
-  final bitmap = await Bitmap.fromProvider(MemoryImage(imageData));
-  return await compute(_transform, [bitmap.content, bitmap.width, bitmap.height, a, b, c, d]);
+Future<ui.Image?> transform(ui.Image image, Offset a, Offset b, Offset c, Offset d) async{
+  final byteData = await image.toByteData();
+  if(byteData == null) return null;
+
+  final raw = await compute(_transform, [byteData.buffer.asUint8List(), image.width, image.height, a, b, c, d]);
+
+  if(raw == null) return null;
+  return await bytesToImage(raw);
 }

@@ -1,17 +1,14 @@
-import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'helpers.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 import 'package:flutter/material.dart';
 
 class PostTransformPage extends StatelessWidget{
-  final Uint8List imageData;
-  const PostTransformPage({super.key, required this.imageData});
+  final ui.Image image;
+  const PostTransformPage({super.key, required this.image});
 
   Future save() async{
-    final img = await bytesToImage(imageData);
-    final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
+    final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
     if(bytes == null) return;
 
     await ImageGallerySaver.saveImage(bytes.buffer.asUint8List());
@@ -26,7 +23,7 @@ class PostTransformPage extends StatelessWidget{
       ),
       body: Container(
         margin: const EdgeInsets.all(10.0),
-        child: Image.memory(imageData),
+        child: RawImage(image: image),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => save(),

@@ -1,9 +1,11 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:straighten/transform_page.dart';
 
+import 'dart:ui' as ui;
+
+import 'helpers.dart';
 import 'loading_page.dart';
 
 class MyHomePage extends StatelessWidget {
@@ -12,9 +14,10 @@ class MyHomePage extends StatelessWidget {
   final String title;
   final picker = ImagePicker();
   
-  Future<Uint8List?> crossFileToImageData(XFile? xfile) async{
+  Future<ui.Image?> crossFileToImage(XFile? xfile) async{
     if(xfile == null) return null;
-    return await (await FlutterExifRotation.rotateImage(path: xfile.path)).readAsBytes();
+    final raw = await (await FlutterExifRotation.rotateImage(path: xfile.path)).readAsBytes();
+    return await bytesToImage(raw);
   }
 
   @override
@@ -32,8 +35,8 @@ class MyHomePage extends StatelessWidget {
             picker.pickImage(source: ImageSource.camera).then((xfile) => Navigator.push(context, 
                 MaterialPageRoute(
                   builder: (context) => FutureBuilder(
-                    future: crossFileToImageData(xfile),
-                    builder: (context, snapshot) => snapshot.hasData ? TransformPage(imageData: snapshot.data!) : const LoadingPage(),
+                    future: crossFileToImage(xfile),
+                    builder: (context, snapshot) => snapshot.hasData ? TransformPage(image: snapshot.data!) : const LoadingPage(),
                   )
                 )
               )
@@ -48,15 +51,15 @@ class MyHomePage extends StatelessWidget {
             picker.pickImage(source: ImageSource.gallery).then((xfile) => Navigator.push(context, 
                 MaterialPageRoute(
                   builder: (context) => FutureBuilder(
-                    future: crossFileToImageData(xfile),
-                    builder: (context, snapshot) => snapshot.hasData ? TransformPage(imageData: snapshot.data!) : const LoadingPage(),
+                    future: crossFileToImage(xfile),
+                    builder: (context, snapshot) => snapshot.hasData ? TransformPage(image: snapshot.data!) : const LoadingPage(),
                   )
                 )
               )
             );
           },
           tooltip: "From gallery",
-          child: const Icon(Icons.camera_alt),
+          child: const Icon(Icons.image),
         ),
       ]
     );

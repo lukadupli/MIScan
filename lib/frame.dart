@@ -46,7 +46,9 @@ class Frame extends StatefulWidget{
   final Color color;
   final EdgeInsets margin;
   final void Function()? whenLoaded;
+  final void Function(int)? onDragStart;
   final void Function(int)? onPositionChange;
+  final void Function()? onDragEnd;
   final Widget child;
 
   const Frame({
@@ -57,7 +59,9 @@ class Frame extends StatefulWidget{
     this.color = Colors.black, 
     this.margin = EdgeInsets.zero,
     this.whenLoaded,
-    this.onPositionChange, 
+    this.onDragStart,
+    this.onPositionChange,
+    this.onDragEnd, 
     required this.child,
   });
 
@@ -80,6 +84,9 @@ class _FrameState extends State<Frame>{
       positionOffset: Offset(widget.cornerSize / 2, widget.cornerSize / 2),
       size: size,
       boundary: bound,
+      onDragStart: (pos){
+        if(widget.onDragStart != null) widget.onDragStart!(index);
+      },
       onPositionChange: (pos){
         final temp = widget.controller.corners[index];
         widget.controller.corners[index] = pos;
@@ -92,6 +99,9 @@ class _FrameState extends State<Frame>{
         else {
           widget.controller.corners[index] = temp;
         }
+      },
+      onDragEnd: (){
+        if(widget.onDragEnd != null) widget.onDragEnd!();
       },
       child: Container(
         width: widget.cornerSize,
