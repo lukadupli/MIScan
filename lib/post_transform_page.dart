@@ -23,7 +23,7 @@ class PostTransformPage extends StatelessWidget{
       ),
       body: Container(
         margin: const EdgeInsets.all(10.0),
-        child: RawImage(image: image),
+        child: Center(child: RawImage(image: image)),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => save(),
