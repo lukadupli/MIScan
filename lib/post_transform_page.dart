@@ -3,12 +3,19 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 import 'package:flutter/material.dart';
 
-class PostTransformPage extends StatelessWidget{
+class PostTransformPage extends StatefulWidget{
   final ui.Image image;
   const PostTransformPage({super.key, required this.image});
 
+  @override
+  State<PostTransformPage> createState() => _PostTransformPageState();
+}
+
+class _PostTransformPageState extends State<PostTransformPage> {
+  double turns = 0.0;
+
   Future save() async{
-    final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+    final bytes = await widget.image.toByteData(format: ui.ImageByteFormat.png);
     if(bytes == null) return;
 
     await ImageGallerySaver.saveImage(bytes.buffer.asUint8List());
@@ -23,10 +30,23 @@ class PostTransformPage extends StatelessWidget{
       ),
       body: Container(
         margin: const EdgeInsets.all(10.0),
-        child: Center(child: RawImage(image: image)),
+        child: Center(
+          child: AnimatedRotation(
+            turns: turns,
+            duration: const Duration(milliseconds: 200),
+            child: RawImage(image: widget.image)
+          )
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => save(),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(icon: const Icon(Icons.rotate_left ), onPressed: () => setState(() => turns -= 1 / 4)),
+            IconButton(icon: const Icon(Icons.rotate_right), onPressed: () => setState(() => turns += 1 / 4)),
+            IconButton(icon: const Icon(Icons.save), onPressed: () => save()),
+          ]
+        )
       ),
     );
   }

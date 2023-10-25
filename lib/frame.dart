@@ -1,4 +1,5 @@
 import 'glider.dart';
+import 'helpers.dart';
 import 'package:flutter/material.dart';
 
 class BorderPainter extends CustomPainter{
@@ -70,20 +71,48 @@ class Frame extends StatefulWidget{
 }
 
 class _FrameState extends State<Frame>{
-  Rect? boundary;
+  Rect boundary = Rect.zero;
   final notifier = ValueNotifier<bool>(false);
   final childKey = GlobalKey();
 
+  void handleChildSizeChange(){
+    final childBox = childKey.currentContext!.findRenderObject()! as RenderBox;
+    final newBound = widget.margin.topLeft & childBox.size;
+
+    if(newBound != boundary){
+      if(!widget.controller.initialized){
+        widget.controller.initialized = true;
+
+        widget.controller.corners[0] = Offset.zero;
+        widget.controller.corners[1] = Offset(0, newBound.height);
+        widget.controller.corners[2] = Offset(newBound.width, newBound.height);
+        widget.controller.corners[3] = Offset(newBound.width, 0);
+      }
+      else{
+        for(int i = 0; i < 4; i++){
+          widget.controller.corners[i] = Offset(
+            scale(widget.controller.corners[i].dx, 0, boundary.height, 0, newBound.height),
+            scale(widget.controller.corners[i].dy, 0, boundary.width, 0, newBound.width),
+          );
+        }
+      }
+
+      widget.controller.childSize = newBound.size;
+      if(widget.whenLoaded != null) widget.whenLoaded!();
+
+      setState(() => boundary = newBound);
+    }
+  }
+
   Widget buildCorner(int index){
-    final bound = boundary == null ? Rect.zero : boundary!;
-    final size = Size(bound.right + widget.margin.right, bound.bottom + widget.margin.bottom);
+    final size = Size(boundary.right + widget.margin.right, boundary.bottom + widget.margin.bottom);
 
     return Glider(
       key: GlobalKey(),
       startPosition: widget.controller.corners[index],
       positionOffset: Offset(widget.cornerSize / 2, widget.cornerSize / 2),
       size: size,
-      boundary: bound,
+      boundary: boundary,
       onDragStart: (pos){
         if(widget.onDragStart != null) widget.onDragStart!(index);
       },
@@ -113,37 +142,23 @@ class _FrameState extends State<Frame>{
 
   @override
   Widget build(BuildContext context){
-    if(boundary == null || boundary!.size == Size.zero){
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        final childBox = childKey.currentContext!.findRenderObject()! as RenderBox;
-
-        setState((){
-          boundary = widget.margin.topLeft & childBox.size;
-        });
-      });
-    }
-    else if(!widget.controller.initialized){
-      widget.controller.initialized = true;
-      widget.controller.childSize = boundary!.size;
-
-      widget.controller.corners[0] = Offset.zero;
-      widget.controller.corners[1] = Offset(0, boundary!.height);
-      widget.controller.corners[2] = Offset(boundary!.width, boundary!.height);
-      widget.controller.corners[3] = Offset(boundary!.width, 0);
-
-      if(widget.whenLoaded != null) widget.whenLoaded!();
-    }
-
-    return CustomPaint(
-      foregroundPainter: BorderPainter(color: widget.color, points: widget.controller.corners, delta: boundary?.topLeft, notifier: notifier),
-      child: Stack(
-        children:[
-          Container(
-            margin: widget.margin,
-            child: Container(key: childKey, child: widget.child),
-          ),
-          for(int i = 0; i < 4; i++) buildCorner(i),
-        ]
+    WidgetsBinding.instance.addPostFrameCallback((_) => handleChildSizeChange());
+    return NotificationListener<SizeChangedLayoutNotification>(
+      onNotification: (sizeNotification) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => handleChildSizeChange());
+        return true;
+      },
+      child: CustomPaint(
+        foregroundPainter: BorderPainter(color: widget.color, points: widget.controller.corners, delta: boundary.topLeft, notifier: notifier),
+        child: Stack(
+          children:[
+            Container(
+              margin: widget.margin,
+              child: SizeChangedLayoutNotifier(key: childKey, child: widget.child),
+            ),
+            for(int i = 0; i < 4; i++) buildCorner(i),
+          ]
+        ),
       ),
     );
   }               

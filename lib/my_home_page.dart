@@ -14,8 +14,7 @@ class MyHomePage extends StatelessWidget {
   final String title;
   final picker = ImagePicker();
   
-  Future<ui.Image?> crossFileToImage(XFile? xfile) async{
-    if(xfile == null) return null;
+  Future<ui.Image> crossFileToImage(XFile xfile) async{
     final raw = await (await FlutterExifRotation.rotateImage(path: xfile.path)).readAsBytes();
     return await bytesToImage(raw);
   }
@@ -32,15 +31,16 @@ class MyHomePage extends StatelessWidget {
         FloatingActionButton(
           heroTag: "1",
           onPressed: () {
-            picker.pickImage(source: ImageSource.camera).then((xfile) => Navigator.push(context, 
-                MaterialPageRoute(
+            picker.pickImage(source: ImageSource.camera).then((xfile) {
+              if(xfile != null) {
+                Navigator.push(context, MaterialPageRoute(
                   builder: (context) => FutureBuilder(
                     future: crossFileToImage(xfile),
                     builder: (context, snapshot) => snapshot.hasData ? TransformPage(image: snapshot.data!) : const LoadingPage(),
                   )
-                )
-              )
-            );
+                ));
+              }
+            });
           },
           tooltip: "Take a photo",
           child: const Icon(Icons.camera_alt),
@@ -48,15 +48,16 @@ class MyHomePage extends StatelessWidget {
         FloatingActionButton(
           heroTag: "2",
           onPressed: () {
-            picker.pickImage(source: ImageSource.gallery).then((xfile) => Navigator.push(context, 
-                MaterialPageRoute(
+            picker.pickImage(source: ImageSource.gallery).then((xfile) {
+              if(xfile != null) {
+                Navigator.push(context, MaterialPageRoute(
                   builder: (context) => FutureBuilder(
                     future: crossFileToImage(xfile),
                     builder: (context, snapshot) => snapshot.hasData ? TransformPage(image: snapshot.data!) : const LoadingPage(),
                   )
-                )
-              )
-            );
+                ));
+              }
+            });
           },
           tooltip: "From gallery",
           child: const Icon(Icons.image),

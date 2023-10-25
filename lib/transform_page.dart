@@ -19,7 +19,8 @@ class TransformPage extends StatefulWidget{
 
 class _TransformPageState extends State<TransformPage> {
   final fController = FrameController();
-  late final double ratio;
+  late double ratio;
+  int quarterTurns = 0;
 
   int active = 0;
   final showcaseAlignment = ValueNotifier<bool?>(null);
@@ -27,7 +28,7 @@ class _TransformPageState extends State<TransformPage> {
 
   static const double frameCornerDimension = 50.0;
   static const double showcaseSizeDimension = 100.0;
-  static const double showcaseSegmentDimension = 100.0;
+  static const double showcaseSegmentDimension = 200.0;
 
   bool getAlignment(Offset position, Size imageSize){
     return position.dx < imageSize.width / 2 && position.dy < imageSize.height / 2;
@@ -90,25 +91,18 @@ class _TransformPageState extends State<TransformPage> {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(icon: const Icon(Icons.rotate_left), onPressed: () => debugPrint("left")),
-            IconButton(icon: const Icon(Icons.rotate_right), onPressed: () => debugPrint("right")),
-            IconButton(icon: const Icon(Icons.check), onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
-                future: transform(
-                  widget.image, 
-                  fController.corners[0] * ratio, 
-                  fController.corners[1] * ratio, 
-                  fController.corners[2] * ratio,
-                  fController.corners[3] * ratio,
-                ),
-                builder: (context, snapshot) => snapshot.hasData ? PostTransformPage(image: snapshot.data!) : const LoadingPage(),
-              )));
-            })
-          ],
-        ),
+        child: IconButton(icon: const Icon(Icons.check), onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
+            future: transform(
+              widget.image, 
+              fController.corners[0] * ratio, 
+              fController.corners[1] * ratio, 
+              fController.corners[2] * ratio,
+              fController.corners[3] * ratio,
+            ),
+            builder: (context, snapshot) => snapshot.hasData ? PostTransformPage(image: snapshot.data!) : const LoadingPage(),
+          )));
+        }),
       ),
     );
   }
