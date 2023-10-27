@@ -3,6 +3,7 @@
     "files.associations": {
         "algorithm": "cpp",
         "cstdlib": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "utility": "cpp"
     }
 }

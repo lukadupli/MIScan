@@ -12,7 +12,7 @@ class PostTransformPage extends StatefulWidget{
 }
 
 class _PostTransformPageState extends State<PostTransformPage> {
-  double turns = 0.0;
+  int turns = 0;
 
   Future save() async{
     final bytes = await widget.image.toByteData(format: ui.ImageByteFormat.png);
@@ -31,9 +31,8 @@ class _PostTransformPageState extends State<PostTransformPage> {
       body: Container(
         margin: const EdgeInsets.all(10.0),
         child: Center(
-          child: AnimatedRotation(
-            turns: turns,
-            duration: const Duration(milliseconds: 200),
+          child: RotatedBox(
+            quarterTurns: turns,
             child: RawImage(image: widget.image)
           )
         ),
@@ -42,8 +41,8 @@ class _PostTransformPageState extends State<PostTransformPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            IconButton(icon: const Icon(Icons.rotate_left ), onPressed: () => setState(() => turns -= 1 / 4)),
-            IconButton(icon: const Icon(Icons.rotate_right), onPressed: () => setState(() => turns += 1 / 4)),
+            IconButton(icon: const Icon(Icons.rotate_left ), onPressed: () => setState(() => turns = (turns + 3) % 4)),
+            IconButton(icon: const Icon(Icons.rotate_right), onPressed: () => setState(() => turns = (turns + 1) % 4)),
             IconButton(icon: const Icon(Icons.save), onPressed: () => save()),
           ]
         )
