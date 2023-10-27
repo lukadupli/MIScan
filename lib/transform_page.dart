@@ -20,8 +20,7 @@ class TransformPage extends StatefulWidget{
 class _TransformPageState extends State<TransformPage> {
   final fController = FrameController();
   late double ratio;
-  int quarterTurns = 0;
-
+  
   int active = 0;
   final showcaseAlignment = ValueNotifier<bool?>(null);
   final showcasePosition = ValueNotifier<Offset>(Offset.zero);
@@ -49,72 +48,70 @@ class _TransformPageState extends State<TransformPage> {
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(
+      appBar: MediaQuery.orientationOf(context) == Orientation.landscape ? null : AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Transformator"),
       ),
-      body: Stack(
-        children: [
-          Center(
-            child: Frame(
-              controller: fController,
-              cornerSize: frameCornerDimension,
-              margin: const EdgeInsets.fromLTRB(frameCornerDimension / 4, frameCornerDimension / 2, frameCornerDimension / 4, frameCornerDimension / 2),
-              whenLoaded: () => ratio = widget.image.width / fController.childSize.width,
-              onDragStart: (index){
-                active++;
-                if(active == 2) showcaseAlignment.value = null;
-              },
-              onPositionChange: (index) {
-                if(active != 1) return;
-                
-                final properAlignment = getAlignment(fController.corners[index], fController.childSize);
-                if(showcaseAlignment.value != properAlignment) showcaseAlignment.value = properAlignment;
-                
-                showcasePosition.value = fController.corners[index] * ratio;
-              },
-              onDragEnd: (index) {
-                active--;
-                if(active == 0) showcaseAlignment.value = null;
-              }, 
-              child: RawImage(image: widget.image),
-            ),
-          ),
-          ValueListenableBuilder(
-            valueListenable: showcaseAlignment,
-            builder: (context, alignment, child) => alignment != null ? Align(
-              alignment: alignment ? Alignment.topRight : Alignment.topLeft,
-              child: child,
-            ) : const SizedBox.shrink(),
-            child: buildShowcase(),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: IconButton(icon: const Icon(Icons.check), onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
-            future: transform(
-              widget.image, 
-              fController.corners[0] * ratio, 
-              fController.corners[1] * ratio, 
-              fController.corners[2] * ratio,
-              fController.corners[3] * ratio,
-            ),
-            builder: (context, snapshot) => snapshot.hasData ? PostTransformPage(image: snapshot.data!) : const LoadingPage(),
-          )));
-        }),
-      ),
-    );
-  }
+      body: Padding(
+        padding: EdgeInsets.only(top: MediaQuery.orientationOf(context) == Orientation.portrait ? 0.0 : MediaQuery.paddingOf(context).top),
+        child: Flex(
+          direction: MediaQuery.orientationOf(context) == Orientation.portrait ? Axis.vertical : Axis.horizontal,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Stack(
+              children: [
+                Frame(
+                  controller: fController,
+                  cornerSize: frameCornerDimension,
+                  margin: EdgeInsets.symmetric(
+                    vertical  : frameCornerDimension / (MediaQuery.orientationOf(context) == Orientation.portrait ? 2 : 4),
+                    horizontal: frameCornerDimension / (MediaQuery.orientationOf(context) == Orientation.portrait ? 4 : 2),
+                  ),
+                  whenLoaded: () => ratio = widget.image.width / fController.childSize.width,
+                  onDragStart: (index){
+                    active++;
+                    if(active == 2) showcaseAlignment.value = null;
+                  },
+                  onPositionChange: (index) {
+                    if(active != 1) return;
 
-  TextButton simpleButton({required Icon icon, required Text text, required void Function() onPressed}) {
-    return TextButton(
-      onPressed: onPressed,
-      child: Column(
-        children: [
-          icon,
-          text, 
-        ]
+                    final properAlignment = getAlignment(fController.corners[index], fController.childSize);
+                    if(showcaseAlignment.value != properAlignment) showcaseAlignment.value = properAlignment;
+                    
+                    showcasePosition.value = fController.corners[index] * ratio;
+                  },
+                  onDragEnd: (index) {
+                    active--;
+                    if(active == 0) showcaseAlignment.value = null;
+                  }, 
+                  child: RawImage(image: widget.image),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: showcaseAlignment,
+                  builder: (context, alignment, child) => alignment != null ? Positioned.fill(
+                    child: Align(
+                      alignment: alignment ? Alignment.topRight : Alignment.topLeft,
+                      child: child,
+                    ),
+                  ) : const SizedBox.shrink(),
+                  child: buildShowcase(),
+                ),
+              ],
+            ),
+            OutlinedButton(child: const Icon(Icons.check), onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
+                future: transform(
+                  widget.image, 
+                  fController.corners[0] * ratio, 
+                  fController.corners[1] * ratio, 
+                  fController.corners[2] * ratio,
+                  fController.corners[3] * ratio,
+                ),
+                builder: (context, snapshot) => snapshot.hasData ? PostTransformPage(image: snapshot.data!) : const LoadingPage(),
+              )));
+            }),
+          ]
+        ),
       ),
     );
   }
