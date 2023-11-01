@@ -245,6 +245,9 @@ Project_BINARY_DIR:STATIC=C:/Users/lukad/Desktop/flutterapps/straighten/android/
 //Value Computed by CMake
 Project_SOURCE_DIR:STATIC=C:/Users/lukad/Desktop/flutterapps/straighten/android/app
 
+//Path to a library.
+log-lib:FILEPATH=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/x86_64-linux-android/21/liblog.so
+
 //Dependencies for the target
 straighten_LIB_DEPENDS:STATIC=general;basic_linear;
 

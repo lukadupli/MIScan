@@ -12,17 +12,22 @@ import 'helpers.dart';
 
 final DynamicLibrary dll = Platform.isAndroid ? DynamicLibrary.open("libstraighten.so") : DynamicLibrary.process();
 
-final bool Function(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3) loadCornerCoordinates = 
+final _loadCornerCoordinates = 
 dll.lookupFunction<Bool Function(Double, Double, Double, Double, Double, Double, Double, Double), bool Function(double, double, double, double, double, double, double, double)>("LoadCornerCoordinates");
 
-final int Function() getWidth = dll.lookupFunction<Uint32 Function(), int Function()>("GetWidth");
-final int Function() getHeight = dll.lookupFunction<Uint32 Function(), int Function()>("GetHeight");
+final _getWidth = dll.lookupFunction<Uint32 Function(), int Function()>("GetWidth");
+final _getHeight = dll.lookupFunction<Uint32 Function(), int Function()>("GetHeight");
 
-final void Function(Pointer<Uint8> src, int srcWidth, int srcHeight, int srcChannels, Pointer<Uint8> dst, bool assureStrideDivBy4) processBitmapData = 
+final _processBitmapData = 
 dll.lookupFunction<
   Void Function(Pointer<Uint8>, Uint32, Uint32, Uint32, Pointer<Uint8>, Bool), 
   void Function(Pointer<Uint8>, int, int, int, Pointer<Uint8>, bool)>
 ("ProcessBitmapData");
+
+final _canTransform = 
+dll.lookupFunction<Bool Function(Double, Double, Double, Double, Double, Double, Double, Double), bool Function(double, double, double, double, double, double, double, double)>("CanTransform");
+
+bool canTransform(Offset a, Offset b, Offset c, Offset d) => _canTransform(a.dx, a.dy, b.dx, b.dy, c.dx, c.dy, d.dx, d.dy);
 
 Uint8List? _transform(List<dynamic> list){
   final srcList = list[0] as Uint8List;
@@ -33,15 +38,15 @@ Uint8List? _transform(List<dynamic> list){
   final c = list[5] as Offset;
   final d = list[6] as Offset;
 
-  if(!loadCornerCoordinates(a.dx, a.dy, b.dx, b.dy, c.dx, c.dy, d.dx, d.dy)) return null;
+  if(!_loadCornerCoordinates(a.dx, a.dy, b.dx, b.dy, c.dx, c.dy, d.dx, d.dy)) return null;
 
   final src = malloc.allocate<Uint8>(srcList.length);
   src.asTypedList(srcList.length).setAll(0, srcList);
 
-  int neww = getWidth(), newh = getHeight();
+  int neww = _getWidth(), newh = _getHeight();
   final dst = malloc.allocate<Uint8>(neww * newh * 4); //RGBA
 
-  processBitmapData(src, width, height, 4, dst, true);
+  _processBitmapData(src, width, height, 4, dst, true);
 
   final dstList = dst.asTypedList(neww * newh * 4);
   
@@ -54,12 +59,11 @@ Uint8List? _transform(List<dynamic> list){
   return result;
 }
 
-Future<ui.Image?> transform(ui.Image image, Offset a, Offset b, Offset c, Offset d) async{
-  final byteData = await image.toByteData();
-  if(byteData == null) return null;
+Future<ui.Image> transform(ui.Image image, Offset a, Offset b, Offset c, Offset d) async{
+  final byteData = (await image.toByteData())!;
 
   final raw = await compute(_transform, [byteData.buffer.asUint8List(), image.width, image.height, a, b, c, d]);
+  if(raw == null) throw const FormatException("Cannot uniquely transform from these points");
 
-  if(raw == null) return null;
   return await bytesToImage(raw);
 }

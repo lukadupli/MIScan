@@ -99,6 +99,22 @@ class _TransformPageState extends State<TransformPage> {
               ],
             ),
             OutlinedButton(child: const Icon(Icons.check), onPressed: () {
+              if(!canTransform(
+                fController.corners[0] * ratio, 
+                fController.corners[1] * ratio, 
+                fController.corners[2] * ratio,
+                fController.corners[3] * ratio,
+              )){
+                showDialog(
+                  context: context, 
+                  builder: (context) => AlertDialog.adaptive(
+                    title: const Text("Cannot transform from selected points"),
+                    actions: [TextButton(child: const Text("OK"), onPressed: () => Navigator.of(context).pop())]
+                  )
+                );
+                return;
+              }
+
               Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
                 future: transform(
                   widget.image, 

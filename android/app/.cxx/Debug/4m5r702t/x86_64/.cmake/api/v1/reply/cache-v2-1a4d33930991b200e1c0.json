@@ -11,7 +11,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86"
+			"value" : "x86_64"
 		},
 		{
 			"name" : "ANDROID_NDK",
@@ -63,7 +63,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86"
+			"value" : "x86_64"
 		},
 		{
 			"name" : "CMAKE_ANDROID_NDK",
@@ -151,7 +151,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/Debug/4m5r702t/x86"
+			"value" : "c:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/Debug/4m5r702t/x86_64"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -695,7 +695,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\build\\app\\intermediates\\cxx\\Debug\\4m5r702t\\obj\\x86"
+			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\build\\app\\intermediates\\cxx\\Debug\\4m5r702t\\obj\\x86_64"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -967,7 +967,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\build\\app\\intermediates\\cxx\\Debug\\4m5r702t\\obj\\x86"
+			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\build\\app\\intermediates\\cxx\\Debug\\4m5r702t\\obj\\x86_64"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1239,7 +1239,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/Debug/4m5r702t/x86"
+			"value" : "C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/Debug/4m5r702t/x86_64"
 		},
 		{
 			"name" : "Project_SOURCE_DIR",
@@ -1252,6 +1252,18 @@
 			],
 			"type" : "STATIC",
 			"value" : "C:/Users/lukad/Desktop/flutterapps/straighten/android/app"
+		},
+		{
+			"name" : "log-lib",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/x86_64-linux-android/21/liblog.so"
 		},
 		{
 			"name" : "straighten_LIB_DEPENDS",

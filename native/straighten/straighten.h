@@ -1,6 +1,7 @@
 #pragma once
 
 extern "C" {
+	bool CanTransform(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3);
 	bool LoadCornerCoordinates(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3);
 	unsigned int GetWidth();
 	unsigned int GetHeight();

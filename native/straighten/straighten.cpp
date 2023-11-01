@@ -109,6 +109,23 @@ Vector3 CorrespondingSrcCoors(unsigned int floorx, unsigned int floory, const Ve
 }
 
 extern "C" {
+    bool CanTransform(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3){
+        Vector3 A{ x0, y0, 0. };
+        Vector3 B{ x1, y1, 0. };
+        Vector3 C{ x2, y2, 0. };
+        Vector3 D{ x3, y3, 0. };
+
+        S = Intersection(Line(A, C), Line(B, D));
+        A = A - S; B = B - S; C = C - S; D = D - S;
+
+        double a = A.Abs(), b = B.Abs(), c = C.Abs(), d = D.Abs();
+
+        // the points already form a rectangle
+        if(eq(a, c) && eq(b, d) && eq(a, b)) return true;
+
+        return !(eq(a * b, c * d) || eq(b * c, a * d));
+    }
+    
     bool LoadCornerCoordinates(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3)
     {
         Vector3 A{ x0, y0, 0. };
@@ -138,8 +155,8 @@ extern "C" {
             return true;
         }
 
-        // these points can't be transformed to make a rectangle
-        if (eq(a, c) && eq(b, d)) return false;
+        // these points can't be transformed to make a rectangle, or they cannot be uniquely transformed
+        if (eq(a * b, c * d) || eq(b * c, a * d)) return false;
         double l = sqrt(abs((sq(a * c * (b - d)) - sq(b * d * (a - c))) / ((a * b - c * d) * (b * c - a * d))));
 
         // calculating pitches of projected diagonals relative to pictured diagonals
