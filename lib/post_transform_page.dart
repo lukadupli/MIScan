@@ -1,7 +1,8 @@
 import 'dart:ui' as ui;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-
 import 'package:flutter/material.dart';
+import 'package:bitmap/bitmap.dart';
+import 'helpers.dart';
 
 class PostTransformPage extends StatefulWidget{
   final ui.Image image;
@@ -14,38 +15,75 @@ class PostTransformPage extends StatefulWidget{
 class _PostTransformPageState extends State<PostTransformPage> {
   int turns = 0;
 
-  Future save() async{
-    final bytes = await widget.image.toByteData(format: ui.ImageByteFormat.png);
-    if(bytes == null) return;
+  Future<ui.Image> rotate(ui.Image image, int turns) async{
+    if(turns == 0) return image;
 
-    await ImageGallerySaver.saveImage(bytes.buffer.asUint8List());
+    final byteData = (await image.toByteData())!;
+    var bmp = Bitmap.fromHeadless(image.width, image.height, byteData.buffer.asUint8List());
+
+    if(turns == 1){
+      bmp = bmp.apply(BitmapRotate.rotateClockwise());
+    }
+    else if(turns == 2){
+      bmp = bmp.apply(BitmapRotate.rotate180());
+    }
+    else if(turns == 3){
+      bmp = bmp.apply(BitmapRotate.rotateCounterClockwise());
+    }
+
+    return await bytesToImage(bmp.buildHeaded());
+  }
+
+  Future save(ui.Image image, int turns) async{
+    debugPrint("start save");
+
+    final rotated = await rotate(image, turns);
+    final byteData = (await rotated.toByteData(format: ui.ImageByteFormat.png))!;
+
+    await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
+    debugPrint("saved");
   }
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(
+      appBar: MediaQuery.orientationOf(context) == Orientation.landscape ? null : AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Save and Edit")
       ),
-      body: Container(
-        margin: const EdgeInsets.all(10.0),
-        child: Center(
-          child: RotatedBox(
-            quarterTurns: turns,
-            child: RawImage(image: widget.image)
-          )
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Padding(
+        padding: EdgeInsets.only(top: MediaQuery.orientationOf(context) == Orientation.portrait ? 0.0 : MediaQuery.paddingOf(context).top),
+        child: Flex(
+          direction: MediaQuery.orientationOf(context) == Orientation.portrait ? Axis.vertical : Axis.horizontal,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            IconButton(icon: const Icon(Icons.rotate_left ), onPressed: () => setState(() => turns = (turns + 3) % 4)),
-            IconButton(icon: const Icon(Icons.rotate_right), onPressed: () => setState(() => turns = (turns + 1) % 4)),
-            IconButton(icon: const Icon(Icons.save), onPressed: () => save()),
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: RotatedBox(
+                    quarterTurns: turns,
+                    child: RawImage(image: widget.image)
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              color: Theme.of(context).highlightColor,
+              height: MediaQuery.orientationOf(context) == Orientation.portrait ? 80.0 : null,
+              width: MediaQuery.orientationOf(context) == Orientation.landscape ? 80.0 : null,
+              child: Flex(
+                direction: MediaQuery.orientationOf(context) == Orientation.portrait ? Axis.horizontal : Axis.vertical,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(icon: const Icon(Icons.rotate_left ), onPressed: () => setState(() => turns = (turns + 3) % 4)),
+                  IconButton(icon: const Icon(Icons.rotate_right), onPressed: () => setState(() => turns = (turns + 1) % 4)),
+                  IconButton(icon: const Icon(Icons.save), onPressed: () => save(widget.image, turns)),
+                ]
+              ),
+            )
           ]
-        )
+        ),
       ),
     );
   }

@@ -140,7 +140,7 @@ extern "C" {
 
         // these points can't be transformed to make a rectangle
         if (eq(a, c) && eq(b, d)) return false;
-        double l = sqrt((sq(a * c * (b - d)) - sq(b * d * (a - c))) / ((a * b - c * d) * (b * c - a * d)));
+        double l = sqrt(abs((sq(a * c * (b - d)) - sq(b * d * (a - c))) / ((a * b - c * d) * (b * c - a * d))));
 
         // calculating pitches of projected diagonals relative to pictured diagonals
         double pitch1 = sqrt(abs(sq((a + c) * l / (2 * a * c)) - 1));
