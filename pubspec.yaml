@@ -44,6 +44,7 @@ dependencies:
   flutter_exif_rotation: ^0.5.1
   image_gallery_saver: ^2.0.3
   permission_handler: ^11.0.1
+  share_plus: ^7.2.1
 
 dev_dependencies:
   flutter_test:

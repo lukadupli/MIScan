@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:bitmap/bitmap.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'jpeg_encode.dart';
 import 'helpers.dart';
 
 class PostTransformPage extends StatefulWidget{
@@ -33,15 +37,25 @@ class _PostTransformPageState extends State<PostTransformPage> {
 
     return await bytesToImage(bmp.buildHeaded());
   }
+  Future<File> imageToTemporaryFile(ui.Image image) async{
+    final rotated = await rotate(image, turns);
+    final byteData = await rotated.toByteData();
+
+    final bytes = JpegEncoder().compress(byteData!.buffer.asUint8List(), rotated.width, rotated.height, 80);
+
+    final path = "${(await getTemporaryDirectory()).path}/${getImageName(format: "jpg")}";
+    
+    final file = File(path);
+    return file.writeAsBytes(bytes);
+  }
 
   Future save(ui.Image image, int turns) async{
-    debugPrint("start save");
-
     final rotated = await rotate(image, turns);
-    final byteData = (await rotated.toByteData(format: ui.ImageByteFormat.png))!;
+    final byteData = await rotated.toByteData();
 
-    await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
-    debugPrint("saved");
+    final bytes = JpegEncoder().compress(byteData!.buffer.asUint8List(), rotated.width, rotated.height, 80);
+
+    await ImageGallerySaver.saveImage(bytes, name: getImageName(format: "jpg")); 
   }
 
   @override
@@ -78,6 +92,9 @@ class _PostTransformPageState extends State<PostTransformPage> {
                 children: [
                   IconButton(icon: const Icon(Icons.rotate_left ), onPressed: () => setState(() => turns = (turns + 3) % 4)),
                   IconButton(icon: const Icon(Icons.rotate_right), onPressed: () => setState(() => turns = (turns + 1) % 4)),
+                  IconButton(icon: const Icon(Icons.share), onPressed: () async => Share.shareXFiles(
+                    [XFile((await imageToTemporaryFile(widget.image)).path)]
+                  )),
                   IconButton(icon: const Icon(Icons.save), onPressed: () => save(widget.image, turns)),
                 ]
               ),
