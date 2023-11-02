@@ -17,5 +17,5 @@ Future<ui.Image> bytesToImage(Uint8List imgBytes) async{
 }
 String getImageName({required String format}){
   final now = DateTime.now();
-  return "Scan_${now.year}${now.month}${now.day}_${now.hour}${now.minute}${now.second}.$format";
+  return "Scan_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}.$format";
 }
