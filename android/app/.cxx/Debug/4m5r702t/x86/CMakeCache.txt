@@ -230,8 +230,8 @@ CMAKE_SYSTEM_NAME:UNINITIALIZED=Android
 //No help, variable specified on the command line.
 CMAKE_SYSTEM_VERSION:UNINITIALIZED=19
 
-//No help, variable specified on the command line.
-CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=C:\Users\lukad\AppData\Local\Android\sdk\ndk\23.1.7779620\build\cmake\android.toolchain.cmake
+//The CMake toolchain file
+CMAKE_TOOLCHAIN_FILE:FILEPATH=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/build/cmake/android.toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -244,9 +244,6 @@ Project_BINARY_DIR:STATIC=C:/Users/lukad/Desktop/flutterapps/straighten/android/
 
 //Value Computed by CMake
 Project_SOURCE_DIR:STATIC=C:/Users/lukad/Desktop/flutterapps/straighten/android/app
-
-//Path to a library.
-log-lib:FILEPATH=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/i686-linux-android/19/liblog.so
 
 //Dependencies for the target
 straighten_LIB_DEPENDS:STATIC=general;basic_linear;

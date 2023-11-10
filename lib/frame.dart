@@ -5,18 +5,26 @@ import 'package:flutter/material.dart';
 class BorderPainter extends CustomPainter{
   final Color color;
   final List<Offset> points;
+  final double cornerSize;
+  final double cornerLineThickness;
   final Offset? delta;
   ValueNotifier<bool> notifier;
 
-  BorderPainter({required this.color, required this.points, this.delta, required this.notifier}) : super(repaint: notifier);
+  BorderPainter({
+    required this.color, 
+    required this.cornerSize, 
+    required this.cornerLineThickness, 
+    required this.points, 
+    this.delta, 
+    required this.notifier
+  }) : super(repaint: notifier);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint();
-    paint.color = color;
     Offset add = delta == null ? Offset.zero : delta!;
     for(int i = 0; i < points.length; i++){
-      canvas.drawLine(points[i] + add, points[(i + 1) % points.length] + add, paint);
+      canvas.drawCircle(points[i] + add, cornerSize / 2, Paint()..style = PaintingStyle.stroke..color = color..strokeWidth = cornerLineThickness);
+      canvas.drawLine(points[i] + add, points[(i + 1) % points.length] + add, Paint()..color = color);
     }
   }
 
@@ -33,7 +41,7 @@ class FrameController{
   Size childSize = Size.zero;
   final corners = <Offset>[Offset.zero, Offset.zero, Offset.zero, Offset.zero];
 
-  bool convexCheck(){
+  bool isConvex(){
     for(int i = 0; i < 4; i++){
       if(ccw(corners[i], corners[(i + 1) % 4], corners[(i + 2) % 4]) >= 0) return false;
     }
@@ -117,17 +125,10 @@ class _FrameState extends State<Frame>{
         if(widget.onDragStart != null) widget.onDragStart!(index);
       },
       onPositionChange: (pos){
-        final temp = widget.controller.corners[index];
         widget.controller.corners[index] = pos;
-
-        if(widget.controller.convexCheck()){
-          widget.controller.corners[index] = pos;
-          if(widget.onPositionChange != null) widget.onPositionChange!(index);
-          notifier.value = !notifier.value;
-        }
-        else {
-          widget.controller.corners[index] = temp;
-        }
+        widget.controller.corners[index] = pos;
+        if(widget.onPositionChange != null) widget.onPositionChange!(index);
+        notifier.value = !notifier.value;
       },
       onDragEnd: (){
         if(widget.onDragEnd != null) widget.onDragEnd!(index);
@@ -135,7 +136,7 @@ class _FrameState extends State<Frame>{
       child: Container(
         width: widget.cornerSize,
         height: widget.cornerSize, 
-        decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: widget.color, width: widget.cornerLineThickness))
+        decoration: const BoxDecoration(shape: BoxShape.circle)
       )
     );
   }
@@ -149,7 +150,14 @@ class _FrameState extends State<Frame>{
         return true;
       },
       child: CustomPaint(
-        foregroundPainter: BorderPainter(color: widget.color, points: widget.controller.corners, delta: boundary.topLeft, notifier: notifier),
+        foregroundPainter: BorderPainter(
+          color: widget.color, 
+          cornerSize: widget.cornerSize,
+          cornerLineThickness: widget.cornerLineThickness, 
+          points: widget.controller.corners, 
+          delta: boundary.topLeft, 
+          notifier: notifier
+        ),
         child: Stack(
           children:[
             Container(

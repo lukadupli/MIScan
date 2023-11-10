@@ -56,76 +56,79 @@ class _TransformPageState extends State<TransformPage> {
         padding: EdgeInsets.only(top: MediaQuery.orientationOf(context) == Orientation.portrait ? 0.0 : MediaQuery.paddingOf(context).top),
         child: Flex(
           direction: MediaQuery.orientationOf(context) == Orientation.portrait ? Axis.vertical : Axis.horizontal,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Stack(
-              children: [
-                Frame(
-                  controller: fController,
-                  cornerSize: frameCornerDimension,
-                  margin: EdgeInsets.symmetric(
-                    vertical  : frameCornerDimension / (MediaQuery.orientationOf(context) == Orientation.portrait ? 2 : 4),
-                    horizontal: frameCornerDimension / (MediaQuery.orientationOf(context) == Orientation.portrait ? 4 : 2),
-                  ),
-                  whenLoaded: () => ratio = widget.image.width / fController.childSize.width,
-                  onDragStart: (index){
-                    active++;
-                    if(active == 2) showcaseAlignment.value = null;
-                  },
-                  onPositionChange: (index) {
-                    if(active != 1) return;
-
-                    final properAlignment = getAlignment(fController.corners[index], fController.childSize);
-                    if(showcaseAlignment.value != properAlignment) showcaseAlignment.value = properAlignment;
+            Expanded(
+              child: Center(
+                child: Stack(
+                  children: [
+                    Frame(
+                      controller: fController,
+                      cornerSize: frameCornerDimension,
+                      margin: const EdgeInsets.all(frameCornerDimension / 4),
+                      whenLoaded: () => ratio = widget.image.width / fController.childSize.width,
+                      onDragStart: (index){
+                        active++;
+                        if(active == 2) showcaseAlignment.value = null;
+                      },
+                      onPositionChange: (index) {
+                        if(active != 1) return;
                     
-                    showcasePosition.value = fController.corners[index] * ratio;
-                  },
-                  onDragEnd: (index) {
-                    active--;
-                    if(active == 0) showcaseAlignment.value = null;
-                  }, 
-                  child: RawImage(image: widget.image),
-                ),
-                ValueListenableBuilder(
-                  valueListenable: showcaseAlignment,
-                  builder: (context, alignment, child) => alignment != null ? Positioned.fill(
-                    child: Align(
-                      alignment: alignment ? Alignment.topRight : Alignment.topLeft,
-                      child: child,
+                        final properAlignment = getAlignment(fController.corners[index], fController.childSize);
+                        if(showcaseAlignment.value != properAlignment) showcaseAlignment.value = properAlignment;
+                        
+                        showcasePosition.value = fController.corners[index] * ratio;
+                      },
+                      onDragEnd: (index) {
+                        active--;
+                        if(active == 0) showcaseAlignment.value = null;
+                      }, 
+                      child: RawImage(image: widget.image),
                     ),
-                  ) : const SizedBox.shrink(),
-                  child: buildShowcase(),
+                    ValueListenableBuilder(
+                      valueListenable: showcaseAlignment,
+                      builder: (context, alignment, child) => alignment != null ? Positioned.fill(
+                        child: Align(
+                          alignment: alignment ? Alignment.topRight : Alignment.topLeft,
+                          child: child,
+                        ),
+                      ) : const SizedBox.shrink(),
+                      child: buildShowcase(),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-            OutlinedButton(child: const Icon(Icons.check), onPressed: () {
-              if(!canTransform(
-                fController.corners[0] * ratio, 
-                fController.corners[1] * ratio, 
-                fController.corners[2] * ratio,
-                fController.corners[3] * ratio,
-              )){
-                showDialog(
-                  context: context, 
-                  builder: (context) => AlertDialog.adaptive(
-                    title: const Text("Cannot transform from selected points"),
-                    actions: [TextButton(child: const Text("OK"), onPressed: () => Navigator.of(context).pop())]
-                  )
-                );
-                return;
-              }
-
-              Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
-                future: transform(
-                  widget.image, 
+            OutlinedButton(
+              child: const Icon(Icons.check),
+              onPressed: () {
+                if(!canTransform(
                   fController.corners[0] * ratio, 
                   fController.corners[1] * ratio, 
                   fController.corners[2] * ratio,
                   fController.corners[3] * ratio,
-                ),
-                builder: (context, snapshot) => snapshot.hasData ? PostTransformPage(image: snapshot.data!) : const LoadingPage(),
-              )));
-            }),
+                )){
+                  showDialog(
+                    context: context, 
+                    builder: (context) => AlertDialog.adaptive(
+                      title: const Text("Cannot transform from selected points"),
+                      actions: [TextButton(child: const Text("OK"), onPressed: () => Navigator.of(context).pop())]
+                    )
+                  );
+                  return;
+                }
+              
+                Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
+                  future: transform(
+                    widget.image, 
+                    fController.corners[0] * ratio, 
+                    fController.corners[1] * ratio, 
+                    fController.corners[2] * ratio,
+                    fController.corners[3] * ratio,
+                  ),
+                  builder: (context, snapshot) => snapshot.hasData ? PostTransformPage(image: snapshot.data!) : const LoadingPage(),
+                )));
+              }
+            ),
           ]
         ),
       ),

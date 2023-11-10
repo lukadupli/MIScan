@@ -210,7 +210,9 @@ extern "C" {
                 for (int y = 0; y < dstbmp.height; y++) {
                     Vector3 v = CorrespondingSrcCoors(x, y, newOrigin, unitX, unitY, h) + S;
                     for (int z = 0; z < src_chan; z++) {
-                        if (srcbmp.in_range((unsigned int)v.x, (unsigned int)v.y, z)) dstbmp(x, y, z) = srcbmp((unsigned int)v.x, (unsigned int)v.y, z);
+                        int xr = std::round(v.x);
+                        int yr = std::round(v.y);
+                        if (srcbmp.in_range(xr, yr, z)) dstbmp(x, y, z) = srcbmp(xr, yr, z);
                         else dstbmp(x, y, z) = 0;
                     }
                 }
