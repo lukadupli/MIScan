@@ -52,8 +52,7 @@ class _TransformPageState extends State<TransformPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Transformator"),
       ),
-      body: Padding(
-        padding: EdgeInsets.only(top: MediaQuery.orientationOf(context) == Orientation.portrait ? 0.0 : MediaQuery.paddingOf(context).top),
+      body: SafeArea(
         child: Flex(
           direction: MediaQuery.orientationOf(context) == Orientation.portrait ? Axis.vertical : Axis.horizontal,
           children: [
@@ -110,7 +109,8 @@ class _TransformPageState extends State<TransformPage> {
                   showDialog(
                     context: context, 
                     builder: (context) => AlertDialog.adaptive(
-                      title: const Text("Cannot transform from selected points"),
+                      title: const Text("Cannot transform"),
+                      content: const Text("Image cannot be transformed from selected points"),
                       actions: [TextButton(child: const Text("OK"), onPressed: () => Navigator.of(context).pop())]
                     )
                   );

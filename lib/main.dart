@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: Theme.of(context).textTheme.apply(),
       ),
-      home: MyHomePage(title: 'Home'),
+      home: const MyHomePage(title: 'Home'),
     );
   }
 }
