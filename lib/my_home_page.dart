@@ -120,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
   IconButton importImageButton(BuildContext context, {required ImageSource source, required Icon icon, String? tooltip}) {
     return IconButton(
       icon: icon,
+      style: IconButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
       tooltip: tooltip,
       onPressed: () {
         picker.pickImage(source: source).then((xfile) {
