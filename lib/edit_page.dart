@@ -1,15 +1,14 @@
 import 'dart:io';
-import 'dart:ui' as ui;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:bitmap/bitmap.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'jpeg_encode.dart';
+import 'package:image/image.dart' as img;
 import 'helpers.dart';
+import 'image_page.dart';
+import 'locations.dart';
 
 class EditPage extends StatefulWidget{
-  final ui.Image image;
-  const EditPage({super.key, required this.image});
+  final File imageFile;
+  const EditPage({super.key, required this.imageFile});
 
   @override
   State<EditPage> createState() => _EditPageState();
@@ -17,47 +16,53 @@ class EditPage extends StatefulWidget{
 
 class _EditPageState extends State<EditPage> {
   int turns = 0;
+  late String name;
 
-  Future<ui.Image> rotate(ui.Image image, int turns) async{
+  @override
+  void initState(){
+    super.initState();
+    name = getName(widget.imageFile.path);
+  }
+
+  img.Image _rotate(img.Image image, int turns){
     if(turns == 0) return image;
-
-    final byteData = (await image.toByteData())!;
-    var bmp = Bitmap.fromHeadless(image.width, image.height, byteData.buffer.asUint8List());
-
-    if(turns == 1){
-      bmp = bmp.apply(BitmapRotate.rotateClockwise());
-    }
-    else if(turns == 2){
-      bmp = bmp.apply(BitmapRotate.rotate180());
-    }
-    else if(turns == 3){
-      bmp = bmp.apply(BitmapRotate.rotateCounterClockwise());
-    }
-
-    return await bytesToImage(bmp.buildHeaded());
+    return img.copyRotate(image, angle: turns * 90);
   }
-  Future<File> imageToTemporaryFile(ui.Image image) async{
-    final rotated = await rotate(image, turns);
-    final byteData = await rotated.toByteData();
+  Future<Uint8List> _editAndEncodeImage() async{
+    var image = img.decodeImage(await widget.imageFile.readAsBytes())!;
+    image = _rotate(image, turns);
 
-    final bytes = JpegEncoder().compress(byteData!.buffer.asUint8List(), rotated.width, rotated.height, 80);
-
-    final path = "${(await getTemporaryDirectory()).path}/${generateImageName(format: "jpg")}";
-    
-    final file = File(path);
-    return file.writeAsBytes(bytes);
+    return img.encodeJpg(image);
   }
-
-  Future save(ui.Image image, int turns) async{
-    final rotated = await rotate(image, turns);
-    final byteData = await rotated.toByteData();
-
-    final bytes = JpegEncoder().compress(byteData!.buffer.asUint8List(), rotated.width, rotated.height, 80);
-
-    final path = "${(await getApplicationDocumentsDirectory()).path}/Scans/${generateImageName(format: "jpg")}";
-    final file = File(path);
-
-    await file.writeAsBytes(bytes);
+  void _saveAndPop(BuildContext context, File file, Uint8List bytes){
+    file.writeAsBytesSync(bytes, flush: true);
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => ImagePage(imageFile: file)));
+  }
+  void _save(BuildContext context) {
+    _editAndEncodeImage().then(
+      (bytes) => Locations.getAppInternalSaveDirectory().then(
+        (dir){
+          final file = File("${dir.path}/$name");
+          if(file.existsSync()){
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("File already exists"),
+                content: Text("File with the name '$name' already exists. Do you want to replace it?"),
+                actions: [
+                  TextButton(child: const Text("Yes"), onPressed: () {Navigator.of(context).pop(); FileImage(file).evict(); _saveAndPop(context, file, bytes);}),
+                  TextButton(child: const Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
+                ]
+              )
+            );
+          }
+          else{
+            _saveAndPop(context, file, bytes);
+          }
+        }
+      )
+    );
   }
 
   @override
@@ -65,7 +70,7 @@ class _EditPageState extends State<EditPage> {
     return Scaffold(
       appBar: MediaQuery.orientationOf(context) == Orientation.landscape ? null : AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Edit")
+        title: TextFormField(initialValue: removeExtension(name), onFieldSubmitted: (value) => name = "$value.jpg", style: Theme.of(context).textTheme.titleLarge),
       ),
       body: SafeArea(
         child: Flex(
@@ -76,7 +81,7 @@ class _EditPageState extends State<EditPage> {
               child: Center(
                 child: RotatedBox(
                   quarterTurns: turns,
-                  child: RawImage(image: widget.image)
+                  child: Image.file(widget.imageFile),
                 ),
               ),
             ),
@@ -89,10 +94,7 @@ class _EditPageState extends State<EditPage> {
                 children: [
                   IconButton(icon: const Icon(Icons.rotate_left ), onPressed: () => setState(() => turns = (turns + 3) % 4)),
                   IconButton(icon: const Icon(Icons.rotate_right), onPressed: () => setState(() => turns = (turns + 1) % 4)),
-                  IconButton(icon: const Icon(Icons.share), onPressed: () async => Share.shareXFiles(
-                    [XFile((await imageToTemporaryFile(widget.image)).path)]
-                  )),
-                  IconButton(icon: const Icon(Icons.save), onPressed: () => save(widget.image, turns)),
+                  IconButton(icon: const Icon(Icons.done), onPressed: () => _save(context)),
                 ]
               ),
             )

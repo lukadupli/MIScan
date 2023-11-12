@@ -1,11 +1,13 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-//import 'package:path_provider/path_provider.dart';
-//import 'helpers.dart';
+import 'package:path_provider/path_provider.dart';
+import 'helpers.dart';
 import 'corner_showcase.dart';
 import 'frame.dart';
-//import 'jpeg_encode.dart';
+import 'jpeg_encode.dart';
 import 'loading_page.dart';
 import 'transform.dart';
 import 'edit_page.dart';
@@ -121,14 +123,8 @@ class _TransformPageState extends State<TransformPage> {
                 }
               
                 Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
-                  future: transform(
-                    widget.image, 
-                    fController.corners[0] * ratio, 
-                    fController.corners[1] * ratio, 
-                    fController.corners[2] * ratio,
-                    fController.corners[3] * ratio,
-                  ),
-                  builder: (context, snapshot) => snapshot.hasData ? EditPage(image: snapshot.data!) : const LoadingPage(),
+                  future: _transformAndSaveToTemporary(),
+                  builder: (context, snapshot) => snapshot.hasData ? EditPage(imageFile: snapshot.data!) : const LoadingPage(),
                 )));
               }
             ),
@@ -138,7 +134,21 @@ class _TransformPageState extends State<TransformPage> {
     );
   }
 
-  Future _transformAndSaveToTemporary() async{
-    //TODO
+  Future<File> _transformAndSaveToTemporary() async{
+    final transformed = await transform(
+      widget.image, 
+      fController.corners[0] * ratio, 
+      fController.corners[1] * ratio, 
+      fController.corners[2] * ratio,
+      fController.corners[3] * ratio,
+    );
+
+    final byteData = await transformed.toByteData();
+    final bytes = JpegEncoder().compress(byteData!.buffer.asUint8List(), transformed.width, transformed.height, 100);
+
+    final path = "${(await getTemporaryDirectory()).path}/${generateImageName(format: "jpg")}";
+    final file = File(path);
+
+    return await file.writeAsBytes(bytes);
   }
 }

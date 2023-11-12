@@ -33,7 +33,7 @@ class ListViewImage extends StatelessWidget{
                 children: [
                   Expanded(
                     child: ListTile(
-                      title: Text(getName(imageFile.path)),
+                      title: Text(removeExtension(getName(imageFile.path))),
                       subtitle: Text(formatDateTime(time)),
                     ),
                   ),

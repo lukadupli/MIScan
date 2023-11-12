@@ -30,6 +30,10 @@ String getName(String path){
   return path.split('/').last;
 }
 
+String removeExtension(String name){
+  return name.split('.').first;
+}
+
 String formatDateTime(DateTime time){
   final strTime = time.toString();
   final hourMinute = strTime.substring(11, 16);

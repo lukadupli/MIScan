@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'edit_page.dart';
 import 'gallery_export.dart';
 import 'helpers.dart';
 
@@ -15,7 +16,7 @@ class ImagePage extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    String name = getName(imageFile.path);
+    String name = removeExtension(getName(imageFile.path));
 
     return Scaffold(
       appBar: MediaQuery.orientationOf(context) == Orientation.landscape ? null : AppBar(
@@ -44,6 +45,10 @@ class ImagePage extends StatelessWidget{
                     tooltip: "Share",
                     onPressed: () => Share.shareXFiles([XFile(imageFile.path)])
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.edit), 
+                    tooltip: "Edit", 
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EditPage(imageFile: imageFile)))),
                   IconButton(
                     icon: const Icon(Icons.exit_to_app), 
                     tooltip: "Export to gallery",
