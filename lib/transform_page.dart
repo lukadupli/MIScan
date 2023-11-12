@@ -1,11 +1,14 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
+//import 'package:path_provider/path_provider.dart';
+//import 'helpers.dart';
 import 'corner_showcase.dart';
 import 'frame.dart';
+//import 'jpeg_encode.dart';
 import 'loading_page.dart';
 import 'transform.dart';
-import 'post_transform_page.dart';
+import 'edit_page.dart';
 import 'dart:ui' as ui;
 
 class TransformPage extends StatefulWidget{
@@ -125,7 +128,7 @@ class _TransformPageState extends State<TransformPage> {
                     fController.corners[2] * ratio,
                     fController.corners[3] * ratio,
                   ),
-                  builder: (context, snapshot) => snapshot.hasData ? PostTransformPage(image: snapshot.data!) : const LoadingPage(),
+                  builder: (context, snapshot) => snapshot.hasData ? EditPage(image: snapshot.data!) : const LoadingPage(),
                 )));
               }
             ),
@@ -133,5 +136,9 @@ class _TransformPageState extends State<TransformPage> {
         ),
       ),
     );
+  }
+
+  Future _transformAndSaveToTemporary() async{
+    //TODO
   }
 }
