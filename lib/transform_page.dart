@@ -2,12 +2,12 @@
 
 import 'dart:io';
 
+import 'package:bitmap/bitmap.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'helpers.dart';
 import 'corner_showcase.dart';
 import 'frame.dart';
-import 'jpeg_encode.dart';
 import 'loading_page.dart';
 import 'transform.dart';
 import 'edit_page.dart';
@@ -144,11 +144,10 @@ class _TransformPageState extends State<TransformPage> {
     );
 
     final byteData = await transformed.toByteData();
-    final bytes = JpegEncoder().compress(byteData!.buffer.asUint8List(), transformed.width, transformed.height, 100);
 
-    final path = "${(await getTemporaryDirectory()).path}/${generateImageName(format: "jpg")}";
+    final path = "${(await getTemporaryDirectory()).path}/${generateImageName(format: "bmp")}";
     final file = File(path);
 
-    return await file.writeAsBytes(bytes);
+    return await file.writeAsBytes(Bitmap.fromHeadless(transformed.width, transformed.height, byteData!.buffer.asUint8List()).buildHeaded());
   }
 }

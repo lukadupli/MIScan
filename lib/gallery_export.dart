@@ -8,7 +8,21 @@ import 'locations.dart';
 
 class GalleryExport{
   static const permission = Permission.manageExternalStorage;
-  static void exportToGalleryWithPermission({required BuildContext context, required File file}) {
+
+  static void export({required BuildContext context, required File file}){
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm export"),
+        content: Text("Are you sure you want to export file '${getName(file.path)}' to gallery?"),
+        actions: [
+          TextButton(child: const Text("Yes"), onPressed: () {Navigator.of(context).pop(); _exportToGalleryWithPermission(context, file);}),
+          TextButton(child: const Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
+        ]
+      )
+    );
+  }
+  static void _exportToGalleryWithPermission(BuildContext context, File file) {
     final name = getName(file.path);
     permission.request().then(
       (status){
@@ -17,7 +31,7 @@ class GalleryExport{
             context: context,
             builder: (context) => AlertDialog(
               title: const Text("Unable to export"),
-              content: const Text("App needs the permission to manage external storage in order to export this image"),
+              content: const Text("App needs the permission to manage external storage in order to export this file"),
               actions: [
                 TextButton(child: const Text("Go to settings"), onPressed: () {openAppSettings(); Navigator.of(context).pop();}),
                 TextButton(child: const Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
@@ -30,10 +44,10 @@ class GalleryExport{
             context: context,
             builder: (context) => AlertDialog(
               title: const Text("Unable to export"),
-              content: const Text("App needs the permission to manage external storage in order to export this image"),
+              content: const Text("App needs the permission to manage external storage in order to export this file"),
               actions: [
                 TextButton(child: const Text("Try again"), onPressed: () {Navigator.of(context).pop(); 
-                exportToGalleryWithPermission(context: context, file: file);}),
+                _exportToGalleryWithPermission(context, file);}),
                 TextButton(child: const Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
               ]
             )
@@ -73,7 +87,7 @@ class GalleryExport{
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Export complete"),
-        content: Text("Image '${getName(newPath)}' successfully exported to gallery"),
+        content: Text("File '${getName(newPath)}' successfully exported to gallery"),
         actions: [
           TextButton(child: const Text("OK"), onPressed: () => Navigator.of(context).pop()),
         ]

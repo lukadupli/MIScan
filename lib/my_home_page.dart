@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     else if(files!.isEmpty){
       body = const Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text("No recent scans!"), Text("Take a photo or import from gallery using the buttons below.")]
+        children: [Text("No recent scans!"), Text("Create a new scan by clicking on the button below!")]
       );
     }
     else{
@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0), 
               child: ListView.separated(
                 itemBuilder: (context, index){
-                  return ListViewImage(imageFile: files![index].$1, time: files![index].$2, height: 130, index: index, 
+                  return ListViewImage(imageFile: files![index].$1, time: files![index].$2, height: MediaQuery.orientationOf(context) == Orientation.portrait ? 100 : 150, index: index, 
                     onDeletion: (deleted){
                       showDialog(
                         context: context,
@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                 },
                 separatorBuilder: (context, index){
-                  return Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: Container(height: 2, color: Colors.black26));
+                  return Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: Container(height: 1, color: Colors.black26));
                 },
                 itemCount: files!.length,
               ),
@@ -109,19 +109,34 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SafeArea(
         child: body,
       ),
-      persistentFooterAlignment: AlignmentDirectional.bottomCenter,
-      persistentFooterButtons: [
-        importImageButton(context, source: ImageSource.camera, icon: const Icon(Icons.camera_alt), tooltip: "Take a photo"),
-        importImageButton(context, source: ImageSource.gallery, icon: const Icon(Icons.image), tooltip: "Import from gallery")
-      ]
+      floatingActionButton: FloatingActionButton(
+        onPressed: _getImage,
+        child: const Icon(Icons.add_a_photo),
+      ),
     );
   }
 
-  IconButton importImageButton(BuildContext context, {required ImageSource source, required Icon icon, String? tooltip}) {
-    return IconButton(
+  void _getImage(){
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Import from: "),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            importImageButton(source: ImageSource.camera, icon: const Icon(Icons.camera_alt), label: "Camera"),
+            importImageButton(source: ImageSource.gallery, icon: const Icon(Icons.image), label: "Gallery")
+          ]
+        )
+      ),
+    );
+  }
+
+  Widget importImageButton({required ImageSource source, required Icon icon, required String label}) {
+    return ElevatedButton.icon(
       icon: icon,
+      label: Text(label),
       style: IconButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
-      tooltip: tooltip,
       onPressed: () {
         picker.pickImage(source: source).then((xfile) {
           if(xfile != null) {

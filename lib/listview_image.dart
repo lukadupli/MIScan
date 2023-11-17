@@ -27,7 +27,14 @@ class ListViewImage extends StatelessWidget{
         ),
         child: Row(
           children: [
-            SizedBox(width: MediaQuery.orientationOf(context) == Orientation.portrait ? 100 : 300, child: Image.file(imageFile)),
+            Container(
+              width: height, 
+              height: height, 
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                image: DecorationImage(image: FileImage(imageFile), fit: BoxFit.cover)
+              )
+            ),
             Expanded(
               child: Column(
                 children: [
@@ -43,7 +50,7 @@ class ListViewImage extends StatelessWidget{
                       IconButton(icon: const Icon(Icons.share), tooltip: "Share", onPressed: () => Share.shareXFiles([XFile(imageFile.path)])),
                       IconButton(icon: const Icon(Icons.delete), tooltip: "Delete", onPressed: () => onDeletion(index)),
                       IconButton(icon: const Icon(Icons.exit_to_app), tooltip: "Export to gallery", onPressed: () => 
-                      GalleryExport.exportToGalleryWithPermission(context: context, file: imageFile)),
+                      GalleryExport.export(context: context, file: imageFile)),
                     ],
                   )
                 ]

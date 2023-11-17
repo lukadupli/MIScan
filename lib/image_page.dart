@@ -52,7 +52,7 @@ class ImagePage extends StatelessWidget{
                   IconButton(
                     icon: const Icon(Icons.exit_to_app), 
                     tooltip: "Export to gallery",
-                    onPressed: () => GalleryExport.exportToGalleryWithPermission(context: context, file: imageFile),
+                    onPressed: () => GalleryExport.export(context: context, file: imageFile),
                   ),
                 ]
               ),
