@@ -30,18 +30,20 @@ class GalleryExport{
     
     while(status != PermissionStatus.granted){
       if(status == PermissionStatus.permanentlyDenied){
+        bool flag = true;
         await showDialog(
           context: navigatorKey.currentContext!,
           builder: (context) => AlertDialog(
             title: const Text("Unable to export"),
             content: const Text("App needs the permission to manage external storage in order to export this file"),
             actions: [
-              TextButton(child: const Text("Go to settings"), onPressed: () {openAppSettings(); Navigator.of(context).pop();}),
+              TextButton(child: const Text("Go to settings"), onPressed: () {flag = false; openAppSettings().then((_) => flag = true); Navigator.of(context).pop();}),
               TextButton(child: const Text("Cancel"), onPressed: () {Navigator.of(context).pop(); cancelled = true;}),
             ],
           ),
           barrierDismissible: false,
         );
+        while(!flag){}
       }
       else{
         await showDialog(
