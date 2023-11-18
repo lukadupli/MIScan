@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'my_home_page.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
 void main() {
   runApp(const MyApp());
 }
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         textTheme: Theme.of(context).textTheme.apply(),
       ),
       home: const MyHomePage(title: 'Home'),
+      navigatorKey: navigatorKey,
     );
   }
 }

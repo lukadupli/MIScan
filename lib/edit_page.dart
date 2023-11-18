@@ -82,8 +82,10 @@ class _EditPageState extends State<EditPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: TextFormField(
           initialValue: removeExtension(name),
-          onFieldSubmitted: (value) => name = "$value.jpg", 
-          style: Theme.of(context).textTheme.titleLarge),
+          onChanged: (value) => name = "$value.jpg",
+          style: Theme.of(context).textTheme.titleLarge,
+          decoration: const InputDecoration(suffixIcon: Icon(Icons.edit))
+        ),
       ),
       body: SafeArea(
         child: Flex(

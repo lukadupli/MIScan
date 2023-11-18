@@ -50,7 +50,7 @@ class ListViewImage extends StatelessWidget{
                       IconButton(icon: const Icon(Icons.share), tooltip: "Share", onPressed: () => Share.shareXFiles([XFile(imageFile.path)])),
                       IconButton(icon: const Icon(Icons.delete), tooltip: "Delete", onPressed: () => onDeletion(index)),
                       IconButton(icon: const Icon(Icons.exit_to_app), tooltip: "Export to gallery", onPressed: () => 
-                      GalleryExport.export(context: context, file: imageFile)),
+                      GalleryExport.export(imageFile)),
                     ],
                   )
                 ]

@@ -1,27 +1,62 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'edit_page.dart';
 import 'gallery_export.dart';
 import 'helpers.dart';
 
-class ImagePage extends StatelessWidget{
+class ImagePage extends StatefulWidget{
   const ImagePage({super.key, required this.imageFile});
-  final permission = Permission.manageExternalStorage;
 
   final File imageFile;
 
   @override
-  Widget build(BuildContext context) {
-    String name = removeExtension(getName(imageFile.path));
+  State<ImagePage> createState() => _ImagePageState();
+}
 
+class _ImagePageState extends State<ImagePage> {
+  late File imageFile;
+
+  @override initState(){
+    super.initState();
+    imageFile = widget.imageFile;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint(imageFile.path);
     return Scaffold(
       appBar: MediaQuery.orientationOf(context) == Orientation.landscape ? null : AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(name)
+        title: TextFormField(
+          initialValue: removeExtension(getName(imageFile.path)),
+          onFieldSubmitted: (value){
+            if(value == removeExtension(getName(imageFile.path))) return;
+
+            final newPath = "${widget.imageFile.parent.path}/$value.jpg";
+            if(File(newPath).existsSync()){
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("File already exists"),
+                  content: Text("File with the name '$value' already exists. Do you want to replace it?"),
+                  actions: [
+                    TextButton(child: const Text("Yes"), onPressed: () {Navigator.of(context).pop(); setState(() => imageFile = imageFile.renameSync(newPath));}),
+                    TextButton(child: const Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
+                  ]
+                )
+              );
+            }
+            else{
+              setState(() => imageFile = imageFile.renameSync(newPath));
+            }
+          },
+          style: Theme.of(context).textTheme.titleLarge,
+          decoration: const InputDecoration(suffixIcon: Icon(Icons.edit))
+        ),
       ),
       body: SafeArea(
         child: Flex(
@@ -30,7 +65,15 @@ class ImagePage extends StatelessWidget{
           children: [
             Expanded(
               child: Center(
-                child: Image.file(imageFile),
+                child: ClipRRect(
+                  child: PhotoView(
+                    backgroundDecoration: const BoxDecoration(color: Colors.transparent),
+                    imageProvider: FileImage(widget.imageFile),
+                    initialScale: PhotoViewComputedScale.contained,
+                    minScale: PhotoViewComputedScale.contained,
+                    maxScale: PhotoViewComputedScale.covered * 5,
+                  ),
+                )
               ),
             ),
             SizedBox(
@@ -43,7 +86,7 @@ class ImagePage extends StatelessWidget{
                   IconButton(
                     icon: const Icon(Icons.share), 
                     tooltip: "Share",
-                    onPressed: () => Share.shareXFiles([XFile(imageFile.path)])
+                    onPressed: () => Share.shareXFiles([XFile(widget.imageFile.path)])
                   ),
                   IconButton(
                     icon: const Icon(Icons.edit), 
@@ -52,7 +95,7 @@ class ImagePage extends StatelessWidget{
                   IconButton(
                     icon: const Icon(Icons.exit_to_app), 
                     tooltip: "Export to gallery",
-                    onPressed: () => GalleryExport.export(context: context, file: imageFile),
+                    onPressed: () => GalleryExport.export(widget.imageFile),
                   ),
                 ]
               ),

@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                 },
                 separatorBuilder: (context, index){
-                  return Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: Container(height: 1, color: Colors.black26));
+                  return Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: Container(height: 1, color: Colors.black12));
                 },
                 itemCount: files!.length,
               ),
@@ -111,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _getImage,
+        tooltip: "New scan",
         child: const Icon(Icons.add_a_photo),
       ),
     );
