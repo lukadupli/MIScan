@@ -90,15 +90,8 @@ class GalleryExport{
   }
   static void _copyWithMessage(File file, String newPath){
     file.copySync(newPath);
-    showDialog(
-      context: navigatorKey.currentContext!,
-      builder: (context) => AlertDialog(
-        title: const Text("Export complete"),
-        content: Text("File '${getName(newPath)}' successfully exported to gallery"),
-        actions: [
-          TextButton(child: const Text("OK"), onPressed: () => Navigator.of(context).pop()),
-        ]
-      )
+    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+      SnackBar(content: Text("File '${getName(newPath)}' exported to gallery")) 
     );
   }
 }

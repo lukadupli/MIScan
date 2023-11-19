@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
     else if(files!.isEmpty){
       body = const Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text("No recent scans!"), Text("Create a new scan by clicking on the button below!")]
+        children: [Center(child: Text("No recent scans!")), Center(child: Text("Create a new scan by clicking on the button below."))]
       );
     }
     else{
