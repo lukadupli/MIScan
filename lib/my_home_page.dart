@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:straighten/transform_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'helpers.dart';
+import 'transform_page.dart';
 import 'loading_page.dart';
 import 'listview_image.dart';
 import 'locations.dart';
@@ -39,22 +40,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context){
+    final apploc = AppLocalizations.of(context)!;
     _getImageFiles().then((result) => setState(() => files = result));
     late Widget body;
     if(files == null){
       body = const Center(child: SizedBox(width: 60.0, height: 60.0, child: CircularProgressIndicator()));
     }
     else if(files!.isEmpty){
-      body = const Column(
+      body = Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Center(child: Text("No recent scans!")), Center(child: Text("Create a new scan by clicking on the button below."))]
+        children: [Center(child: Text(apploc.noScansYet)), Center(child: Text(apploc.tipForCreatingScans))]
       );
     }
     else{
       body = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(padding: const EdgeInsets.all(8.0), child: Text("Recent scans", style: Theme.of(context).textTheme.titleLarge)),
+          Padding(padding: const EdgeInsets.all(8.0), child: Text(apploc.scanListTitle, style: Theme.of(context).textTheme.titleLarge)),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0), 
@@ -65,16 +67,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog.adaptive(
-                          title: const Text("Confirm deletion"),
-                          content: Text("Are you sure you want to delete ${getName(files![deleted].$1.path)}?"),
+                          title: Text(apploc.confirmDeletionTitle),
+                          content: Text(apploc.confirmDeletionContent(getName(files![deleted].$1.path))),
                           actions: [
-                            TextButton(child: const Text("Yes"), onPressed: (){
+                            TextButton(child: Text(apploc.yes), onPressed: (){
                               files![deleted].$1.delete();
                               files!.removeAt(deleted);
                               Navigator.of(context).pop();
                               setState((){});
                             }),
-                            TextButton(child: const Text("No"), onPressed: () => Navigator.of(context).pop()),
+                            TextButton(child: Text(apploc.cancel), onPressed: () => Navigator.of(context).pop()),
                           ]
                         )
                       );
@@ -99,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
           text: TextSpan(
             children: [
               const WidgetSpan(child: Icon(Icons.home)),
-              TextSpan(text: " Home", style: Theme.of(context).textTheme.titleLarge),
+              TextSpan(text: " ${apploc.homePageTitle}", style: Theme.of(context).textTheme.titleLarge),
             ]
           )
         )
@@ -109,22 +111,23 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _getImage,
-        tooltip: "New scan",
+        tooltip: apploc.newScanTooltip,
         child: const Icon(Icons.add_a_photo),
       ),
     );
   }
 
   void _getImage(){
+    final apploc = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Import from: "),
+        title: Text(apploc.chooseSourceTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            importImageButton(source: ImageSource.camera, icon: const Icon(Icons.camera_alt), label: "Camera"),
-            importImageButton(source: ImageSource.gallery, icon: const Icon(Icons.image), label: "Gallery")
+            importImageButton(source: ImageSource.camera, icon: const Icon(Icons.camera_alt), label: apploc.imageSource("camera")),
+            importImageButton(source: ImageSource.gallery, icon: const Icon(Icons.image), label: apploc.imageSource("gallery"))
           ]
         )
       ),

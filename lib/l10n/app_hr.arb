@@ -1,0 +1,15 @@
+{
+    "@@locale": "hr",
+    "homePageTitle": "Početna",
+    "scanListTitle": "Nedavno",
+    "noScansYet": "Nema prijašnjih skenova!",
+    "tipForCreatingScans": "Pritisnite gumb dolje desno za izradu novog skena.",
+    "confirmDeletionTitle": "Potvrdi brisanje",
+    "confirmDeletionContent": "Jeste li sigurni da želite izbrisati datoteku '{filename}'?",
+    "yes": "Da",
+    "no": "Ne",
+    "cancel": "Otkaži",
+    "newScanTooltip": "Izradi novi sken",
+    "chooseSourceTitle": "Uvezi iz",
+    "imageSource": "{source, select, camera{Kamere} gallery{Galerije} other{Druga lokacija}}"
+}

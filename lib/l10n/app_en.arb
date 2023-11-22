@@ -1,0 +1,55 @@
+{
+    "@@locale": "en",
+    "homePageTitle": "Home",
+    "@homePageTitle": {
+        "description": "Home page title"
+    },
+    "scanListTitle": "Recent",
+    "@scanListTitle": {
+        "description": "Title of the home page list of previous scans"
+    },
+    "noScansYet": "No scans yet!",
+    "@noRecentScans": {
+        "description": "Message to display when there are no previous scans"
+    },
+    "tipForCreatingScans": "Click on the button below to create a new scan!",
+    "@tipForCreatingScans": {
+        "description": "Message to display when there are no previous scans to show how to create new scans"
+    },
+    "confirmDeletionTitle": "Confirm deletion",
+    "@confirmDeletionTitle": {
+        "description": "Title of the alert dialog which pops up when the user wants to delete a file"
+    },
+    "confirmDeletionContent": "Are you sure you want to delete file '{filename}'?",
+    "@confirmDeletionContent": {
+        "description": "Content of the alert dialog which pops up when the user wants to delete a file",
+        "placeholders": {
+            "filename": {
+                "type": "String",
+                "example": "myFileName.jpg"
+            }
+        }
+    },
+
+    "yes": "Yes",
+    "@yes": {"description": "Yes/No question answer"},
+    "no": "No",
+    "@no": {"description": "Yes/No question answer"},
+    "cancel": "Cancel",
+    "@cancel": {"description": "Cancel operation"},
+
+    "newScanTooltip": "Create a new scan",
+    "@newScanTooltip": {"description": "Message displayed when new scan button is long pressed"},
+
+    "chooseSourceTitle": "Import from",
+    "@chooseSourceTitle": {"description": "Title of dialog for choosing how to import an image"},
+    "imageSource": "{source, select, camera{Camera} gallery{Gallery} other{Other}}",
+    "@imageSource": {
+        "description": "Image source options",
+        "placeholders": {
+            "source": {
+                "type": "String"
+            }
+        }
+    }
+}
