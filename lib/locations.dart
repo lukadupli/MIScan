@@ -3,7 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:external_path/external_path.dart';
 
 class Locations{
-  static const String galleryAlbumName = "Exported Scans";
+  static const String galleryAlbumName = "MIScan exports";
 
   static Future<Directory> getAppInternalSaveDirectory() async{
     final path = "${(await getApplicationDocumentsDirectory()).path}/Scans";

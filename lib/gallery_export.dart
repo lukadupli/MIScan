@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'helpers.dart';
 import 'locations.dart';
@@ -14,11 +15,11 @@ class GalleryExport{
     showDialog(
       context: navigatorKey.currentContext!,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm export"),
-        content: Text("Are you sure you want to export file '${getName(file.path)}' to gallery?"),
+        title: Text(AppLocalizations.of(context)!.exportConfirmTitle),
+        content: Text(AppLocalizations.of(context)!.exportConfirmContent(getName(file.path))),
         actions: [
-          TextButton(child: const Text("Yes"), onPressed: () {Navigator.of(context).pop(); _exportWithPermission(file);}),
-          TextButton(child: const Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
+          TextButton(child: Text(AppLocalizations.of(context)!.yes), onPressed: () {Navigator.of(context).pop(); _exportWithPermission(file);}),
+          TextButton(child: Text(AppLocalizations.of(context)!.cancel), onPressed: () => Navigator.of(context).pop()),
         ]
       )
     );
@@ -30,30 +31,28 @@ class GalleryExport{
     
     while(status != PermissionStatus.granted){
       if(status == PermissionStatus.permanentlyDenied){
-        bool flag = true;
         await showDialog(
           context: navigatorKey.currentContext!,
           builder: (context) => AlertDialog(
-            title: const Text("Unable to export"),
-            content: const Text("App needs the permission to manage external storage in order to export this file"),
+            title: Text(AppLocalizations.of(context)!.exportPermissionTitle),
+            content: Text(AppLocalizations.of(context)!.exportPermissionContent),
             actions: [
-              TextButton(child: const Text("Go to settings"), onPressed: () {flag = false; openAppSettings().then((_) => flag = true); Navigator.of(context).pop();}),
-              TextButton(child: const Text("Cancel"), onPressed: () {Navigator.of(context).pop(); cancelled = true;}),
+              TextButton(child: Text(AppLocalizations.of(context)!.openSettings), onPressed: () => openAppSettings().then((_) => Navigator.of(context).pop())),
+              TextButton(child: Text(AppLocalizations.of(context)!.cancel), onPressed: () {Navigator.of(context).pop(); cancelled = true;}),
             ],
           ),
           barrierDismissible: false,
         );
-        while(!flag){}
       }
       else{
         await showDialog(
           context: navigatorKey.currentContext!,
           builder: (context) => AlertDialog(
-            title: const Text("Unable to export"),
-            content: const Text("App needs the permission to manage external storage in order to export this file"),
+            title: Text(AppLocalizations.of(context)!.exportPermissionTitle),
+            content: Text(AppLocalizations.of(context)!.exportPermissionContent),
             actions: [
-              TextButton(child: const Text("Try again"), onPressed: () => Navigator.of(context).pop()),
-              TextButton(child: const Text("Cancel"), onPressed: () {Navigator.of(context).pop(); cancelled = true;}),
+              TextButton(child: Text(AppLocalizations.of(context)!.tryAgain), onPressed: () => Navigator.of(context).pop()),
+              TextButton(child: Text(AppLocalizations.of(context)!.cancel), onPressed: () {Navigator.of(context).pop(); cancelled = true;}),
             ]
           ),
           barrierDismissible: false,
@@ -71,11 +70,11 @@ class GalleryExport{
       showDialog(
         context: navigatorKey.currentContext!,
         builder: (context) => AlertDialog(
-          title: const Text("File already exists"),
-          content: Text("File with the name '$name' already exists in gallery. Do you want to replace it?"),
+          title: Text(AppLocalizations.of(context)!.fileExistsTitle),
+          content: Text(AppLocalizations.of(context)!.fileExistsContent(name)),
           actions: [
-            TextButton(child: const Text("Yes"), onPressed: () {Navigator.of(context).pop(); _copyWithMessage(file, newPath);}),
-            TextButton(child: const Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
+            TextButton(child: Text(AppLocalizations.of(context)!.yes), onPressed: () {Navigator.of(context).pop(); _copyWithMessage(file, newPath);}),
+            TextButton(child: Text(AppLocalizations.of(context)!.cancel), onPressed: () => Navigator.of(context).pop()),
           ]
         )
       );
@@ -90,8 +89,9 @@ class GalleryExport{
   }
   static void _copyWithMessage(File file, String newPath){
     file.copySync(newPath);
-    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
-      SnackBar(content: Text("File '${getName(newPath)}' exported to gallery")) 
+    final context = navigatorKey.currentContext!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)!.exportConfirmation(getName(newPath)))) 
     );
   }
 }

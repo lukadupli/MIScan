@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'edit_page.dart';
 import 'gallery_export.dart';
@@ -27,7 +28,8 @@ class _ImagePageState extends State<ImagePage> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(imageFile.path);
+    final apploc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: MediaQuery.orientationOf(context) == Orientation.landscape ? null : AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -41,11 +43,11 @@ class _ImagePageState extends State<ImagePage> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text("File already exists"),
-                  content: Text("File with the name '$value' already exists. Do you want to replace it?"),
+                  title: Text(apploc.fileExistsTitle),
+                  content: Text(apploc.fileExistsContent(value)),
                   actions: [
-                    TextButton(child: const Text("Yes"), onPressed: () {Navigator.of(context).pop(); setState(() => imageFile = imageFile.renameSync(newPath));}),
-                    TextButton(child: const Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
+                    TextButton(child: Text(apploc.yes), onPressed: () {Navigator.of(context).pop(); setState(() => imageFile = imageFile.renameSync(newPath));}),
+                    TextButton(child: Text(apploc.cancel), onPressed: () => Navigator.of(context).pop()),
                   ]
                 )
               );
@@ -85,16 +87,16 @@ class _ImagePageState extends State<ImagePage> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.share), 
-                    tooltip: "Share",
+                    tooltip: apploc.shareTooltip,
                     onPressed: () => Share.shareXFiles([XFile(widget.imageFile.path)])
                   ),
                   IconButton(
                     icon: const Icon(Icons.edit), 
-                    tooltip: "Edit", 
+                    tooltip: apploc.editTooltip, 
                     onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EditPage(imageFile: imageFile)))),
                   IconButton(
                     icon: const Icon(Icons.exit_to_app), 
-                    tooltip: "Export to gallery",
+                    tooltip: apploc.exportTooltip,
                     onPressed: () => GalleryExport.export(widget.imageFile),
                   ),
                 ]

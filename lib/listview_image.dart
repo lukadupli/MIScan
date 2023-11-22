@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
 import 'gallery_export.dart';
 import 'helpers.dart';
@@ -16,6 +18,8 @@ class ListViewImage extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final apploc = AppLocalizations.of(context)!;
+
     return SizedBox(
       height: height,
       child: InkWell(
@@ -41,15 +45,15 @@ class ListViewImage extends StatelessWidget{
                   Expanded(
                     child: ListTile(
                       title: Text(removeExtension(getName(imageFile.path))),
-                      subtitle: Text(formatDateTime(time)),
+                      subtitle: Text(_formatDateTime(apploc, time)),
                     ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      IconButton(icon: const Icon(Icons.share), tooltip: "Share", onPressed: () => Share.shareXFiles([XFile(imageFile.path)])),
-                      IconButton(icon: const Icon(Icons.delete), tooltip: "Delete", onPressed: () => onDeletion(index)),
-                      IconButton(icon: const Icon(Icons.exit_to_app), tooltip: "Export to gallery", onPressed: () => 
+                      IconButton(icon: const Icon(Icons.share), tooltip: apploc.shareTooltip, onPressed: () => Share.shareXFiles([XFile(imageFile.path)])),
+                      IconButton(icon: const Icon(Icons.delete), tooltip: apploc.deleteTooltip, onPressed: () => onDeletion(index)),
+                      IconButton(icon: const Icon(Icons.exit_to_app), tooltip: apploc.exportTooltip, onPressed: () => 
                       GalleryExport.export(imageFile)),
                     ],
                   )
@@ -60,5 +64,18 @@ class ListViewImage extends StatelessWidget{
         ),
       )
     );
+  }
+
+  String _formatDateTime(AppLocalizations apploc, DateTime time){
+    final date = DateTime(time.year, time.month, time.day);
+
+    final now = DateTime.now();
+
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+
+    if(date == today) return "${apploc.today}, ${DateFormat.jm(apploc.localeName).format(time)}";
+    if(date == yesterday) return "${apploc.yesterday}, ${DateFormat.jm(apploc.localeName).format(time)}";
+    return DateFormat.yMd(apploc.localeName).format(time);
   }
 }

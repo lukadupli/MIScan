@@ -51,5 +51,93 @@
                 "type": "String"
             }
         }
-    }
+    },
+
+    "shareTooltip": "Share",
+    "@shareTooltip": {"description": "Message shown when share button is long pressed"},
+
+    "deleteTooltip": "Delete",
+    "@deleteTooltip": {"description": "Message shown when delete button is long pressed"},
+
+    "exportTooltip": "Export to gallery",
+    "@exportTooltip": {"description": "Message shown when export to gallery button is long pressed"},
+
+    "editTooltip": "Edit",
+    "@editTooltip": {"description": "Message shown when edit button is long pressed"},
+
+    "today": "Today",
+    "@today": {"description": "Used for scan modification time"},
+
+    "yesterday": "Yesterday",
+    "@yesterday": {"description": "Used for scan modification time"},
+
+    "fileExistsTitle": "File already exists",
+    "@fileExistsTitle": {
+        "description": "Title of a dialog warning user that a file with the same name already exists in the save location"
+    },
+    "fileExistsContent": "File with the name '{filename}' already exists. Do you want to replace it?",
+    "@fileExistsContent": {
+        "description": "Content of a dialog warning user that a file with the same name already exists in the save location",
+        "placeholders": {
+            "filename": {
+                "type": "String",
+                "example": "myFileName.jpg"
+            }
+        }
+    },
+
+    "exportConfirmTitle": "Confirm export",
+    "@exportConfirmTitle": {
+        "description": "Title of a dialog asking user to confirm export to gallery"
+    },
+    "exportConfirmContent": "Are you sure you want to export file '{filename}' to gallery?",
+    "@exportConfirmContent": {
+        "description": "Content of a dialog asking user to confirm export to gallery",
+        "placeholders": {
+            "filename": {
+                "type": "String",
+                "example": "myFileName.jpg"
+            }
+        }
+    },
+
+    "exportPermissionTitle": "Unable to export",
+    "@exportPermissionTitle": {
+        "description": "Title of a dialog asking user to allow the app to manage external storage in order to export a file"
+    },
+    "exportPermissionContent": "App needs the permission to manage external storage in order to export files",
+    "@exportPermissionContent": {
+        "description": "Content of a dialog asking user to allow the app to manage external storage in order to export a file"
+    },
+    "openSettings": "Open settings",
+    "@openSettings": {"description": "Title of a button leading to phone settings"},
+    "tryAgain": "Try again",
+    "@tryAgain": {"description": "Title of a button for trying again"},
+    "exportConfirmation": "File '{filename}' exported to gallery",
+    "@exportConfirmation": {
+        "description": "File export confirmation",
+        "placeholders": {
+            "filename": {
+                "type": "String",
+                "example": "myFileName.jpg"
+            }
+        }
+    },
+
+    "loading": "Loading",
+    "@loading": {"description": "Loading page text"},
+
+    "transformPageTitle": "Select corners",
+    "@transformPageTitle": {"description": "Title of transform page"},
+
+    "cannotTransformTitle": "Cannot transform",
+    "@cannotTransformTitle": {
+        "description": "Title of a dialog alerting user that the transformation cannot be made from selected corners"
+    },
+    "cannotTransformContent": "Image cannot be transformed from selected corners",
+    "@cannotTransformContent": {
+        "description": "Content of a dialog alerting user that the transformation cannot be made from selected corners"
+    },
+    "ok": "OK",
+    "@ok": {"description": "OK button title"}
 }

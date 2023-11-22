@@ -1,10 +1,10 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
 import 'dart:io';
-
 import 'package:bitmap/bitmap.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'helpers.dart';
 import 'corner_showcase.dart';
 import 'frame.dart';
@@ -52,10 +52,12 @@ class _TransformPageState extends State<TransformPage> {
 
   @override
   Widget build(BuildContext context){
+    final apploc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: MediaQuery.orientationOf(context) == Orientation.landscape ? null : AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Transformator"),
+        title: Text(apploc.transformPageTitle),
       ),
       body: SafeArea(
         child: Flex(
@@ -114,9 +116,9 @@ class _TransformPageState extends State<TransformPage> {
                   showDialog(
                     context: context, 
                     builder: (context) => AlertDialog.adaptive(
-                      title: const Text("Cannot transform"),
-                      content: const Text("Image cannot be transformed from selected points"),
-                      actions: [TextButton(child: const Text("OK"), onPressed: () => Navigator.of(context).pop())]
+                      title: Text(apploc.cannotTransformTitle),
+                      content: Text(apploc.cannotTransformContent),
+                      actions: [TextButton(child: Text(apploc.ok), onPressed: () => Navigator.of(context).pop())]
                     )
                   );
                   return;
