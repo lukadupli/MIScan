@@ -18,7 +18,12 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(brightness: Brightness.light, seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+        textTheme: Theme.of(context).textTheme.apply(),
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark),
         useMaterial3: true,
         textTheme: Theme.of(context).textTheme.apply(),
       ),

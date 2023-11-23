@@ -1,0 +1,4 @@
+C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/RelWithDebInfo/1be203q6/arm64-v8a/CMakeFiles/basic_linear.dir
+C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/RelWithDebInfo/1be203q6/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/RelWithDebInfo/1be203q6/arm64-v8a/CMakeFiles/straighten.dir
+C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/RelWithDebInfo/1be203q6/arm64-v8a/CMakeFiles/rebuild_cache.dir

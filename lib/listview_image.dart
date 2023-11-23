@@ -76,6 +76,6 @@ class ListViewImage extends StatelessWidget{
 
     if(date == today) return "${apploc.today}, ${DateFormat.jm(apploc.localeName).format(time)}";
     if(date == yesterday) return "${apploc.yesterday}, ${DateFormat.jm(apploc.localeName).format(time)}";
-    return DateFormat.yMd(apploc.localeName).format(time);
+    return DateFormat.yMMMd(apploc.localeName).format(time);
   }
 }

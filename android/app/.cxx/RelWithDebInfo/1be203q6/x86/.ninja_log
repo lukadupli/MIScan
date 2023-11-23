@@ -1,0 +1,8 @@
+# ninja log v5
+1	74	722434214	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/helpers.cpp.o	c3f2b1fe2fa9ef20
+7	97	722434214	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/line.cpp.o	2f48890686d28d84
+18	193	722434214	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/vector.cpp.o	450b29542baebb2e
+12	689	722434215	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/basic_linear/plane.cpp.o	818701e03659b1d2
+690	775	722434215	libbasic_linear.a	d21b5d3868657d1d
+26	982	722434215	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp.o	267fec8125d188bd
+982	1118	722434215	C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/RelWithDebInfo/1be203q6/obj/x86/libstraighten.so	b9f4713a4105f81d
