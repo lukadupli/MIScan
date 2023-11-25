@@ -82,6 +82,8 @@ struct Bitmap {
 	}
 };
 
+bool input4, output4;
+
 Vector3 S, newOrigin, unitX, unitY;
 double h;
 unsigned int neww, newh;
@@ -109,6 +111,11 @@ Vector3 CorrespondingSrcCoors(unsigned int floorx, unsigned int floory, const Ve
 }
 
 extern "C" {
+    void Prepare(bool input_padded, bool output_padded){
+        input4 = input_padded;
+        output4 = output_padded;
+    }
+
     bool CanTransform(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3){
         Vector3 A{ x0, y0, 0. };
         Vector3 B{ x1, y1, 0. };
@@ -200,10 +207,16 @@ extern "C" {
     unsigned int GetHeight() {
         return newh;
     }
+    unsigned int GetRequiredDstSize(unsigned int bytes_per_pixel) {
+        unsigned int stride = neww * bytes_per_pixel;
+        if(stride % 4 && output4) stride += 4 - (stride % 4);
 
-	void ProcessBitmapData(unsigned char* src, unsigned int src_width, unsigned int src_height, unsigned int src_chan, unsigned char* dst, bool assure_stride_is_divisible_by_4) {
-        Bitmap srcbmp{ src, src_width, src_height, src_chan, assure_stride_is_divisible_by_4 };
-        Bitmap dstbmp{ dst, neww, newh, src_chan, assure_stride_is_divisible_by_4 };
+        return stride * newh;
+    }
+
+	void ProcessBitmapData(unsigned char* src, unsigned int src_width, unsigned int src_height, unsigned int src_chan, unsigned char* dst) {
+        Bitmap srcbmp{ src, src_width, src_height, src_chan, input4 };
+        Bitmap dstbmp{ dst, neww, newh, src_chan, output4 };
         
         parallel_for(dstbmp.width, [&](int start, int end){
             for(int x = start; x < end; x++){

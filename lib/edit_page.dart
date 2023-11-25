@@ -1,13 +1,11 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+import 'package:native_exif/native_exif.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'main.dart';
 import 'image_page.dart';
-import 'loading_page.dart';
 import 'helpers.dart';
 import 'locations.dart';
-
-import 'package:image/image.dart' as img;
 
 class EditPage extends StatefulWidget{
   final File imageFile;
@@ -27,53 +25,57 @@ class _EditPageState extends State<EditPage> {
     name = "${removeExtension(getName(widget.imageFile.path))}.jpg";
   }
 
-  static String _editAndSave(List list) {
-    final path1 = list[0] as String;
-    final path2 = list[1] as String;
-    final turns = list[2] as int;
-    
-    final file1 = File(path1);
+  static int _orientToTurns(int orient){
+    if(orient == 6) return 1;
+    if(orient == 3) return 2;
+    if(orient == 8) return 3;
+    return 0;
+  }
+  static int _turnsToOrient(int turns){
+    if(turns == 1) return 6;
+    if(turns == 2) return 3;
+    if(turns == 3) return 8;
+    return 1;
+  }
+  static Future<void> _edit(String path, int turns) async {
+    if(turns == 0) return;
 
-    var image = img.decodeNamedImage(path1, file1.readAsBytesSync())!;
-    if(turns != 0) image = img.copyRotate(image, angle: turns * 90);
-    
-    final file2 = File(path2);
-    file2.writeAsBytesSync(img.encodeJpg(image));
+    final exif = await Exif.fromPath(path);
+    final orient = await exif.getAttribute("Orientation");
 
-    return path2;
+    int realTurns = (turns + _orientToTurns(int.parse(orient))) % 4;
+
+    await exif.writeAttribute("Orientation", _turnsToOrient(realTurns).toString());
   }
 
-  void _saveAndPop(File file){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const LoadingPage()));
-    compute(_editAndSave, [widget.imageFile.path, file.path, turns]).then(
-      (_) => FileImage(file).evict().then((_) {
-        Navigator.popUntil(context, (route) => route.isFirst); 
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ImagePage(imageFile: file)));
-      }),
-    );
+  Future<void> _saveAndPop(File file) async{
+    if(file.path != widget.imageFile.path) await widget.imageFile.copy(file.path);
+    await _edit(file.path, turns);
+
+    await FileImage(file).evict();
+    Navigator.popUntil(navigatorKey.currentContext!, (route) => route.isFirst); 
+    Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ImagePage(imageFile: file)));
   }
-  void _save() {
-    Locations.getAppInternalSaveDirectory().then(
-      (dir){
-        final file = File("${dir.path}/$name");
-        if(file.existsSync()){
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(AppLocalizations.of(context)!.fileExistsTitle),
-              content: Text(AppLocalizations.of(context)!.fileExistsContent(name)),
-              actions: [
-                TextButton(child: Text(AppLocalizations.of(context)!.yes), onPressed: () {Navigator.of(context).pop(); _saveAndPop(file);}),
-                TextButton(child: Text(AppLocalizations.of(context)!.cancel), onPressed: () => Navigator.of(context).pop()),
-              ]
-            )
-          );
-        }
-        else{
-          _saveAndPop(file);
-        }
-      }
-    );
+
+  Future<void> _save() async{
+    final dir = await Locations.getAppInternalSaveDirectory();
+    final file = File("${dir.path}/$name");
+    if(file.path != widget.imageFile.path && await file.exists()){
+      showDialog(
+        context: navigatorKey.currentContext!,
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.fileExistsTitle),
+          content: Text(AppLocalizations.of(context)!.fileExistsContent(name)),
+          actions: [
+            TextButton(child: Text(AppLocalizations.of(context)!.yes), onPressed: () {Navigator.of(context).pop(); _saveAndPop(file);}),
+            TextButton(child: Text(AppLocalizations.of(context)!.cancel), onPressed: () => Navigator.of(context).pop()),
+          ]
+        )
+      );
+    }
+    else{
+      _saveAndPop(file);
+    }
   }
 
   @override
