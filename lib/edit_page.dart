@@ -53,6 +53,7 @@ class _EditPageState extends State<EditPage> {
     await _edit(file.path, turns);
 
     await FileImage(file).evict();
+
     Navigator.popUntil(navigatorKey.currentContext!, (route) => route.isFirst); 
     Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ImagePage(imageFile: file)));
   }

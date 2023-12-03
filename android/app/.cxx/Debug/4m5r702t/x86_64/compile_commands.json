@@ -1,6 +1,16 @@
 [
 {
   "directory": "C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/Debug/4m5r702t/x86_64",
+  "command": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android21 --gcc-toolchain=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Djpg_encode_EXPORTS -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC -o CMakeFiles\\jpg_encode.dir\\C_\\Users\\lukad\\Desktop\\flutterapps\\straighten\\native\\jpg_encode\\jpg_encode.cpp.o -c C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\native\\jpg_encode\\jpg_encode.cpp",
+  "file": "C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\native\\jpg_encode\\jpg_encode.cpp"
+},
+{
+  "directory": "C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/Debug/4m5r702t/x86_64",
+  "command": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android21 --gcc-toolchain=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC -o CMakeFiles\\jpge.dir\\C_\\Users\\lukad\\Desktop\\flutterapps\\straighten\\native\\jpge\\jpge.cpp.o -c C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\native\\jpge\\jpge.cpp",
+  "file": "C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\native\\jpge\\jpge.cpp"
+},
+{
+  "directory": "C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/Debug/4m5r702t/x86_64",
   "command": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android21 --gcc-toolchain=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC -o CMakeFiles\\basic_linear.dir\\C_\\Users\\lukad\\Desktop\\flutterapps\\straighten\\native\\basic_linear\\helpers.cpp.o -c C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\native\\basic_linear\\helpers.cpp",
   "file": "C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\native\\basic_linear\\helpers.cpp"
 },

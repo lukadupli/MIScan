@@ -23,6 +23,19 @@
       "artifactName": "basic_linear",
       "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\android\\app\\.cxx\\RelWithDebInfo\\1be203q6\\x86_64\\libbasic_linear.a"
     },
+    "jpg_encode::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "jpg_encode",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\build\\app\\intermediates\\cxx\\RelWithDebInfo\\1be203q6\\obj\\x86_64\\libjpg_encode.so",
+      "runtimeFiles": []
+    },
+    "jpge::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "jpge",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\straighten\\android\\app\\.cxx\\RelWithDebInfo\\1be203q6\\x86_64\\libjpge.a"
+    },
     "straighten::@6890427a1f51a3e7e1df": {
       "toolchain": "toolchain",
       "abi": "x86_64",

@@ -1,0 +1,86 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4.1"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "RelWithDebInfo",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Project",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "basic_linear::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-basic_linear-RelWithDebInfo-edbad5ac565c4118ee53.json",
+					"name" : "basic_linear",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "jpg_encode::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-jpg_encode-RelWithDebInfo-a8c916e3a0aa70c6afac.json",
+					"name" : "jpg_encode",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "jpge::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-jpge-RelWithDebInfo-5e400df16f5f34c6bd58.json",
+					"name" : "jpge",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "straighten::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-straighten-RelWithDebInfo-f10fbb30f449f4d2a7e9.json",
+					"name" : "straighten",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/RelWithDebInfo/1be203q6/arm64-v8a",
+		"source" : "C:/Users/lukad/Desktop/flutterapps/straighten/android/app"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 1
+	}
+}

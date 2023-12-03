@@ -1,10 +1,8 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:image/image.dart' as img;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'helpers.dart';
 import 'corner_showcase.dart';
@@ -12,6 +10,7 @@ import 'frame.dart';
 import 'loading_page.dart';
 import 'transform.dart';
 import 'edit_page.dart';
+import 'jpg_encode.dart';
 import 'dart:ui' as ui;
 
 class TransformPage extends StatefulWidget{
@@ -146,11 +145,11 @@ class _TransformPageState extends State<TransformPage> {
       fController.corners[3] * ratio,
     );
 
-    final image = (await compute(img.decodeBmp, transformed.buildHeaded()))!;
     final path = "${(await getTemporaryDirectory()).path}/${generateImageName(format: "jpg")}";
     final file = File(path);
-    
-    final bytes = await compute(img.encodeJpg, image);
-    return await file.writeAsBytes(bytes);
+
+    await JpgEncode.encodeToFileAsync(file.path, transformed.content, transformed.width, transformed.height, 4); // 4 channels - RGBA
+
+    return file;
   }
 }

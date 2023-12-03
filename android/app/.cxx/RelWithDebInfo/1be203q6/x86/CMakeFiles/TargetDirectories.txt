@@ -1,3 +1,5 @@
+C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/RelWithDebInfo/1be203q6/x86/CMakeFiles/jpg_encode.dir
+C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/RelWithDebInfo/1be203q6/x86/CMakeFiles/jpge.dir
 C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/RelWithDebInfo/1be203q6/x86/CMakeFiles/basic_linear.dir
 C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/RelWithDebInfo/1be203q6/x86/CMakeFiles/edit_cache.dir
 C:/Users/lukad/Desktop/flutterapps/straighten/android/app/.cxx/RelWithDebInfo/1be203q6/x86/CMakeFiles/straighten.dir

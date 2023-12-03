@@ -13,3 +13,7 @@
 851	1010	722624352	C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/armeabi-v7a/libstraighten.so	d7a623056c1dcf33
 4	1071	722626508	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/straighten/straighten.cpp.o	a3867155afefdb8c
 1071	1270	722626509	C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/armeabi-v7a/libstraighten.so	d7a623056c1dcf33
+7	133	723305274	CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/jpg_encode/jpg_encode.cpp.o	f6c6d03ef01f5fe1
+15	1408	723305276	CMakeFiles/jpge.dir/C_/Users/lukad/Desktop/flutterapps/straighten/native/jpge/jpge.cpp.o	1319e172f4cb356e
+1408	1567	723305276	libjpge.a	eb6d02ee7557431
+1567	1978	723305276	C:/Users/lukad/Desktop/flutterapps/straighten/build/app/intermediates/cxx/Debug/4m5r702t/obj/armeabi-v7a/libjpg_encode.so	c78646dfe1451f2a
