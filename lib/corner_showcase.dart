@@ -20,6 +20,9 @@ class ShowcasePainter extends CustomPainter{
 }
 
 class CornerShowcase extends StatelessWidget {
+  /// Creates a widget of size [size] which shows a segment of [image]
+  /// 
+  /// The size of the segment is [imageSegmentSize] and its position is given by [positionNotifier] and updated accordingly
   const CornerShowcase({
     super.key,
     required this.size,

@@ -11,6 +11,9 @@ import 'main.dart';
 class GalleryExport{
   static const permission = Permission.manageExternalStorage;
 
+  /// Exports a file [file] to gallery folder
+  /// 
+  /// Shows confirmation dialogs and asks for permission to manage external storage (needed for storing in external memory)
   static void export(File file){
     showDialog(
       context: navigatorKey.currentContext!,

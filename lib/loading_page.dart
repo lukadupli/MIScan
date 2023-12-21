@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoadingPage extends StatelessWidget{
+  /// Creates a simple loading page with [CircularProgressIndicator] and a localized loading message
   const LoadingPage({super.key});
 
   @override

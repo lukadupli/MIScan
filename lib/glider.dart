@@ -11,6 +11,7 @@ class Glider extends StatefulHookWidget {
   final void Function(Offset)? onPositionChange;
   final void Function()? onDragEnd;
 
+  /// Creates a widget which can be dragged inside its [boundary], the size of [GestureDetector] running this widget is given by [size]
   const Glider({
     super.key, 
     required this.child, 

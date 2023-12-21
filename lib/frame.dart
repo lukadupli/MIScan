@@ -32,10 +32,21 @@ class BorderPainter extends CustomPainter{
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
+/// Returns double the size of area of a triangle given by points [a], [b] and [c]
+/// 
+/// If the given points are in counterclockwise order, the area is positive,
+/// if they are in clockwise order, the area is negative
 double ccw(Offset a, Offset b, Offset c){
   return a.dx * (b.dy - c.dy) + b.dx * (c.dy - a.dy) + c.dx * (a.dy - b.dy);
 }
 
+/// Class which provides information about a [Frame].
+/// 
+/// Corners are indexed in clockwise order starting from bottom left
+/// (note that on the screen they are actually in counterclockwise order starting from top left 
+/// because (0, 0) coordinate is in screen's upper left corner)
+/// 
+/// Provides a function to check if the corners form a convex quadrilateral
 class FrameController{
   bool initialized = false;
   Size childSize = Size.zero;
@@ -49,17 +60,28 @@ class FrameController{
   }
 }
 
+/// A draggable frame with 4 corners around child widget
 class Frame extends StatefulWidget{
   final FrameController controller;
   final double cornerSize, cornerLineThickness;
   final Color color;
   final EdgeInsets margin;
-  final void Function()? whenLoaded;
+  final void Function()? whenResized;
   final void Function(int)? onDragStart;
   final void Function(int)? onPositionChange;
   final void Function(int)? onDragEnd;
   final Widget child;
 
+  /// Creates a widget which shows a draggable frame with 4 corners around child widget
+  /// 
+  /// [controller] contains information about corner positions and child's size
+  /// 
+  /// Corners are indexed in clockwise order starting from bottom left 
+  /// (note that on the screen they are actually in counterclockwise order starting from top left because (0, 0) coordinate is in upper left corner)
+  /// 
+  /// [onDragStart], [onPositionChange], [onDragEnd] are called with an index (from 0 to 3) to the corner whose position was altered
+  /// 
+  /// [whenResized] is called at first build and when child's size is changed
   const Frame({
     super.key, 
     required this.controller, 
@@ -67,7 +89,7 @@ class Frame extends StatefulWidget{
     this.cornerLineThickness = 3.0, 
     this.color = Colors.black, 
     this.margin = EdgeInsets.zero,
-    this.whenLoaded,
+    this.whenResized,
     this.onDragStart,
     this.onPositionChange,
     this.onDragEnd, 
@@ -106,7 +128,7 @@ class _FrameState extends State<Frame>{
       }
 
       widget.controller.childSize = newBound.size;
-      if(widget.whenLoaded != null) widget.whenLoaded!();
+      if(widget.whenResized != null) widget.whenResized!();
 
       setState(() => boundary = newBound);
     }

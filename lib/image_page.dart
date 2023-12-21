@@ -10,6 +10,11 @@ import 'gallery_export.dart';
 import 'helpers.dart';
 
 class ImagePage extends StatefulWidget{
+  /// Creates a widget for showing the image from [imageFile]
+  /// 
+  /// Image can be renamed, exported, edited or shared
+  /// 
+  /// Cases when image has the same name as some other image are handled with [AlertDialog]
   const ImagePage({super.key, required this.imageFile});
 
   final File imageFile;

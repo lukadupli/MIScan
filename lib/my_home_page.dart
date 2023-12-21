@@ -13,6 +13,11 @@ import 'listview_image.dart';
 import 'locations.dart';
 
 class MyHomePage extends StatefulWidget {
+  /// App's home page
+  /// 
+  /// Previous scans are shown in a [ListView] as [ListViewImage]s
+  /// 
+  /// New image can be imported from camera or from gallery using a [FloatingActionButton]
   const MyHomePage({super.key});
 
   @override
@@ -34,6 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final entities = dir.listSync();
     final files = [for(final item in entities) (item as File, (await FileStat.stat(item.path)).modified)];
 
+    // sort files by last modification time
     files.sort((a, b) => b.$2.compareTo(a.$2));
     return files;
   }

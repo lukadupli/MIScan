@@ -9,6 +9,12 @@ import 'locations.dart';
 
 class EditPage extends StatefulWidget{
   final File imageFile;
+
+  /// Creates a page widget for editing the image from [imageFile]
+  /// 
+  /// Image can be renamed or rotated 90 degrees
+  /// 
+  /// Cases when image has the same name as some other image are handled with [AlertDialog]
   const EditPage({super.key, required this.imageFile});
 
   @override

@@ -28,6 +28,9 @@ dll.lookupFunction<
 final _canTransform = 
 dll.lookupFunction<Bool Function(Double, Double, Double, Double, Double, Double, Double, Double), bool Function(double, double, double, double, double, double, double, double)>("CanTransform");
 
+/// Checks if these coordinates can be linearly transformed to make a rectangle
+/// 
+/// The coordinates are given in clockwise order, starting from bottom left coordinate
 bool canTransform(Offset a, Offset b, Offset c, Offset d) => _canTransform(a.dx, a.dy, b.dx, b.dy, c.dx, c.dy, d.dx, d.dy);
 
 Bitmap? _transform(List<dynamic> list){
@@ -59,6 +62,12 @@ Bitmap? _transform(List<dynamic> list){
   return result;
 }
 
+/// Linearly transforms [image] so that the coordinates given form a rectangular border of the new image,
+/// e.g. performs a quadrilateral transformation of an image
+/// 
+/// The coordinates are given in clockwise order, starting from bottom left coordinate
+/// 
+/// Throws a [FormatException] if the coordinates cannot be uniquely transformed to make a rectangle
 Future<Bitmap> transform(ui.Image image, Offset a, Offset b, Offset c, Offset d) async{
   final byteData = (await image.toByteData())!;
 

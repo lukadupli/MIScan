@@ -16,6 +16,7 @@ import 'dart:ui' as ui;
 class TransformPage extends StatefulWidget{
   final ui.Image image;
 
+  /// Creates a page which uses a [Frame] to select the corners to quadrilateraly transform an [image] and save it in JPEG format
   const TransformPage({super.key, required this.image});
 
   @override
@@ -71,7 +72,7 @@ class _TransformPageState extends State<TransformPage> {
                       controller: fController,
                       cornerSize: frameCornerDimension,
                       margin: const EdgeInsets.all(frameCornerDimension / 4),
-                      whenLoaded: () => ratio = widget.image.width / fController.childSize.width,
+                      whenResized: () => ratio = widget.image.width / fController.childSize.width,
                       onDragStart: (index){
                         active++;
                         if(active == 2) showcaseAlignment.value = null;
@@ -148,7 +149,7 @@ class _TransformPageState extends State<TransformPage> {
     final path = "${(await getTemporaryDirectory()).path}/${generateImageName(format: "jpg")}";
     final file = File(path);
 
-    await JpgEncode.encodeToFileAsync(file.path, transformed.content, transformed.width, transformed.height, 4); // 4 channels - RGBA
+    await JpgEncode.encodeToFile(file.path, transformed.content, transformed.width, transformed.height, 4); // 4 channels - RGBA
 
     return file;
   }

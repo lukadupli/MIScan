@@ -7,6 +7,9 @@ import 'gallery_export.dart';
 import 'helpers.dart';
 import 'image_page.dart';
 
+/// A larger [ListView]'s element which shows an image
+/// 
+/// Shows localized last modification time
 class ListViewImage extends StatelessWidget{
   final File imageFile;
   final DateTime time;
@@ -14,6 +17,11 @@ class ListViewImage extends StatelessWidget{
   final int index;
   final void Function(int) onDeletion;
 
+  /// Creates a widget which shows a single [imageFile] in a larger [ListView]
+  /// 
+  /// Image can be shared, deleted or exported
+  /// 
+  /// Parent widget is responsible for deleting the [imageFile] so when the delete button is pressed, [onDeletion] is called with [index]
   const ListViewImage({super.key, required this.imageFile, required this.height, required this.time, required this.index, required this.onDeletion});
 
   @override
