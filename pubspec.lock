@@ -610,14 +610,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
-  turbo_jpeg_ffi:
-    dependency: "direct main"
-    description:
-      name: turbo_jpeg_ffi
-      sha256: "0ea71a7f502b0b604f7335f1ff67fe1795dea439e28766dacdcfd7d372d4267f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.2"
   typed_data:
     dependency: transitive
     description:

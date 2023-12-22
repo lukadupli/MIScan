@@ -50,7 +50,6 @@ dependencies:
     sdk: flutter
   intl: any
   native_exif: ^0.5.0
-  turbo_jpeg_ffi: ^0.0.2
 
 dev_dependencies:
   flutter_test:

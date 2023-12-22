@@ -8,7 +8,7 @@ import 'helpers.dart';
 import 'corner_showcase.dart';
 import 'frame.dart';
 import 'loading_page.dart';
-import 'transform.dart';
+import 'quad_transform.dart';
 import 'edit_page.dart';
 import 'jpg_encode.dart';
 import 'dart:ui' as ui;
@@ -108,7 +108,7 @@ class _TransformPageState extends State<TransformPage> {
             OutlinedButton(
               child: const Icon(Icons.check),
               onPressed: () {
-                if(!canTransform(
+                if(!QuadTransform.canTransform(
                   fController.corners[0] * ratio, 
                   fController.corners[1] * ratio, 
                   fController.corners[2] * ratio,
@@ -138,7 +138,7 @@ class _TransformPageState extends State<TransformPage> {
   }
 
   Future<File> _transformAndSaveToTemporary() async{
-    final transformed = await transform(
+    final transformed = await QuadTransform.transform(
       widget.image, 
       fController.corners[0] * ratio, 
       fController.corners[1] * ratio, 

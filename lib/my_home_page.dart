@@ -25,7 +25,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final picker = ImagePicker();
   List<(File, DateTime)>? files;
 
   Future<ui.Image> crossFileToImage(XFile xfile) async{
@@ -68,7 +67,12 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0), 
               child: ListView.separated(
                 itemBuilder: (context, index){
-                  return ListViewImage(imageFile: files![index].$1, time: files![index].$2, height: MediaQuery.orientationOf(context) == Orientation.portrait ? 100 : 150, index: index, 
+                  return ListViewImage(
+                    key: ValueKey(files![index].$2), // forces rebuild when image is modified
+                    imageFile: files![index].$1, 
+                    time: files![index].$2, 
+                    height: MediaQuery.orientationOf(context) == Orientation.portrait ? 100 : 150, 
+                    index: index, 
                     onDeletion: (deleted){
                       showDialog(
                         context: context,
@@ -77,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           content: Text(apploc.confirmDeletionContent(getName(files![deleted].$1.path))),
                           actions: [
                             TextButton(child: Text(apploc.yes), onPressed: (){
-                              files![deleted].$1.delete();
+                              files![deleted].$1.deleteSync();
                               files!.removeAt(deleted);
                               Navigator.of(context).pop();
                               setState((){});
@@ -146,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
       label: Text(label),
       style: IconButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
       onPressed: () {
-        picker.pickImage(source: source).then((xfile) {
+        ImagePicker().pickImage(source: source).then((xfile) {
           if(xfile != null) {
             Navigator.push(context, MaterialPageRoute(
               builder: (context) => FutureBuilder(
