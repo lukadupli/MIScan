@@ -4,7 +4,7 @@ import 'package:external_path/external_path.dart';
 
 class Locations{
   /// Name of album in external gallery where images are exported
-  static const String galleryAlbumName = "MIScan exports";
+  static const String galleryAlbumName = "MIScan";
 
   /// Returns the directory where images are internally saved
   /// 
