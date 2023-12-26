@@ -154,7 +154,6 @@ extern "C" {
             Vector3 yedge = B - A;
             h = 0.;
             
-            newOrigin = A;
             unitX = xedge.Unit(); unitY = yedge.Unit();
 
             neww = xedge.Abs(); newh = yedge.Abs();
