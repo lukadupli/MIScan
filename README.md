@@ -1,16 +1,3 @@
-# straighten
+# MIScan
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+MIScan is a mobile scanning app written in Flutter using an original algorithm for performing a quadrilateral transformation of an image. It also contains some simple, but useful tools, like sharing, renaming, or exporting images.
