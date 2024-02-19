@@ -4,7 +4,8 @@
         "algorithm": "cpp",
         "cstdlib": "cpp",
         "xstring": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "cmath": "cpp"
     },
     "cmake.sourceDirectory": "C:/Users/lukad/Desktop/flutterapps/straighten/android/app"
 }

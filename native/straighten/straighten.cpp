@@ -170,22 +170,24 @@ extern "C" {
         if (a > c) pitch1 = -pitch1;
 
         Line d1{ A, C };
+        // we know d1 is passing through the origin
         d1.base = Vector3{ 0., 0., 0. };
-        d1.dir.z = pitch1; // dir is unit vector
-        d1.dir = d1.dir.Unit();
+        d1.dir.z = pitch1; // since origin is the base, and dir iz unit vector, this makes d1 a line between points A2 and C2
+        d1.dir = d1.dir.Unit(); // keeping dir unit
 
         double pitch2 = sqrt(abs(sq((b + d) * l / (2 * b * d)) - 1));
         if (b > d) pitch2 = -pitch2;
 
         Line d2{ B, D };
+        // we know d2 is passing through the origin
         d2.base = Vector3{ 0., 0., 0. };
-        d2.dir.z = pitch2; // dir is unit vector
-        d2.dir = d2.dir.Unit();
+        d2.dir.z = pitch2; // since origin is the base, and dir iz unit vector, this makes d2 a line between points B2 and D2
+        d2.dir = d2.dir.Unit(); // keeping dir unit
 
         // plane of the floor
         Plane fplane{ d1, d2 };
 
-        // height of the observer
+        // height of the camera
         h = sqrt(abs(sq((a + c) * l / (2 * a * c)) - 1)) * 2 * a * c / abs(a - c);
 
         Vector3 A2 = PutOnFloor(A, fplane, h), B2 = PutOnFloor(B, fplane, h), D2 = PutOnFloor(D, fplane, h);
@@ -221,14 +223,14 @@ extern "C" {
             for(int x = start; x < end; x++){
                 for (int y = 0; y < dstbmp.height; y++) {
                     Vector3 v = CorrespondingSrcCoors(x, y, newOrigin, unitX, unitY, h) + S;
+                    int xr = std::round(v.x);
+                    int yr = std::round(v.y);
                     for (int z = 0; z < src_chan; z++) {
-                        int xr = std::round(v.x);
-                        int yr = std::round(v.y);
                         if (srcbmp.in_range(xr, yr, z)) dstbmp(x, y, z) = srcbmp(xr, yr, z);
                         else dstbmp(x, y, z) = 0;
                     }
                 }
-		}
+		    }
         });
 	}
 }
