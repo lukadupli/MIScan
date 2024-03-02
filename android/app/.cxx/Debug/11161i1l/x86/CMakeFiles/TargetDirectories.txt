@@ -1,0 +1,6 @@
+C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86/CMakeFiles/jpg_encode.dir
+C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86/CMakeFiles/jpge.dir
+C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86/CMakeFiles/basic_linear.dir
+C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86/CMakeFiles/edit_cache.dir
+C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86/CMakeFiles/straighten.dir
+C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86/CMakeFiles/rebuild_cache.dir

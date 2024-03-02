@@ -1,0 +1,12 @@
+# ninja log v5
+23	309	731095192	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/helpers.cpp.o	9f676fe9d2a64e4e
+2	321	731095192	CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o	452bfbc9e54705bd
+57	433	731095192	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/line.cpp.o	211fa0e063a24e75
+104	632	731095192	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/vector.cpp.o	eb8bbaa6cfeebcd
+117	1912	731095194	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/plane.cpp.o	82cd4f2701109d3
+89	2236	731095194	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/straighten/straighten.cpp.o	66a1fefffda92890
+13	2400	731095194	CMakeFiles/jpge.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpge/jpge.cpp.o	74edf1f5ce12e4ca
+1914	2544	731095194	libbasic_linear.a	13e3e170d8bbaab6
+2400	2555	731095194	libjpge.a	43aa4e9fac5c2a96
+2556	2808	731095195	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/armeabi-v7a/libjpg_encode.so	6edb966a10b26db
+2544	2815	731095195	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/armeabi-v7a/libstraighten.so	4fccef12e9c57ac2
