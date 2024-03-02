@@ -14,6 +14,7 @@ class ShowcasePainter extends CustomPainter{
     final src = Offset(position.value.dx - imageSegmentSize.width / 2, position.value.dy - imageSegmentSize.height / 2) & imageSegmentSize;
     canvas.drawImageRect(image, src, Offset.zero & size, Paint());
   }
+  
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
