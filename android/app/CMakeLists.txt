@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)  
+project(MIScan)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -O3")
 
@@ -11,6 +12,14 @@ add_library(
     ../../native/basic_linear/vector.cpp
 )
 add_library(
+    transform
+    STATIC
+    ../../native/transform/bitmap.cpp
+    ../../native/transform/parallel_for.cpp
+    ../../native/transform/quad_transform.cpp
+    ../../native/transform/book_transform.cpp
+)
+add_library(
     jpge
     STATIC
     ../../native/jpge/jpge.cpp
@@ -18,7 +27,7 @@ add_library(
 add_library( 
     straighten
     SHARED
-    ../../native/straighten/straighten.cpp
+    ../../native/straighten/exports.cpp
 )
 add_library(
     jpg_encode
@@ -27,8 +36,12 @@ add_library(
 )
 
 target_link_libraries(
-    straighten
+    transform
     basic_linear
+)
+target_link_libraries(
+    straighten
+    transform
 )
 target_link_libraries(
     jpg_encode

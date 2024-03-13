@@ -164,7 +164,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=Project
+CMAKE_PROJECT_NAME:STATIC=MIScan
 
 //Ranlib
 CMAKE_RANLIB:FILEPATH=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/bin/llvm-ranlib.exe
@@ -230,14 +230,23 @@ CMAKE_SYSTEM_NAME:UNINITIALIZED=Android
 //No help, variable specified on the command line.
 CMAKE_SYSTEM_VERSION:UNINITIALIZED=19
 
-//The CMake toolchain file
-CMAKE_TOOLCHAIN_FILE:FILEPATH=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/build/cmake/android.toolchain.cmake
+//No help, variable specified on the command line.
+CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=C:\Users\lukad\AppData\Local\Android\sdk\ndk\23.1.7779620\build\cmake\android.toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
 // during the make.  This is useful for debugging only. With Visual
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
+
+//Value Computed by CMake
+MIScan_BINARY_DIR:STATIC=C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/arm64-v8a
+
+//Value Computed by CMake
+MIScan_SOURCE_DIR:STATIC=C:/Users/lukad/Desktop/flutterapps/MIScan/android/app
+
+//The directory containing a CMake configuration file for OpenCV.
+OpenCV_DIR:PATH=OpenCV_DIR-NOTFOUND
 
 //Value Computed by CMake
 Project_BINARY_DIR:STATIC=C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/arm64-v8a
@@ -249,7 +258,7 @@ Project_SOURCE_DIR:STATIC=C:/Users/lukad/Desktop/flutterapps/MIScan/android/app
 jpg_encode_LIB_DEPENDS:STATIC=general;jpge;
 
 //Dependencies for the target
-straighten_LIB_DEPENDS:STATIC=general;basic_linear;
+straighten_LIB_DEPENDS:STATIC=general;basic_linear;general;opencv_calib3d;general;opencv_core;general;opencv_dnn;general;opencv_features2d;general;opencv_flann;general;opencv_gapi;general;opencv_highgui;general;opencv_imgcodecs;general;opencv_imgproc;general;opencv_ml;general;opencv_objdetect;general;opencv_photo;general;opencv_stitching;general;opencv_video;general;opencv_videoio;
 
 
 ########################
@@ -389,4 +398,6 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 CMAKE_STRIP-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Details about finding OpenCV
+FIND_PACKAGE_MESSAGE_DETAILS_OpenCV:INTERNAL=[C:/OpenCV-android-sdk][v4.9.0()]
 

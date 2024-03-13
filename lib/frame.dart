@@ -42,8 +42,8 @@ double ccw(Offset a, Offset b, Offset c){
 
 /// Class which provides information about a [Frame].
 /// 
-/// Corners are indexed in clockwise order starting from bottom left
-/// (note that on the screen they are actually in counterclockwise order starting from top left 
+/// Corners are indexed in counterclockwise order starting from bottom left
+/// (note that on the screen they are actually in clockwise order starting from top left 
 /// because (0, 0) coordinate is in screen's upper left corner)
 /// 
 /// Provides a function to check if the corners form a convex quadrilateral
@@ -114,9 +114,9 @@ class _FrameState extends State<Frame>{
         widget.controller.initialized = true;
 
         widget.controller.corners[0] = Offset.zero;
-        widget.controller.corners[1] = Offset(0, newBound.height);
+        widget.controller.corners[1] = Offset(newBound.width, 0);
         widget.controller.corners[2] = Offset(newBound.width, newBound.height);
-        widget.controller.corners[3] = Offset(newBound.width, 0);
+        widget.controller.corners[3] = Offset(0, newBound.height);
       }
       else{
         for(int i = 0; i < 4; i++){

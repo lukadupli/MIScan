@@ -12,18 +12,18 @@ final DynamicLibrary dll = Platform.isAndroid ? DynamicLibrary.open("libstraight
 
 final _prepare = dll.lookupFunction<Void Function(Bool, Bool), void Function(bool, bool)>("Prepare");
 
-final _loadCornerCoordinates = 
-dll.lookupFunction<Bool Function(Double, Double, Double, Double, Double, Double, Double, Double), bool Function(double, double, double, double, double, double, double, double)>("LoadCornerCoordinates");
+final _loadCoordinates = 
+dll.lookupFunction<Bool Function(Double, Double, Double, Double, Double, Double, Double, Double), bool Function(double, double, double, double, double, double, double, double)>("LoadCoordinates");
 
 final _getWidth = dll.lookupFunction<Uint32 Function(), int Function()>("GetWidth");
 final _getHeight = dll.lookupFunction<Uint32 Function(), int Function()>("GetHeight");
 final _getRequiredDstSize = dll.lookupFunction<Uint32 Function(Uint32), int Function(int)>("GetRequiredDstSize");
 
-final _processBitmapData = 
+final _process = 
 dll.lookupFunction<
   Void Function(Pointer<Uint8>, Uint32, Uint32, Uint32, Pointer<Uint8>), 
   void Function(Pointer<Uint8>, int, int, int, Pointer<Uint8>)>
-("ProcessBitmapData");
+("Process");
 
 final _canTransform = 
 dll.lookupFunction<Bool Function(Double, Double, Double, Double, Double, Double, Double, Double), bool Function(double, double, double, double, double, double, double, double)>("CanTransform");
@@ -38,7 +38,7 @@ Bitmap? _transform(List<dynamic> list){
   final d = list[6] as Offset;
 
   _prepare(false, false); // is input padded and is output padded
-  if(!_loadCornerCoordinates(a.dx, a.dy, b.dx, b.dy, c.dx, c.dy, d.dx, d.dy)) return null;
+  if(!_loadCoordinates(a.dx, a.dy, b.dx, b.dy, c.dx, c.dy, d.dx, d.dy)) return null;
 
   final src = malloc.allocate<Uint8>(srcList.length);
   src.asTypedList(srcList.length).setAll(0, srcList);
@@ -46,7 +46,7 @@ Bitmap? _transform(List<dynamic> list){
   int size = _getRequiredDstSize(4); //RGBA - 4 bytes per pixel
   final dst = malloc.allocate<Uint8>(size);
 
-  _processBitmapData(src, width, height, 4, dst);
+  _process(src, width, height, 4, dst);
 
   final dstList = dst.asTypedList(size);
   final result = Bitmap.fromHeadless(_getWidth(), _getHeight(), Uint8List.fromList(dstList));

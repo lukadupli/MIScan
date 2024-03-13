@@ -1,0 +1,95 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.6.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "MIScan",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "basic_linear::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-basic_linear-Debug-fbcb1f3be6dc47366e3d.json",
+					"name" : "basic_linear",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "jpg_encode::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-jpg_encode-Debug-f82896046e474ca572b2.json",
+					"name" : "jpg_encode",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "jpge::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-jpge-Debug-5fc154519b4f818061df.json",
+					"name" : "jpge",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "straighten::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-straighten-Debug-28a93ade327bf6a6b28e.json",
+					"name" : "straighten",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "transform::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-transform-Debug-16a4a4e444295dc4c4c0.json",
+					"name" : "transform",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/arm64-v8a",
+		"source" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 1
+	}
+}

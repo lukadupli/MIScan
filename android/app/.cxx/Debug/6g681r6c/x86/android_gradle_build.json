@@ -1,0 +1,63 @@
+{
+  "buildFiles": [
+    "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\lukad\\AppData\\Local\\Android\\sdk\\cmake\\3.18.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\6g681r6c\\x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\lukad\\AppData\\Local\\Android\\sdk\\cmake\\3.18.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\6g681r6c\\x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "basic_linear::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "basic_linear",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\6g681r6c\\x86\\libbasic_linear.a"
+    },
+    "jpg_encode::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "jpg_encode",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\6g681r6c\\obj\\x86\\libjpg_encode.so",
+      "runtimeFiles": []
+    },
+    "jpge::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "jpge",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\6g681r6c\\x86\\libjpge.a"
+    },
+    "straighten::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "straighten",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\6g681r6c\\obj\\x86\\libstraighten.so",
+      "runtimeFiles": []
+    },
+    "transform::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "transform",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\6g681r6c\\x86\\libtransform.a"
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
+      "cppCompilerExecutable": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}
