@@ -8,7 +8,7 @@ import 'helpers.dart';
 import 'corner_showcase.dart';
 import 'frame.dart';
 import 'loading_page.dart';
-import 'quad_transform.dart';
+import 'transform.dart';
 import 'edit_page.dart';
 import 'jpg_encode.dart';
 import 'dart:ui' as ui;

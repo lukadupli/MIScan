@@ -63,6 +63,7 @@ bool BookTransform::loadCoordinates(Point2D p1, Point2D p2, Point2D p3, Point2D 
         length += increment;
     }
     neww = xzValues.size();
+    return true;
 }
 
 int BookTransform::newWidth() { return neww; }
@@ -82,7 +83,7 @@ void BookTransform::process(BitmapSegment& src, BitmapSegment& dst) {
                 Vector3 globalPosition = modelX * unitX + y * unitY + modelZ * unitZ + floorOrigin;
                 Line lightRay = Line{ globalPosition, Vector3{0, 0, quad.cameraHeight() } };
 
-                assert(!eq(lightRay.dir.z, 0)); // shouldn't happen
+                // lightRay.dir.z is never 0
                 Vector3 sourceCoors = lightRay.base - (lightRay.base.z / lightRay.dir.z) * lightRay.dir; // intersection with xy plane
                 sourceCoors = sourceCoors + quad.referentOrigin(); // (0, 0) is now not diagonal intersection, but upper-left corner of src
 

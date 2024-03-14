@@ -12,13 +12,8 @@ Vector3 QuadTransform::correspondingSrcCoors(int floorx, int floory, const Vecto
     Vector3 real = floorx * unitx + floory * unity + origin;
     Line l{ {0., 0., height}, real };
 
-    // edge case when paper on picture is already on the right plane
-    if (eq(l.dir.z, 0.)) {
-        assert(eq(real.z, 0.));
-        return real;
-    }
-
     // intersection with picture xy plane
+    // l.dir.z is never 0
     return l.base - (l.base.z / l.dir.z) * l.dir;
 }
 
@@ -81,7 +76,7 @@ bool QuadTransform::loadCoordinates(Point2D p1, Point2D p2, Point2D p3, Point2D 
         newOrigin = A;
         Vector3 xedge = D - A;
         Vector3 yedge = B - A;
-        h = 0.;
+        h = 100.0; // when points already form a rectangle, this can be anything
 
         unitX = xedge.Unit(); unitY = yedge.Unit();
 
