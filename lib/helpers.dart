@@ -25,7 +25,7 @@ String generateImageName({required String format}){
   return "Scan_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}.$format";
 }
 
-/// Gets the extension from [path]
+/// Gets the extension from [path], returns an empty string if there is no extension
 String getExtension(String path){
   final splitted = path.split('.');
   if(splitted.length == 1) return "";
@@ -39,5 +39,7 @@ String getName(String path){
 
 /// Returns the [name] without the extension
 String removeExtension(String name){
-  return name.split('.').first;
+  final lim = name.lastIndexOf('.');
+  if(lim == -1) return name;
+  return name.substring(0, lim);
 }
