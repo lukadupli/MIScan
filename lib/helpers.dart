@@ -19,7 +19,7 @@ Future<ui.Image> bytesToImage(Uint8List imgBytes) async{
   return frame.image;
 }
 
-/// Generates an image name in of form *Scan_YYYYMMDD_HHMMSS.[format]*
+/// Generates an image name in form *Scan_YYYYMMDD_HHMMSS.[format]*
 String generateImageName({required String format}){
   final now = DateTime.now();
   return "Scan_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}.$format";

@@ -121,8 +121,8 @@ class _FrameState extends State<Frame>{
       else{
         for(int i = 0; i < 4; i++){
           widget.controller.corners[i] = Offset(
-            scale(widget.controller.corners[i].dx, 0, boundary.height, 0, newBound.height),
-            scale(widget.controller.corners[i].dy, 0, boundary.width, 0, newBound.width),
+            scale(widget.controller.corners[i].dx, 0, boundary.width, 0, newBound.width),
+            scale(widget.controller.corners[i].dy, 0, boundary.height, 0, newBound.height),
           );
         }
       }
@@ -147,7 +147,6 @@ class _FrameState extends State<Frame>{
         if(widget.onDragStart != null) widget.onDragStart!(index);
       },
       onPositionChange: (pos){
-        widget.controller.corners[index] = pos;
         widget.controller.corners[index] = pos;
         if(widget.onPositionChange != null) widget.onPositionChange!(index);
         notifier.value = !notifier.value;
