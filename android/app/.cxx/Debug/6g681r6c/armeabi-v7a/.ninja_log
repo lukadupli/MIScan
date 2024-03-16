@@ -28,3 +28,7 @@
 1392	1474	732029156	libjpge.a	43aa4e9fac5c2a96
 1474	1671	732029156	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/armeabi-v7a/libjpg_encode.so	bcc730f027f9d9b5
 1466	1676	732029156	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/armeabi-v7a/libstraighten.so	9d2dc3d5c3444f87
+4	772	732302653	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/quad_transform.cpp.o	b0f16ec287fc68e2
+9	920	732302654	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/book_transform.cpp.o	d18bacd7833af030
+920	1015	732302654	libtransform.a	411285ae5924fcb9
+1015	1240	732302654	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/armeabi-v7a/libstraighten.so	9d2dc3d5c3444f87

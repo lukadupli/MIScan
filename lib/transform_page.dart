@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'book_transform_page.dart';
 import 'helpers.dart';
 import 'corner_showcase.dart';
 import 'frame.dart';
@@ -131,6 +132,13 @@ class _TransformPageState extends State<TransformPage> {
                 )));
               }
             ),
+            OutlinedButton(
+              child: const Icon(Icons.menu_book),
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BookTransformPage(
+                image: widget.image,
+                fController: FrameController.from(fController),
+              ))),
+            )
           ]
         ),
       ),

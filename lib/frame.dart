@@ -50,7 +50,16 @@ double ccw(Offset a, Offset b, Offset c){
 class FrameController{
   bool initialized = false;
   Size childSize = Size.zero;
-  final corners = <Offset>[Offset.zero, Offset.zero, Offset.zero, Offset.zero];
+  Rect boundary = Rect.zero;
+  var corners = <Offset>[Offset.zero, Offset.zero, Offset.zero, Offset.zero];
+
+  FrameController();
+  FrameController.from(FrameController other){
+    initialized = other.initialized;
+    childSize = other.childSize;
+    boundary = other.boundary;
+    corners = List<Offset>.from(other.corners);
+  }
 
   bool isConvex(){
     for(int i = 0; i < 4; i++){
@@ -128,6 +137,7 @@ class _FrameState extends State<Frame>{
       }
 
       widget.controller.childSize = newBound.size;
+      widget.controller.boundary = newBound;
       if(widget.whenResized != null) widget.whenResized!();
 
       setState(() => boundary = newBound);

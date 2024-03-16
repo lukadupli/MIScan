@@ -28,3 +28,7 @@
 1368	1466	732029158	libtransform.a	411285ae5924fcb9
 1292	1540	732029158	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libjpg_encode.so	20e5b36ac0c7e7e6
 1466	1643	732029158	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libstraighten.so	e8b22ee7ac2ab9cf
+5	769	732302655	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/quad_transform.cpp.o	93e7565704bbcb01
+9	900	732302655	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/book_transform.cpp.o	42d084b1ea4e553e
+901	991	732302655	libtransform.a	411285ae5924fcb9
+991	1204	732302655	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libstraighten.so	e8b22ee7ac2ab9cf
