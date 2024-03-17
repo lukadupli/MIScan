@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 
 import 'dart:ui' as ui;
 
+import 'cubic_spline.dart';
+
 final DynamicLibrary dll = Platform.isAndroid ? DynamicLibrary.open("libstraighten.so") : DynamicLibrary.process();
 
 final _prepare = dll.lookupFunction<Void Function(Bool, Bool), void Function(bool, bool)>("Prepare");
@@ -129,6 +131,21 @@ class BookTransform{
 
     return result;
   }
+  static Bitmap? _transformFromSpline(Uint8List srcList, int width, int height, List<Offset> corners, CubicSpline spline, bool curvePosition, {double ratio = 1.0}){
+    final points = <Offset>[];
+    if(!curvePosition){
+      for(double x = corners[0].dx; x <= corners[1].dx; x++){
+        points.add(Offset(x, spline.compute(x / ratio) * ratio));
+      }
+    }
+    else{
+      for(double x = corners[3].dx; x <= corners[2].dx; x++){
+        points.add(Offset(x, spline.compute(x / ratio) * ratio));
+      }
+    }
+
+    return _transform(srcList, width, height, corners, points, curvePosition);
+  }
 
   static bool canTransform(List<Offset> corners) => _canTransform(corners[0].dx, corners[0].dy, corners[1].dx, corners[1].dy, corners[2].dx, corners[2].dy, corners[3].dx, corners[3].dy);
 
@@ -145,6 +162,17 @@ class BookTransform{
 
     transform((Uint8List, int, int, List<Offset>, List<Offset>, bool) data) => _transform(data.$1, data.$2, data.$3, data.$4, data.$5, data.$6);
     final raw = await compute(transform, (byteData.buffer.asUint8List(), image.width, image.height, corners, curve, curvePosition));
+    if(raw == null) throw const FormatException("Cannot uniquely transform from these points");
+
+    return raw;
+  }
+
+  /// corners have to be ratioed, ratio is applied only on spline
+  static Future<Bitmap> transformFromSpline(ui.Image image, List<Offset> corners, CubicSpline spline, bool curvePosition, {double ratio = 1.0}) async{
+    final byteData = (await image.toByteData())!;
+
+    transform((Uint8List, int, int, List<Offset>, CubicSpline, bool, double) data) => _transformFromSpline(data.$1, data.$2, data.$3, data.$4, data.$5, data.$6, ratio: data.$7);
+    final raw = await compute(transform, (byteData.buffer.asUint8List(), image.width, image.height, corners, spline, curvePosition, ratio));
     if(raw == null) throw const FormatException("Cannot uniquely transform from these points");
 
     return raw;

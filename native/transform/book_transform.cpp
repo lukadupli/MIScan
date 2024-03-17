@@ -37,10 +37,10 @@ bool BookTransform::loadCoordinates(Point2D p1, Point2D p2, Point2D p3, Point2D 
 
         xzPairs.push_back({ x, z });
     }
+    xzPairs.push_back({quad.newWidth(), 0});
     std::sort(xzPairs.begin(), xzPairs.end());
 
     // Code below assumes (quad.newWidth(), 0) is in xzPairs
-    // This is the case because curve contains its endpoints
 
     newh = quad.newHeight();
     double length = 0;

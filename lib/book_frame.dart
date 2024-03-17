@@ -79,8 +79,9 @@ class BookFramePainter extends CustomPainter{
     }
 
     // spline approximation
-    const int approxSize = 75;
-    debugPrint("${controller.corners[1].dx - controller.corners[0].dx}");
+    const int pixelsPerPoint = 4;
+
+    int approxSize = ((controller.corners[1].dx - controller.corners[0].dx) / pixelsPerPoint).round(); // 3 pixels per point
     final dxUp = (controller.corners[1].dx - controller.corners[0].dx) / approxSize;
     for(int i = 0; i < approxSize; i++){
       final nx = controller.corners[0].dx + i * dxUp;
@@ -90,6 +91,7 @@ class BookFramePainter extends CustomPainter{
       canvas.drawLine(p1 + offset, p2 + offset, Paint()..color = splineLineColor..strokeWidth = 1);
     }
 
+    approxSize = ((controller.corners[2].dx - controller.corners[3].dx) / pixelsPerPoint).round();
     final dxDown = (controller.corners[2].dx - controller.corners[3].dx) / approxSize;
     for(int i = 0; i < approxSize; i++){
       final nx = controller.corners[3].dx + i * dxDown;

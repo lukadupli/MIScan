@@ -106,39 +106,45 @@ class _TransformPageState extends State<TransformPage> {
                 ),
               ),
             ),
-            OutlinedButton(
-              child: const Icon(Icons.check),
-              onPressed: () {
-                if(!QuadTransform.canTransform(
-                  fController.corners[0] * ratio, 
-                  fController.corners[1] * ratio, 
-                  fController.corners[2] * ratio,
-                  fController.corners[3] * ratio,
-                )){
-                  showDialog(
-                    context: context, 
-                    builder: (context) => AlertDialog.adaptive(
-                      title: Text(apploc.cannotTransformTitle),
-                      content: Text(apploc.cannotTransformContent),
-                      actions: [TextButton(child: Text(apploc.ok), onPressed: () => Navigator.of(context).pop())]
-                    )
-                  );
-                  return;
-                }
-              
-                Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
-                  future: _transformAndSaveToTemporary(),
-                  builder: (context, snapshot) => snapshot.hasData ? EditPage(imageFile: snapshot.data!) : const LoadingPage(),
-                )));
-              }
+            Flex(
+              direction: MediaQuery.orientationOf(context) == Orientation.landscape ? Axis.vertical : Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                OutlinedButton(
+                  child: const Icon(Icons.check),
+                  onPressed: () {
+                    if(!QuadTransform.canTransform(
+                      fController.corners[0] * ratio, 
+                      fController.corners[1] * ratio, 
+                      fController.corners[2] * ratio,
+                      fController.corners[3] * ratio,
+                    )){
+                      showDialog(
+                        context: context, 
+                        builder: (context) => AlertDialog.adaptive(
+                          title: Text(apploc.cannotTransformTitle),
+                          content: Text(apploc.cannotTransformContent),
+                          actions: [TextButton(child: Text(apploc.ok), onPressed: () => Navigator.of(context).pop())]
+                        )
+                      );
+                      return;
+                    }
+                  
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
+                      future: _transformAndSaveToTemporary(),
+                      builder: (context, snapshot) => snapshot.hasData ? EditPage(imageFile: snapshot.data!) : const LoadingPage(),
+                    )));
+                  }
+                ),
+                OutlinedButton(
+                  child: const Icon(Icons.menu_book),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BookTransformPage(
+                    image: widget.image,
+                    fController: FrameController.from(fController),
+                  ))),
+                )
+              ]
             ),
-            OutlinedButton(
-              child: const Icon(Icons.menu_book),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BookTransformPage(
-                image: widget.image,
-                fController: FrameController.from(fController),
-              ))),
-            )
           ]
         ),
       ),
