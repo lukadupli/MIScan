@@ -24,7 +24,7 @@ class BorderPainter extends CustomPainter{
     Offset add = delta == null ? Offset.zero : delta!;
     for(int i = 0; i < points.length; i++){
       canvas.drawCircle(points[i] + add, cornerSize / 2, Paint()..style = PaintingStyle.stroke..color = color..strokeWidth = cornerLineThickness);
-      canvas.drawLine(points[i] + add, points[(i + 1) % points.length] + add, Paint()..color = color);
+      canvas.drawLine(points[i] + add, points[(i + 1) % points.length] + add, Paint()..color = color..strokeWidth = 1);
     }
   }
 

@@ -50,7 +50,8 @@ dependencies:
     sdk: flutter
   intl: any
   native_exif: ^0.5.0
-  equations: ^5.0.2
+  scidart: ^0.0.2-dev.12
+  collection: ^1.17.2
 
 dev_dependencies:
   flutter_test:

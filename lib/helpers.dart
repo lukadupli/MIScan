@@ -7,6 +7,12 @@ double scale(double value, double oldMin, double oldMax, double newMin, double n
   return (value - oldMin) * (newMax - newMin) / (oldMax - oldMin) + newMin;
 }
 
+/// computes square of [value]
+double sq(double x) => x * x;
+
+/// computes cube of [value]
+double cb(double x) => x * x * x;
+
 /// Creates an [ui.Image] from [Uint8List]
 Future<ui.Image> bytesToImage(Uint8List imgBytes) async{
   ui.Codec codec = await ui.instantiateImageCodec(imgBytes);

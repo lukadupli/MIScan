@@ -1,5 +1,5 @@
-import 'package:equations/equations.dart';
 import 'package:flutter/material.dart';
+import 'cubic_spline.dart';
 import 'glider.dart';
 import 'helpers.dart';
 
@@ -13,6 +13,8 @@ class BookFrameController {
   Rect boundary;
   Size get childSize => boundary.size;
 
+  static const polyDegree = 7;
+
   BookFrameController({required this.splinePoints, required this.corners, required this.boundary}){
     double dx = (corners[1].dx - corners[0].dx) / (splinePoints + 1);
     double dy = (corners[1].dy - corners[0].dy) / (splinePoints + 1);
@@ -23,17 +25,8 @@ class BookFrameController {
     curvePointsDown = List<Offset>.generate(splinePoints, (int index) => Offset(corners[3].dx + (index + 1) * dx, corners[3].dy + (index + 1) * dy)); 
   }
 
-  SplineInterpolation get curveUp => SplineInterpolation(nodes: [
-    InterpolationNode(x: corners[0].dx, y: corners[0].dy), 
-    for(final p in curvePointsUp) InterpolationNode(x: p.dx, y: p.dy), 
-    InterpolationNode(x: corners[1].dx, y: corners[1].dy)
-  ]);
-
-  SplineInterpolation get curveDown => SplineInterpolation(nodes: [
-    InterpolationNode(x: corners[3].dx, y: corners[3].dy),
-    for(final p in curvePointsDown) InterpolationNode(x: p.dx, y: p.dy),
-    InterpolationNode(x: corners[2].dx, y: corners[2].dy)
-  ]);
+  CubicSpline get curveUp => CubicSpline([corners[0], for(final p in curvePointsUp) p, corners[1]]);
+  CubicSpline get curveDown => CubicSpline([corners[3], for(final p in curvePointsDown) p, corners[2]]);
 
   void setCurvePointUp(int index, Offset pos){
     curvePointsUp[index] = pos;
@@ -73,8 +66,8 @@ class BookFramePainter extends CustomPainter{
     for(final p in controller.corners){
       canvas.drawCircle(p + offset, cornerSize / 2, Paint()..style = PaintingStyle.stroke..color = mainFrameColor..strokeWidth = cornerThickness);
     }
-    canvas.drawLine(controller.corners[1] + offset, controller.corners[2] + offset, Paint()..color = mainFrameColor);
-    canvas.drawLine(controller.corners[3] + offset, controller.corners[0] + offset, Paint()..color = mainFrameColor);
+    canvas.drawLine(controller.corners[1] + offset, controller.corners[2] + offset, Paint()..color = mainFrameColor..strokeWidth = 1);
+    canvas.drawLine(controller.corners[3] + offset, controller.corners[0] + offset, Paint()..color = mainFrameColor.. strokeWidth = 1);
 
     for(final p in controller.curvePointsUp){
       canvas.drawCircle(p + offset, splineSelectorSize / 2, Paint()..color = splineSelectorEdgeColor..style = PaintingStyle.stroke);
@@ -86,14 +79,15 @@ class BookFramePainter extends CustomPainter{
     }
 
     // spline approximation
-    const int approxSize = 1000;
+    const int approxSize = 75;
+    debugPrint("${controller.corners[1].dx - controller.corners[0].dx}");
     final dxUp = (controller.corners[1].dx - controller.corners[0].dx) / approxSize;
     for(int i = 0; i < approxSize; i++){
       final nx = controller.corners[0].dx + i * dxUp;
       final p1 = Offset(nx, controller.curveUp.compute(nx));
       final p2 = Offset(nx + dxUp, controller.curveUp.compute(nx + dxUp));
 
-      canvas.drawLine(p1 + offset, p2 + offset, Paint()..color = splineLineColor);
+      canvas.drawLine(p1 + offset, p2 + offset, Paint()..color = splineLineColor..strokeWidth = 1);
     }
 
     final dxDown = (controller.corners[2].dx - controller.corners[3].dx) / approxSize;
@@ -102,12 +96,12 @@ class BookFramePainter extends CustomPainter{
       final p1 = Offset(nx, controller.curveDown.compute(nx));
       final p2 = Offset(nx + dxDown, controller.curveDown.compute(nx + dxDown));
 
-      canvas.drawLine(p1 + offset, p2 + offset, Paint()..color = splineLineColor);
+      canvas.drawLine(p1 + offset, p2 + offset, Paint()..color = splineLineColor..strokeWidth = 1);
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => this != (oldDelegate as BookFramePainter);
 }
 
 class BookFrame extends StatefulWidget{
