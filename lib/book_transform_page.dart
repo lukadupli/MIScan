@@ -18,7 +18,7 @@ class BookTransformPage extends StatefulWidget{
   late final BookFrameController controller;
 
   BookTransformPage({super.key, required this.image, required FrameController fController}){
-    controller = BookFrameController(splinePoints: 2, corners: fController.corners, boundary: fController.boundary);
+    controller = BookFrameController(splinePoints: 3, corners: fController.corners, boundary: fController.boundary);
   }
 
   @override

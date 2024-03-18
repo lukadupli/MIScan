@@ -7,36 +7,37 @@ class BookFrameController {
   final int splinePoints;
   final List<Offset> corners;
   late final List<Offset> curvePointsUp;
-  late final List<Offset> curvePointsDown;
+
+  // only upper curve will be shown, I have concluded that having 2 curves for selection is unnecessary
+  // all code regarding the other curve is commented
+  //late final List<Offset> curvePointsDown;
   final notifier = ValueNotifier<bool>(true);
 
   Rect boundary;
   Size get childSize => boundary.size;
-
-  static const polyDegree = 7;
 
   BookFrameController({required this.splinePoints, required this.corners, required this.boundary}){
     double dx = (corners[1].dx - corners[0].dx) / (splinePoints + 1);
     double dy = (corners[1].dy - corners[0].dy) / (splinePoints + 1);
     curvePointsUp = List<Offset>.generate(splinePoints, (int index) => Offset(corners[0].dx + (index + 1) * dx, corners[0].dy + (index + 1) * dy));
 
-    dx = (corners[2].dx - corners[3].dx) / (splinePoints + 1);
+    /*dx = (corners[2].dx - corners[3].dx) / (splinePoints + 1);
     dy = (corners[2].dy - corners[3].dy) / (splinePoints + 1);
-    curvePointsDown = List<Offset>.generate(splinePoints, (int index) => Offset(corners[3].dx + (index + 1) * dx, corners[3].dy + (index + 1) * dy)); 
+    curvePointsDown = List<Offset>.generate(splinePoints, (int index) => Offset(corners[3].dx + (index + 1) * dx, corners[3].dy + (index + 1) * dy));*/ 
   }
 
   CubicSpline get curveUp => CubicSpline([corners[0], for(final p in curvePointsUp) p, corners[1]]);
-  CubicSpline get curveDown => CubicSpline([corners[3], for(final p in curvePointsDown) p, corners[2]]);
+  //CubicSpline get curveDown => CubicSpline([corners[3], for(final p in curvePointsDown) p, corners[2]]);
 
   void setCurvePointUp(int index, Offset pos){
     curvePointsUp[index] = pos;
     notifier.value = !notifier.value;
   }
 
-  void setCurvePointDown(int index, Offset pos){
+  /*void setCurvePointDown(int index, Offset pos){
     curvePointsDown[index] = pos;
     notifier.value = !notifier.value;
-  }
+  }*/
 }
 
 class BookFramePainter extends CustomPainter{
@@ -44,6 +45,7 @@ class BookFramePainter extends CustomPainter{
   final double cornerSize;
   final double cornerThickness;
   final Color mainFrameColor;
+  final double splineSelectorDelta;
   final double splineSelectorSize;
   final Color splineSelectorEdgeColor;
   final Color splineSelectorFillColor;
@@ -55,6 +57,7 @@ class BookFramePainter extends CustomPainter{
     required this.cornerSize, 
     required this.cornerThickness,
     required this.mainFrameColor, 
+    required this.splineSelectorDelta,
     required this.splineSelectorSize, 
     required this.splineSelectorEdgeColor,
     required this.splineSelectorFillColor,
@@ -70,33 +73,23 @@ class BookFramePainter extends CustomPainter{
     canvas.drawLine(controller.corners[3] + offset, controller.corners[0] + offset, Paint()..color = mainFrameColor.. strokeWidth = 1);
 
     for(final p in controller.curvePointsUp){
-      canvas.drawCircle(p + offset, splineSelectorSize / 2, Paint()..color = splineSelectorEdgeColor..style = PaintingStyle.stroke);
-      canvas.drawCircle(p + offset, splineSelectorSize / 2, Paint()..color = splineSelectorFillColor..style = PaintingStyle.fill);
-    }
-    for(final p in controller.curvePointsDown){
-      canvas.drawCircle(p + offset, splineSelectorSize / 2, Paint()..color = splineSelectorEdgeColor..style = PaintingStyle.stroke);
-      canvas.drawCircle(p + offset, splineSelectorSize / 2, Paint()..color = splineSelectorFillColor..style = PaintingStyle.fill);
+      Offset np = p + Offset(0.0, splineSelectorDelta);
+      canvas.drawCircle(np + offset, splineSelectorSize / 2, Paint()..color = splineSelectorEdgeColor..style = PaintingStyle.stroke);
+      canvas.drawCircle(np + offset, splineSelectorSize / 2, Paint()..color = splineSelectorFillColor..style = PaintingStyle.fill);
+
+      canvas.drawLine(p + offset, np + offset - Offset(0, splineSelectorSize / 2), Paint()..color = splineLineColor);
+      
+      canvas.drawCircle(p + offset, 5.0, Paint()..color = splineLineColor..style = PaintingStyle.fill);
     }
 
-    // spline approximation
     const int pixelsPerPoint = 4;
+    int approxSize = ((controller.corners[1].dx - controller.corners[0].dx) / pixelsPerPoint).round();
 
-    int approxSize = ((controller.corners[1].dx - controller.corners[0].dx) / pixelsPerPoint).round(); // 3 pixels per point
     final dxUp = (controller.corners[1].dx - controller.corners[0].dx) / approxSize;
     for(int i = 0; i < approxSize; i++){
       final nx = controller.corners[0].dx + i * dxUp;
       final p1 = Offset(nx, controller.curveUp.compute(nx));
       final p2 = Offset(nx + dxUp, controller.curveUp.compute(nx + dxUp));
-
-      canvas.drawLine(p1 + offset, p2 + offset, Paint()..color = splineLineColor..strokeWidth = 1);
-    }
-
-    approxSize = ((controller.corners[2].dx - controller.corners[3].dx) / pixelsPerPoint).round();
-    final dxDown = (controller.corners[2].dx - controller.corners[3].dx) / approxSize;
-    for(int i = 0; i < approxSize; i++){
-      final nx = controller.corners[3].dx + i * dxDown;
-      final p1 = Offset(nx, controller.curveDown.compute(nx));
-      final p2 = Offset(nx + dxDown, controller.curveDown.compute(nx + dxDown));
 
       canvas.drawLine(p1 + offset, p2 + offset, Paint()..color = splineLineColor..strokeWidth = 1);
     }
@@ -114,6 +107,7 @@ class BookFrame extends StatefulWidget{
   final double cornerSize;
   final double cornerThickness;
   final Color mainFrameColor;
+  final double splineSelectorDelta;
   final double splineSelectorSize;
   final Color splineSelectorEdgeColor;
   final Color splineSelectorFillColor;
@@ -129,6 +123,7 @@ class BookFrame extends StatefulWidget{
     this.cornerSize = 50.0,
     this.cornerThickness = 3.0,
     this.mainFrameColor = Colors.black, 
+    this.splineSelectorDelta = 125.0,
     this.splineSelectorSize = 30.0, 
     this.splineSelectorEdgeColor = Colors.black,
     this.splineSelectorFillColor = Colors.white24,
@@ -159,38 +154,27 @@ class _BookFrameState extends State<BookFrame>{
           scale(widget.controller.curvePointsUp[i].dy, 0, widget.controller.boundary.height, 0, newBound.height),
         );
       }
-      for(int i = 0; i < widget.controller.curvePointsDown.length; i++){
-        widget.controller.curvePointsDown[i] = Offset(
-          scale(widget.controller.curvePointsDown[i].dx, 0, widget.controller.boundary.width, 0, newBound.width),
-          scale(widget.controller.curvePointsDown[i].dy, 0, widget.controller.boundary.height, 0, newBound.height),
-        );
-      }
 
       // repaint
       widget.controller.notifier.value = !widget.controller.notifier.value;
 
+      widget.controller.boundary = newBound;
       if(widget.whenResized != null) widget.whenResized!();
-      setState(() => widget.controller.boundary = newBound);
+      setState((){});
     }
   }
 
-  Widget buildSplineSelector(int index, bool curve){
+  Widget buildSplineSelector(int index){
     final size = Size(widget.controller.boundary.right + widget.margin.right, widget.controller.boundary.bottom + widget.margin.bottom);
     const hitboxMul = 1.5;
 
     return Glider(
       key: GlobalKey(),
-      startPosition: !curve ? widget.controller.curvePointsUp[index] : widget.controller.curvePointsDown[index],
-      positionOffset: Offset(widget.splineSelectorSize / 2, widget.splineSelectorSize / 2) * hitboxMul,
+      startPosition: widget.controller.curvePointsUp[index],
+      positionOffset: Offset(widget.splineSelectorSize / 2, widget.splineSelectorSize / 2) * hitboxMul - Offset(0.0, widget.splineSelectorDelta),
       size: size,
       boundary: widget.controller.boundary,
-      onPositionChange: (pos){
-        if(!curve) {
-          widget.controller.setCurvePointUp(index, pos);
-        } else {
-          widget.controller.setCurvePointDown(index, pos);
-        }
-      },
+      onPositionChange: (pos) => widget.controller.setCurvePointUp(index, pos),
       child: Container(
         width: widget.splineSelectorSize * hitboxMul,
         height: widget.splineSelectorSize * hitboxMul, 
@@ -213,6 +197,7 @@ class _BookFrameState extends State<BookFrame>{
           cornerSize: widget.cornerSize,
           cornerThickness: widget.cornerThickness,
           mainFrameColor: widget.mainFrameColor,
+          splineSelectorDelta: widget.splineSelectorDelta,
           splineSelectorSize: widget.splineSelectorSize,
           splineSelectorEdgeColor: widget.splineSelectorEdgeColor,
           splineSelectorFillColor: widget.splineSelectorFillColor,
@@ -225,8 +210,7 @@ class _BookFrameState extends State<BookFrame>{
               margin: widget.margin,
               child: SizeChangedLayoutNotifier(key: childKey, child: widget.child),
             ),
-            for(int i = 0; i < widget.controller.curvePointsUp.length; i++) buildSplineSelector(i, false),
-            for(int i = 0; i < widget.controller.curvePointsDown.length; i++) buildSplineSelector(i, true)
+            for(int i = 0; i < widget.controller.curvePointsUp.length; i++) buildSplineSelector(i),
           ]
         ),
       ),
