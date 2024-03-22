@@ -11,6 +11,7 @@ import 'frame.dart';
 import 'helpers.dart';
 import 'jpg_encode.dart';
 import 'loading_page.dart';
+import 'main.dart';
 import 'transform.dart';
 
 class BookTransformPage extends StatefulWidget{
@@ -18,7 +19,7 @@ class BookTransformPage extends StatefulWidget{
   late final BookFrameController controller;
 
   BookTransformPage({super.key, required this.image, required FrameController fController}){
-    controller = BookFrameController(splinePoints: 3, corners: fController.corners, boundary: fController.boundary);
+    controller = BookFrameController(splinePoints: 4, corners: fController.corners, boundary: fController.boundary);
   }
 
   @override
@@ -60,14 +61,7 @@ class _BookTransformPageState extends State<BookTransformPage>{
                 final corners = List<Offset>.generate(4, (i) => widget.controller.corners[i] * ratio);
 
                 if(!BookTransform.canTransform(corners)){
-                  showDialog(
-                    context: context, 
-                    builder: (context) => AlertDialog.adaptive(
-                      title: Text(apploc.cannotTransformTitle),
-                      content: Text(apploc.cannotTransformContent),
-                      actions: [TextButton(child: Text(apploc.ok), onPressed: () => Navigator.of(context).pop())]
-                    )
-                  );
+                  cannotTransformDialog(context, apploc);
                   return;
                 }
 
@@ -82,20 +76,38 @@ class _BookTransformPageState extends State<BookTransformPage>{
       ),
     );
   }
-  Future<File> _transformAndSaveToTemporary(List<Offset> corners) async{
-    final transformed = await BookTransform.transformFromSpline(
-      widget.image, 
-      corners,
-      widget.controller.curveUp,
-      false,
-      ratio: ratio
-    );
 
-    final path = "${(await getTemporaryDirectory()).path}/${generateImageName(format: "jpg")}";
-    final file = File(path);
+  Future<dynamic> cannotTransformDialog(BuildContext context, AppLocalizations apploc) {
+    return showDialog(
+                  context: context, 
+                  builder: (context) => AlertDialog.adaptive(
+                    title: Text(apploc.cannotTransformTitle),
+                    content: Text(apploc.cannotTransformContent),
+                    actions: [TextButton(child: Text(apploc.ok), onPressed: () => Navigator.of(context).pop())]
+                  )
+                );
+  }
+  Future<File?> _transformAndSaveToTemporary(List<Offset> corners) async{
+    try{
+      final transformed = await BookTransform.transformFromSpline(
+        widget.image, 
+        corners,
+        widget.controller.curveUp,
+        false,
+        ratio: ratio
+      );
 
-    await JpgEncode.encodeToFile(file.path, transformed.content, transformed.width, transformed.height, 4); // 4 channels - RGBA
+      final path = "${(await getTemporaryDirectory()).path}/${generateImageName(format: "jpg")}";
+      final file = File(path);
 
-    return file;
+      await JpgEncode.encodeToFile(file.path, transformed.content, transformed.width, transformed.height, 4); // 4 channels - RGBA
+
+      return file;
+    } on FormatException {
+      cannotTransformDialog(navigatorKey.currentContext!, AppLocalizations.of(navigatorKey.currentContext!)!).then(
+        (_) => Navigator.of(navigatorKey.currentContext!).pop() // pop future builder
+      );
+    }
+    return null;
   }
 }

@@ -40,12 +40,14 @@ class BookFrameController {
   }*/
 }
 
+/// every other spline selector's delta is multiplied by [splineSelectorUpDownMul]
 class BookFramePainter extends CustomPainter{
   final BookFrameController controller;
   final double cornerSize;
   final double cornerThickness;
   final Color mainFrameColor;
   final double splineSelectorDelta;
+  final double splineSelectorUpDownMul;
   final double splineSelectorSize;
   final Color splineSelectorEdgeColor;
   final Color splineSelectorFillColor;
@@ -60,6 +62,7 @@ class BookFramePainter extends CustomPainter{
     required this.splineSelectorDelta,
     required this.splineSelectorSize, 
     required this.splineSelectorEdgeColor,
+    required this.splineSelectorUpDownMul,
     required this.splineSelectorFillColor,
     required this.splineLineColor,
     this.offset = const Offset(0, 0)}) : super(repaint: controller.notifier);
@@ -72,8 +75,9 @@ class BookFramePainter extends CustomPainter{
     canvas.drawLine(controller.corners[1] + offset, controller.corners[2] + offset, Paint()..color = mainFrameColor..strokeWidth = 1);
     canvas.drawLine(controller.corners[3] + offset, controller.corners[0] + offset, Paint()..color = mainFrameColor.. strokeWidth = 1);
 
-    for(final p in controller.curvePointsUp){
-      Offset np = p + Offset(0.0, splineSelectorDelta);
+    for(int i = 0; i < controller.curvePointsUp.length; i++){
+      Offset p = controller.curvePointsUp[i];
+      Offset np = p + Offset(0.0, i % 2 == 0 ? splineSelectorDelta : splineSelectorUpDownMul * splineSelectorDelta);
       canvas.drawCircle(np + offset, splineSelectorSize / 2, Paint()..color = splineSelectorEdgeColor..style = PaintingStyle.stroke);
       canvas.drawCircle(np + offset, splineSelectorSize / 2, Paint()..color = splineSelectorFillColor..style = PaintingStyle.fill);
 
@@ -108,6 +112,7 @@ class BookFrame extends StatefulWidget{
   final double cornerThickness;
   final Color mainFrameColor;
   final double splineSelectorDelta;
+  final double splineSelectorUpDownMul;
   final double splineSelectorSize;
   final Color splineSelectorEdgeColor;
   final Color splineSelectorFillColor;
@@ -123,7 +128,8 @@ class BookFrame extends StatefulWidget{
     this.cornerSize = 50.0,
     this.cornerThickness = 3.0,
     this.mainFrameColor = Colors.black, 
-    this.splineSelectorDelta = 125.0,
+    this.splineSelectorDelta = 150.0,
+    this.splineSelectorUpDownMul = 0.5,
     this.splineSelectorSize = 30.0, 
     this.splineSelectorEdgeColor = Colors.black,
     this.splineSelectorFillColor = Colors.white24,
@@ -168,10 +174,13 @@ class _BookFrameState extends State<BookFrame>{
     final size = Size(widget.controller.boundary.right + widget.margin.right, widget.controller.boundary.bottom + widget.margin.bottom);
     const hitboxMul = 1.5;
 
+    double delta = widget.splineSelectorDelta;
+    if(index % 2 == 1) delta *= widget.splineSelectorUpDownMul;
+
     return Glider(
       key: GlobalKey(),
       startPosition: widget.controller.curvePointsUp[index],
-      positionOffset: Offset(widget.splineSelectorSize / 2, widget.splineSelectorSize / 2) * hitboxMul - Offset(0.0, widget.splineSelectorDelta),
+      positionOffset: Offset(widget.splineSelectorSize / 2, widget.splineSelectorSize / 2) * hitboxMul - Offset(0.0, delta),
       size: size,
       boundary: widget.controller.boundary,
       onPositionChange: (pos) => widget.controller.setCurvePointUp(index, pos),
@@ -198,6 +207,7 @@ class _BookFrameState extends State<BookFrame>{
           cornerThickness: widget.cornerThickness,
           mainFrameColor: widget.mainFrameColor,
           splineSelectorDelta: widget.splineSelectorDelta,
+          splineSelectorUpDownMul: widget.splineSelectorUpDownMul,
           splineSelectorSize: widget.splineSelectorSize,
           splineSelectorEdgeColor: widget.splineSelectorEdgeColor,
           splineSelectorFillColor: widget.splineSelectorFillColor,

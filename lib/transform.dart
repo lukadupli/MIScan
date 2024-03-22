@@ -119,6 +119,10 @@ class BookTransform{
     src.asTypedList(srcList.length).setAll(0, srcList);
 
     int size = _getRequiredDstSize(4); //RGBA - 4 bytes per pixel
+
+    // In extreme cases, transformation won't be possible with given curve points. Size will then be an impossibly large number - it may overflow to negative values
+    if(size < 0 || size > 1e8) return null; 
+
     final dst = malloc.allocate<Uint8>(size);
 
     _bookProcess(src, width, height, 4, dst);
