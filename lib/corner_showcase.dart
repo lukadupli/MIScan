@@ -49,7 +49,7 @@ class CornerShowcase extends StatelessWidget {
           child: SizedBox(
             width: size.width,
             height: size.height, 
-            child: const Center(child: Text("+", style: TextStyle(color: Colors.black54))),
+            child: const Center(child: Text("+", style: TextStyle(color: Color.fromARGB(138, 3, 169, 244), fontSize: 30))),
           ),
         ),
       ),

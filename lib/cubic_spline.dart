@@ -10,6 +10,7 @@ import 'polynomial.dart';
 class CubicSpline{
   final List<Offset> points;
   late final List<Polynomial> poly;
+  bool exists = true;
 
   bool _isGrowing(List<Offset> l){
     for(int i = 1; i < l.length; i++){
@@ -19,7 +20,10 @@ class CubicSpline{
   }
 
   CubicSpline(this.points){
-    if(!_isGrowing(points)) throw const FormatException("x values of points must be in ascending order");
+    if(!_isGrowing(points)){
+      exists = false;
+      return;
+    }
     final n = points.length - 1;
     final mat = Array2d.fixed(4 * n, 4 * n, initialValue: 0);
     final known = Array.fixed(4 * n, initialValue: 0);
@@ -80,6 +84,7 @@ class CubicSpline{
   }
 
   double compute(double x){
+    if(!exists) throw const FormatException("Given points are not valid: x-coordinates should be in ascending order");
     int i = lowerBound(points, Offset(x, double.infinity), compare: (a, b){
       if(a.dx == b.dx) return a.dy.compareTo(b.dy);
       return a.dx.compareTo(b.dx);

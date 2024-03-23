@@ -23,13 +23,18 @@ class BookTransformPage extends StatefulWidget{
   }
 
   @override
-  // ignore: no_logic_in_create_state
-  State<StatefulWidget> createState() => _BookTransformPageState(ratio: image.width / controller.childSize.width);
+  State<StatefulWidget> createState() => _BookTransformPageState();
 }
 
 class _BookTransformPageState extends State<BookTransformPage>{
-  double ratio;
-  _BookTransformPageState({required this.ratio});
+  late double ratio;
+  _BookTransformPageState();
+
+  @override
+  void initState(){
+    super.initState();
+    ratio = widget.image.width / widget.controller.childSize.width;
+  }
 
   @override
   Widget build(BuildContext context) {

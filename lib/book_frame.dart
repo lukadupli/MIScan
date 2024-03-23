@@ -83,8 +83,11 @@ class BookFramePainter extends CustomPainter{
 
       canvas.drawLine(p + offset, np + offset - Offset(0, splineSelectorSize / 2), Paint()..color = splineLineColor);
       
-      canvas.drawCircle(p + offset, 5.0, Paint()..color = splineLineColor..style = PaintingStyle.fill);
+      canvas.drawCircle(p + offset, 2.5, Paint()..color = splineLineColor..style = PaintingStyle.fill);
     }
+
+    final curveUp = controller.curveUp;
+    if(!curveUp.exists) return; // points are not valid
 
     const int pixelsPerPoint = 4;
     int approxSize = ((controller.corners[1].dx - controller.corners[0].dx) / pixelsPerPoint).round();
@@ -92,8 +95,8 @@ class BookFramePainter extends CustomPainter{
     final dxUp = (controller.corners[1].dx - controller.corners[0].dx) / approxSize;
     for(int i = 0; i < approxSize; i++){
       final nx = controller.corners[0].dx + i * dxUp;
-      final p1 = Offset(nx, controller.curveUp.compute(nx));
-      final p2 = Offset(nx + dxUp, controller.curveUp.compute(nx + dxUp));
+      final p1 = Offset(nx, curveUp.compute(nx));
+      final p2 = Offset(nx + dxUp, curveUp.compute(nx + dxUp));
 
       canvas.drawLine(p1 + offset, p2 + offset, Paint()..color = splineLineColor..strokeWidth = 1);
     }

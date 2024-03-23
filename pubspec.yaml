@@ -52,6 +52,7 @@ dependencies:
   native_exif: ^0.5.0
   scidart: ^0.0.2-dev.12
   collection: ^1.17.2
+  image: ^4.1.7
 
 dev_dependencies:
   flutter_test:

@@ -166,18 +166,19 @@ class BookTransform{
 
     transform((Uint8List, int, int, List<Offset>, List<Offset>, bool) data) => _transform(data.$1, data.$2, data.$3, data.$4, data.$5, data.$6);
     final raw = await compute(transform, (byteData.buffer.asUint8List(), image.width, image.height, corners, curve, curvePosition));
-    if(raw == null) throw const FormatException("Cannot uniquely transform from these points");
+    if(raw == null) throw const FormatException("Cannot transform from these points");
 
     return raw;
   }
 
   /// corners have to be ratioed, ratio is applied only on spline
   static Future<Bitmap> transformFromSpline(ui.Image image, List<Offset> corners, CubicSpline spline, bool curvePosition, {double ratio = 1.0}) async{
+    if(!spline.exists) throw const FormatException("Given spline is not valid");
     final byteData = (await image.toByteData())!;
 
     transform((Uint8List, int, int, List<Offset>, CubicSpline, bool, double) data) => _transformFromSpline(data.$1, data.$2, data.$3, data.$4, data.$5, data.$6, ratio: data.$7);
     final raw = await compute(transform, (byteData.buffer.asUint8List(), image.width, image.height, corners, spline, curvePosition, ratio));
-    if(raw == null) throw const FormatException("Cannot uniquely transform from these points");
+    if(raw == null) throw const FormatException("Cannot transform from these points");
 
     return raw;
   }
