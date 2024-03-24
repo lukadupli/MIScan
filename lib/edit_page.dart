@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:native_exif/native_exif.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'jpg_process.dart';
+import 'loading_page.dart';
 import 'main.dart';
 import 'image_page.dart';
 import 'helpers.dart';
@@ -43,7 +45,7 @@ class _EditPageState extends State<EditPage> {
     if(turns == 3) return 8;
     return 1;
   }
-  static Future<void> _edit(String path, int turns) async {
+  static Future<void> _rotate(String path, int turns) async {
     if(turns == 0) return;
 
     final exif = await Exif.fromPath(path);
@@ -54,14 +56,22 @@ class _EditPageState extends State<EditPage> {
     await exif.writeAttribute("Orientation", _turnsToOrient(realTurns).toString());
   }
 
-  Future<void> _saveAndPop(File file) async{
-    if(file.path != widget.imageFile.path) await widget.imageFile.copy(file.path);
-    await _edit(file.path, turns);
+  static Future<bool> _edit(String srcPath, String dstPath, {int turns = 0}) async{
+    JpgProcess.process(srcPath, dstPath);
+    await _rotate(dstPath, turns);
+    await FileImage(File(dstPath)).evict();
 
-    await FileImage(file).evict();
+    return true;
+  }
 
+  void _saveAndPop(File file){
     Navigator.popUntil(navigatorKey.currentContext!, (route) => route.isFirst); 
-    Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ImagePage(imageFile: file)));
+    Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(
+      builder: (context) => FutureBuilder(
+        future: _edit(widget.imageFile.path, file.path, turns: turns),
+        builder: (context, snapshot) => snapshot.hasData ? ImagePage(imageFile: file) : const LoadingPage()
+      )
+    ));
   }
 
   Future<void> _save() async{

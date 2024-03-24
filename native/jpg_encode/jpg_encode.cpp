@@ -1,5 +1,5 @@
 #include "jpg_encode.h"
-#include "../jpge/jpge.h"
+#include "../jpeg_compressor/jpge.h"
 
 extern "C"{
     bool JpgEncodeToFile(const char* filename, unsigned char* src, int src_width, int src_height, int src_channels){

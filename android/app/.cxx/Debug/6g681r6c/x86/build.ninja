@@ -41,7 +41,7 @@ include CMakeFiles/rules.ninja
 #############################################
 # Order-only phony target for jpg_encode
 
-build cmake_object_order_depends_target_jpg_encode: phony || cmake_object_order_depends_target_jpge
+build cmake_object_order_depends_target_jpg_encode: phony || cmake_object_order_depends_target_jpeg_compressor
 
 build CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o: CXX_COMPILER__jpg_encode_Debug C$:/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp || cmake_object_order_depends_target_jpg_encode
   DEFINES = -Djpg_encode_EXPORTS
@@ -58,10 +58,10 @@ build CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native
 #############################################
 # Link the shared library C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\6g681r6c\obj\x86\libjpg_encode.so
 
-build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libjpg_encode.so: CXX_SHARED_LIBRARY_LINKER__jpg_encode_Debug CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o | libjpge.a || libjpge.a
+build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libjpg_encode.so: CXX_SHARED_LIBRARY_LINKER__jpg_encode_Debug CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o | libjpeg_compressor.a || libjpeg_compressor.a
   LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
   LINK_FLAGS = -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments
-  LINK_LIBRARIES = libjpge.a  -latomic -lm
+  LINK_LIBRARIES = libjpeg_compressor.a  -latomic -lm
   OBJECT_DIR = CMakeFiles\jpg_encode.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
@@ -69,37 +69,6 @@ build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Deb
   SONAME_FLAG = -Wl,-soname,
   TARGET_FILE = C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\6g681r6c\obj\x86\libjpg_encode.so
   TARGET_PDB = jpg_encode.so.dbg
-
-# =============================================================================
-# Object build statements for STATIC_LIBRARY target jpge
-
-
-#############################################
-# Order-only phony target for jpge
-
-build cmake_object_order_depends_target_jpge: phony || CMakeFiles/jpge.dir
-
-build CMakeFiles/jpge.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpge/jpge.cpp.o: CXX_COMPILER__jpge_Debug C$:/Users/lukad/Desktop/flutterapps/MIScan/native/jpge/jpge.cpp || cmake_object_order_depends_target_jpge
-  DEP_FILE = CMakeFiles\jpge.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\jpge\jpge.cpp.o.d
-  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
-  OBJECT_DIR = CMakeFiles\jpge.dir
-  OBJECT_FILE_DIR = CMakeFiles\jpge.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\jpge
-
-
-# =============================================================================
-# Link build statements for STATIC_LIBRARY target jpge
-
-
-#############################################
-# Link the static library libjpge.a
-
-build libjpge.a: CXX_STATIC_LIBRARY_LINKER__jpge_Debug CMakeFiles/jpge.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpge/jpge.cpp.o
-  LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
-  OBJECT_DIR = CMakeFiles\jpge.dir
-  POST_BUILD = cd .
-  PRE_LINK = cd .
-  TARGET_FILE = libjpge.a
-  TARGET_PDB = jpge.a.dbg
 
 # =============================================================================
 # Object build statements for STATIC_LIBRARY target basic_linear
@@ -201,6 +170,55 @@ build libtransform.a: CXX_STATIC_LIBRARY_LINKER__transform_Debug CMakeFiles/tran
 
 
 #############################################
+# Utility command for rebuild_cache
+
+build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
+  COMMAND = cmd.exe /C "cd /D C:\Users\lukad\Desktop\flutterapps\MIScan\android\app\.cxx\Debug\6g681r6c\x86 && C:\Users\lukad\AppData\Local\Android\Sdk\cmake\3.18.1\bin\cmake.exe --regenerate-during-build -SC:\Users\lukad\Desktop\flutterapps\MIScan\android\app -BC:\Users\lukad\Desktop\flutterapps\MIScan\android\app\.cxx\Debug\6g681r6c\x86"
+  DESC = Running CMake to regenerate build system...
+  pool = console
+  restat = 1
+
+build rebuild_cache: phony CMakeFiles/rebuild_cache.util
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target jpeg_compressor
+
+
+#############################################
+# Order-only phony target for jpeg_compressor
+
+build cmake_object_order_depends_target_jpeg_compressor: phony || CMakeFiles/jpeg_compressor.dir
+
+build CMakeFiles/jpeg_compressor.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpgd.cpp.o: CXX_COMPILER__jpeg_compressor_Debug C$:/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpgd.cpp || cmake_object_order_depends_target_jpeg_compressor
+  DEP_FILE = CMakeFiles\jpeg_compressor.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\jpeg_compressor\jpgd.cpp.o.d
+  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
+  OBJECT_DIR = CMakeFiles\jpeg_compressor.dir
+  OBJECT_FILE_DIR = CMakeFiles\jpeg_compressor.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\jpeg_compressor
+
+build CMakeFiles/jpeg_compressor.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpge.cpp.o: CXX_COMPILER__jpeg_compressor_Debug C$:/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpge.cpp || cmake_object_order_depends_target_jpeg_compressor
+  DEP_FILE = CMakeFiles\jpeg_compressor.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\jpeg_compressor\jpge.cpp.o.d
+  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
+  OBJECT_DIR = CMakeFiles\jpeg_compressor.dir
+  OBJECT_FILE_DIR = CMakeFiles\jpeg_compressor.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\jpeg_compressor
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target jpeg_compressor
+
+
+#############################################
+# Link the static library libjpeg_compressor.a
+
+build libjpeg_compressor.a: CXX_STATIC_LIBRARY_LINKER__jpeg_compressor_Debug CMakeFiles/jpeg_compressor.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpgd.cpp.o CMakeFiles/jpeg_compressor.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpge.cpp.o
+  LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
+  OBJECT_DIR = CMakeFiles\jpeg_compressor.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = libjpeg_compressor.a
+  TARGET_PDB = jpeg_compressor.a.dbg
+
+
+#############################################
 # Utility command for edit_cache
 
 build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
@@ -246,26 +264,54 @@ build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Deb
   TARGET_FILE = C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\6g681r6c\obj\x86\libstraighten.so
   TARGET_PDB = straighten.so.dbg
 
+# =============================================================================
+# Object build statements for SHARED_LIBRARY target image_processing
+
 
 #############################################
-# Utility command for rebuild_cache
+# Order-only phony target for image_processing
 
-build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D C:\Users\lukad\Desktop\flutterapps\MIScan\android\app\.cxx\Debug\6g681r6c\x86 && C:\Users\lukad\AppData\Local\Android\Sdk\cmake\3.18.1\bin\cmake.exe --regenerate-during-build -SC:\Users\lukad\Desktop\flutterapps\MIScan\android\app -BC:\Users\lukad\Desktop\flutterapps\MIScan\android\app\.cxx\Debug\6g681r6c\x86"
-  DESC = Running CMake to regenerate build system...
-  pool = console
-  restat = 1
+build cmake_object_order_depends_target_image_processing: phony || cmake_object_order_depends_target_jpeg_compressor
 
-build rebuild_cache: phony CMakeFiles/rebuild_cache.util
+build CMakeFiles/image_processing.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/image_processing/image_processing.cpp.o: CXX_COMPILER__image_processing_Debug C$:/Users/lukad/Desktop/flutterapps/MIScan/native/image_processing/image_processing.cpp || cmake_object_order_depends_target_image_processing
+  DEFINES = -Dimage_processing_EXPORTS
+  DEP_FILE = CMakeFiles\image_processing.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\image_processing\image_processing.cpp.o.d
+  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
+  OBJECT_DIR = CMakeFiles\image_processing.dir
+  OBJECT_FILE_DIR = CMakeFiles\image_processing.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\image_processing
+
+
+# =============================================================================
+# Link build statements for SHARED_LIBRARY target image_processing
+
+
+#############################################
+# Link the shared library C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\6g681r6c\obj\x86\libimage_processing.so
+
+build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libimage_processing.so: CXX_SHARED_LIBRARY_LINKER__image_processing_Debug CMakeFiles/image_processing.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/image_processing/image_processing.cpp.o | libjpeg_compressor.a || libjpeg_compressor.a
+  LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
+  LINK_FLAGS = -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments
+  LINK_LIBRARIES = libjpeg_compressor.a  -latomic -lm
+  OBJECT_DIR = CMakeFiles\image_processing.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  SONAME = libimage_processing.so
+  SONAME_FLAG = -Wl,-soname,
+  TARGET_FILE = C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\6g681r6c\obj\x86\libimage_processing.so
+  TARGET_PDB = image_processing.so.dbg
 
 # =============================================================================
 # Target aliases.
 
 build basic_linear: phony libbasic_linear.a
 
+build image_processing: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libimage_processing.so
+
+build jpeg_compressor: phony libjpeg_compressor.a
+
 build jpg_encode: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libjpg_encode.so
 
-build jpge: phony libjpge.a
+build libimage_processing.so: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libimage_processing.so
 
 build libjpg_encode.so: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libjpg_encode.so
 
@@ -283,7 +329,7 @@ build transform: phony libtransform.a
 #############################################
 # Folder: C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/x86
 
-build all: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libjpg_encode.so libjpge.a libbasic_linear.a libtransform.a C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libstraighten.so
+build all: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libjpg_encode.so libbasic_linear.a libtransform.a libjpeg_compressor.a C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libstraighten.so C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86/libimage_processing.so
 
 # =============================================================================
 # Built-in targets

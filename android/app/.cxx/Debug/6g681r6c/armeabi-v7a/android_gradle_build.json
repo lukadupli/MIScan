@@ -23,18 +23,25 @@
       "artifactName": "basic_linear",
       "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\6g681r6c\\armeabi-v7a\\libbasic_linear.a"
     },
+    "image_processing::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "armeabi-v7a",
+      "artifactName": "image_processing",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\6g681r6c\\obj\\armeabi-v7a\\libimage_processing.so",
+      "runtimeFiles": []
+    },
+    "jpeg_compressor::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "armeabi-v7a",
+      "artifactName": "jpeg_compressor",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\6g681r6c\\armeabi-v7a\\libjpeg_compressor.a"
+    },
     "jpg_encode::@6890427a1f51a3e7e1df": {
       "toolchain": "toolchain",
       "abi": "armeabi-v7a",
       "artifactName": "jpg_encode",
       "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\6g681r6c\\obj\\armeabi-v7a\\libjpg_encode.so",
       "runtimeFiles": []
-    },
-    "jpge::@6890427a1f51a3e7e1df": {
-      "toolchain": "toolchain",
-      "abi": "armeabi-v7a",
-      "artifactName": "jpge",
-      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\6g681r6c\\armeabi-v7a\\libjpge.a"
     },
     "straighten::@6890427a1f51a3e7e1df": {
       "toolchain": "toolchain",

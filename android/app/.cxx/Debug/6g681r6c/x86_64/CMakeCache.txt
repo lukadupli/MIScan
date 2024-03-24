@@ -246,7 +246,10 @@ MIScan_BINARY_DIR:STATIC=C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.
 MIScan_SOURCE_DIR:STATIC=C:/Users/lukad/Desktop/flutterapps/MIScan/android/app
 
 //Dependencies for the target
-jpg_encode_LIB_DEPENDS:STATIC=general;jpge;
+image_processing_LIB_DEPENDS:STATIC=general;jpeg_compressor;
+
+//Dependencies for the target
+jpg_encode_LIB_DEPENDS:STATIC=general;jpeg_compressor;
 
 //Dependencies for the target
 straighten_LIB_DEPENDS:STATIC=general;transform;

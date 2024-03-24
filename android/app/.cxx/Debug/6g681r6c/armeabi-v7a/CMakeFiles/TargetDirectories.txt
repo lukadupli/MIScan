@@ -1,7 +1,8 @@
 C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/armeabi-v7a/CMakeFiles/jpg_encode.dir
-C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/armeabi-v7a/CMakeFiles/jpge.dir
 C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/armeabi-v7a/CMakeFiles/basic_linear.dir
 C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/armeabi-v7a/CMakeFiles/transform.dir
+C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/armeabi-v7a/CMakeFiles/jpeg_compressor.dir
 C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/armeabi-v7a/CMakeFiles/edit_cache.dir
 C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/armeabi-v7a/CMakeFiles/straighten.dir
-C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/6g681r6c/armeabi-v7a/CMakeFiles/image_processing.dir

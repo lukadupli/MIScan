@@ -20,9 +20,10 @@ add_library(
     ../../native/transform/book_transform.cpp
 )
 add_library(
-    jpge
+    jpeg_compressor
     STATIC
-    ../../native/jpge/jpge.cpp
+    ../../native/jpeg_compressor/jpgd.cpp
+    ../../native/jpeg_compressor/jpge.cpp
 )
 add_library( 
     straighten
@@ -33,6 +34,11 @@ add_library(
     jpg_encode
     SHARED
     ../../native/jpg_encode/jpg_encode.cpp
+)
+add_library(
+    image_processing
+    SHARED
+    ../../native/image_processing/image_processing.cpp
 )
 
 target_link_libraries(
@@ -45,5 +51,9 @@ target_link_libraries(
 )
 target_link_libraries(
     jpg_encode
-    jpge
+    jpeg_compressor
+)
+target_link_libraries(
+    image_processing
+    jpeg_compressor
 )
