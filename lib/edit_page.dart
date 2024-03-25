@@ -25,7 +25,19 @@ class EditPage extends StatefulWidget{
 
 class _EditPageState extends State<EditPage> {
   int turns = 0;
+  double contrast = 1.0;
+  double brightness = 0.0;
   late String name;
+
+  /// new RGB channel value is [contrast]*(x - 128) + 128 + [brightness]
+  static List<double> _getMatrix(double contrast, double brightness){
+    return [
+      contrast, 0, 0, 0, -128*contrast + 128 + brightness,
+      0, contrast, 0, 0, -128*contrast + 128 + brightness,
+      0, 0, contrast, 0, -128*contrast + 128 + brightness,
+      0, 0, 0, 1, 0,
+    ];
+  }
 
   @override
   void initState(){
@@ -56,8 +68,8 @@ class _EditPageState extends State<EditPage> {
     await exif.writeAttribute("Orientation", _turnsToOrient(realTurns).toString());
   }
 
-  static Future<bool> _edit(String srcPath, String dstPath, {int turns = 0}) async{
-    JpgProcess.process(srcPath, dstPath);
+  static Future<bool> _edit(String srcPath, String dstPath, {int turns = 0, double contrast = 1.0, double brightness = 0.0}) async{
+    await JpgProcess.process(srcPath, dstPath, contrast: contrast, brightness: brightness);
     await _rotate(dstPath, turns);
     await FileImage(File(dstPath)).evict();
 
@@ -68,7 +80,7 @@ class _EditPageState extends State<EditPage> {
     Navigator.popUntil(navigatorKey.currentContext!, (route) => route.isFirst); 
     Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(
       builder: (context) => FutureBuilder(
-        future: _edit(widget.imageFile.path, file.path, turns: turns),
+        future: _edit(widget.imageFile.path, file.path, turns: turns, contrast: contrast, brightness: brightness),
         builder: (context, snapshot) => snapshot.hasData ? ImagePage(imageFile: file) : const LoadingPage()
       )
     ));
@@ -97,6 +109,7 @@ class _EditPageState extends State<EditPage> {
 
   @override
   Widget build(BuildContext context){
+    final apploc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: MediaQuery.orientationOf(context) == Orientation.landscape ? null : AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -114,9 +127,40 @@ class _EditPageState extends State<EditPage> {
           children: [
             Expanded(
               child: Center(
-                child: RotatedBox(
-                  quarterTurns: turns,
-                  child: Image.file(widget.imageFile),
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.matrix(_getMatrix(contrast, brightness)),
+                  child: RotatedBox(
+                    quarterTurns: turns,
+                    child: Image.file(widget.imageFile),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              padding: MediaQuery.orientationOf(context) == Orientation.portrait ? const EdgeInsets.only(top: 20.0) : null,
+              child: SliderTheme(
+                data: const SliderThemeData(showValueIndicator: ShowValueIndicator.always),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // contrast is between [0.5, 1.5], selected with the ran[-100, 100]
+                    Text(apploc.contrast),
+                    Slider(
+                      value: (contrast - 1) * 200,
+                      min: -100,
+                      max: 100,
+                      label: ((contrast - 1) * 200).round().toString(),
+                      onChanged: (value) => setState(() => contrast = value / 200 + 1),
+                    ),
+                    Text(apploc.brightness),
+                    Slider(
+                      value: brightness,
+                      min: -100,
+                      max: 100,
+                      label: brightness.round().toString(),
+                      onChanged: (value) => setState(() => brightness = value),
+                    ),
+                  ],
                 ),
               ),
             ),

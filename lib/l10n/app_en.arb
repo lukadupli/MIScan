@@ -139,5 +139,11 @@
         "description": "Content of a dialog alerting user that the transformation cannot be made from selected corners"
     },
     "ok": "OK",
-    "@ok": {"description": "OK button title"}
+    "@ok": {"description": "OK button title"},
+
+    "contrast": "Contrast",
+    "@contrast": {"description": "Contrast in image processing"},
+
+    "brightness": "Brightness",
+    "@brightness": {"description": "Brightness in image processing"}
 }

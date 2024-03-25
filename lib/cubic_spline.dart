@@ -7,6 +7,8 @@ import 'package:scidart/numdart.dart';
 import 'polynomial.dart';
 
 /// Performs cubic spline interpolation of given points according to this article: https://blog.timodenk.com/cubic-spline-interpolation/index.html
+/// If given points' x-coordinates are not in ascending order, [exists] is set to false
+/// If [compute] is called while [exists] is false, [FormatException] is thrown
 class CubicSpline{
   final List<Offset> points;
   late final List<Polynomial> poly;

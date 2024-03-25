@@ -47,3 +47,5 @@
 1929	2017	733001243	libjpeg_compressor.a	6a2b930fefd76318
 2023	2230	733001243	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86_64/libimage_processing.so	70d3935def0d57f2
 2017	2236	733001243	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86_64/libjpg_encode.so	63ddb11131d46298
+5	825	733056562	CMakeFiles/image_processing.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/image_processing/image_processing.cpp.o	71c02b8ca6a4e1f0
+825	1049	733056562	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/6g681r6c/obj/x86_64/libimage_processing.so	70d3935def0d57f2

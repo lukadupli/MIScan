@@ -31,5 +31,7 @@
     "transformPageTitle": "Odaberi vrhove",
     "cannotTransformTitle": "Transformacija nemoguća",
     "cannotTransformContent": "Nemoguće je transformirati sliku iz odabranih vrhova",
-    "ok": "OK"
+    "ok": "OK",
+    "contrast": "Kontrast",
+    "brightness": "Svjetlina"
 }

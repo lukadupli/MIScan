@@ -32,7 +32,7 @@ class JpgProcess{
 
   /// Asynchronously, in an isolate processes JPEG image at [srcPath] and saves the result at [dstPath] in JPEG format
   /// 
-  /// for each pixel color x, it's new value is [contrast] * (x - 128) + 128 + [brightness]
+  /// for each pixel color x, its new value is [contrast] * (x - 128) + 128 + [brightness]
   /// if [contrast] is 1.0 and [brightness] is 0.0, copies file at srcPath to dstPath, if the paths are same it does nothing, returns true
   /// returns if JPEG decoding/encoding succeeded
   static Future<bool> process(String srcPath, String dstPath, {double contrast = 1.0, double brightness = 0.0}) async{
