@@ -69,7 +69,14 @@ class _EditPageState extends State<EditPage> {
   }
 
   static Future<bool> _edit(String srcPath, String dstPath, {int turns = 0, double contrast = 1.0, double brightness = 0.0}) async{
+    // jpg process doesn't keep exif, so here we manually insert it
+    final srcExif = await Exif.fromPath(srcPath);
     await JpgProcess.process(srcPath, dstPath, contrast: contrast, brightness: brightness);
+    final dstExif = await Exif.fromPath(dstPath);
+    
+    final att = await srcExif.getAttributes();
+    if(att != null) await dstExif.writeAttributes(att);
+
     await _rotate(dstPath, turns);
     await FileImage(File(dstPath)).evict();
 
@@ -151,6 +158,7 @@ class _EditPageState extends State<EditPage> {
                       max: 100,
                       label: ((contrast - 1) * 200).round().toString(),
                       onChanged: (value) => setState(() => contrast = value / 200 + 1),
+                      allowedInteraction: SliderInteraction.slideThumb,
                     ),
                     Text(apploc.brightness),
                     Slider(
@@ -159,6 +167,7 @@ class _EditPageState extends State<EditPage> {
                       max: 100,
                       label: brightness.round().toString(),
                       onChanged: (value) => setState(() => brightness = value),
+                      allowedInteraction: SliderInteraction.slideThumb,
                     ),
                   ],
                 ),
