@@ -3,9 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
-import 'gallery_export.dart';
+import 'file_export.dart';
 import 'helpers.dart';
 import 'image_page.dart';
+import 'locations.dart';
 
 /// A larger [ListView]'s element which shows an image
 /// 
@@ -61,8 +62,15 @@ class ListViewImage extends StatelessWidget{
                     children: [
                       IconButton(icon: const Icon(Icons.share), tooltip: apploc.shareTooltip, onPressed: () => Share.shareXFiles([XFile(imageFile.path)])),
                       IconButton(icon: const Icon(Icons.delete), tooltip: apploc.deleteTooltip, onPressed: () => onDeletion(index)),
-                      IconButton(icon: const Icon(Icons.exit_to_app), tooltip: apploc.exportTooltip, onPressed: () => 
-                      GalleryExport.export(imageFile)),
+                      IconButton(
+                        icon: const Icon(Icons.exit_to_app), 
+                        tooltip: apploc.galleryExportTooltip,
+                        onPressed: () async => await FileExport.export(imageFile, await Locations.getGallerySaveDirectory(),
+                          exportConfirmTitle: apploc.exportConfirmTitle,
+                          exportConfirmDescription: apploc.galleryExportConfirmContent(getName(imageFile.path)),
+                          exportConfirmation: apploc.galleryExportConfirmation(getName(imageFile.path)),
+                        ),
+                      ),
                     ],
                   )
                 ]

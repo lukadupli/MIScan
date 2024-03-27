@@ -10,7 +10,7 @@ class Locations{
   /// 
   /// The returned directory's path is *{applicationDocumentsDirectory}/Scans*
   /// 
-  /// /// If the directory doesn't exist, it is created
+  /// If the directory doesn't exist, it is created
   static Future<Directory> getAppInternalSaveDirectory() async{
     final path = "${(await getApplicationDocumentsDirectory()).path}/Scans";
     final dir = Directory(path);
@@ -28,5 +28,9 @@ class Locations{
     final dir = Directory(path);
     if(!await dir.exists()) await dir.create();
     return dir;
+  }
+
+  static Future<Directory> getDownloadsSaveDirectory() async{
+    return Directory(await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS));
   }
 }

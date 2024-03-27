@@ -1,13 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'edit_page.dart';
-import 'gallery_export.dart';
+import 'file_export.dart';
 import 'helpers.dart';
+import 'locations.dart';
+
+import 'package:pdf/widgets.dart' as pw;
 
 class ImagePage extends StatefulWidget{
   /// Creates a widget for showing the image from [imageFile]
@@ -38,32 +42,7 @@ class _ImagePageState extends State<ImagePage> {
     return Scaffold(
       appBar: MediaQuery.orientationOf(context) == Orientation.landscape ? null : AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: TextFormField(
-          initialValue: removeExtension(getName(imageFile.path)),
-          onFieldSubmitted: (value){
-            if(value == removeExtension(getName(imageFile.path))) return;
-
-            final newPath = "${widget.imageFile.parent.path}/$value.jpg";
-            if(File(newPath).existsSync()){
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(apploc.fileExistsTitle),
-                  content: Text(apploc.fileExistsContent(value)),
-                  actions: [
-                    TextButton(child: Text(apploc.yes), onPressed: () {Navigator.of(context).pop(); setState(() => imageFile = imageFile.renameSync(newPath));}),
-                    TextButton(child: Text(apploc.cancel), onPressed: () => Navigator.of(context).pop()),
-                  ]
-                )
-              );
-            }
-            else{
-              setState(() => imageFile = imageFile.renameSync(newPath));
-            }
-          },
-          style: Theme.of(context).textTheme.titleLarge,
-          decoration: const InputDecoration(suffixIcon: Icon(Icons.edit))
-        ),
+        title: Text(removeExtension(getName(widget.imageFile.path))),
       ),
       body: SafeArea(
         child: Flex(
@@ -101,9 +80,32 @@ class _ImagePageState extends State<ImagePage> {
                     onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EditPage(imageFile: imageFile)))),
                   IconButton(
                     icon: const Icon(Icons.exit_to_app), 
-                    tooltip: apploc.exportTooltip,
-                    onPressed: () => GalleryExport.export(widget.imageFile),
+                    tooltip: apploc.galleryExportTooltip,
+                    onPressed: () async => await FileExport.export(widget.imageFile, await Locations.getGallerySaveDirectory(),
+                      exportConfirmTitle: apploc.exportConfirmTitle,
+                      exportConfirmDescription: apploc.galleryExportConfirmContent(getName(widget.imageFile.path)),
+                      exportConfirmation: apploc.galleryExportConfirmation(getName(widget.imageFile.path)),
+                    ),
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.picture_as_pdf),
+                    onPressed: () async{
+                      final pdfName = removeExtension(getName(widget.imageFile.path));
+                      final pdf = pw.Document(title: pdfName);
+                      final imageBytes = widget.imageFile.readAsBytesSync();
+                      pdf.addPage(pw.Page(margin: const pw.EdgeInsets.all(0.0),build: (context) => pw.Center(child: pw.Image(pw.MemoryImage(imageBytes)))));
+
+                      final pdfBytes = await pdf.save();
+                      final tempFile = File("${(await getApplicationDocumentsDirectory()).path}/$pdfName.pdf");
+                      tempFile.writeAsBytesSync(pdfBytes);
+
+                      await FileExport.export(tempFile, await Locations.getDownloadsSaveDirectory(),
+                        exportConfirmTitle: apploc.exportConfirmTitle,
+                        exportConfirmDescription: apploc.downloadsExportConfirmContent("$pdfName.pdf"),
+                        exportConfirmation: apploc.downloadsExportConfirmation("$pdfName.pdf"),
+                      );
+                    }
+                  )
                 ]
               ),
             )

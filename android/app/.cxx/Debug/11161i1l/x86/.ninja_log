@@ -10,3 +10,17 @@
 40	1180	731095198	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/straighten/straighten.cpp.o	319f37e1b963a04c
 1082	1238	731095198	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libjpg_encode.so	78274f61b7a550f7
 1181	1335	731095198	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libstraighten.so	69a7c69fe5fbc43a
+5	127	733242592	CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o	cab913f0836ad0d1
+44	968	733242593	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/straighten/exports.cpp.o	f672cb70d20dfbc6
+22	1056	733242593	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/bitmap.cpp.o	92550d7e4be4e44c
+9	1057	733242593	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/parallel_for.cpp.o	de9f5c8b77580246
+13	1082	733242593	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/quad_transform.cpp.o	dc977649514b7f1c
+27	1139	733242593	CMakeFiles/jpeg_compressor.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpge.cpp.o	44c56ab12fc65daf
+39	1214	733242593	CMakeFiles/image_processing.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/image_processing/image_processing.cpp.o	b6dc89d2fd69dba4
+17	1300	733242594	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/book_transform.cpp.o	292a4555690acc00
+1300	1388	733242594	libtransform.a	411285ae5924fcb9
+1388	1586	733242594	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libstraighten.so	ac88527863b25374
+32	2669	733242595	CMakeFiles/jpeg_compressor.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpgd.cpp.o	3dd09a053145d798
+2670	2745	733242595	libjpeg_compressor.a	6a2b930fefd76318
+2745	2853	733242595	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libjpg_encode.so	8c620fcb922b9b
+2750	2872	733242595	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libimage_processing.so	be06a57ecd0934d5

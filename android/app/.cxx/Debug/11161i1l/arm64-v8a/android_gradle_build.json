@@ -23,6 +23,19 @@
       "artifactName": "basic_linear",
       "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\11161i1l\\arm64-v8a\\libbasic_linear.a"
     },
+    "image_processing::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "image_processing",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\arm64-v8a\\libimage_processing.so",
+      "runtimeFiles": []
+    },
+    "jpeg_compressor::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "jpeg_compressor",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\11161i1l\\arm64-v8a\\libjpeg_compressor.a"
+    },
     "jpg_encode::@6890427a1f51a3e7e1df": {
       "toolchain": "toolchain",
       "abi": "arm64-v8a",
@@ -30,18 +43,18 @@
       "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\arm64-v8a\\libjpg_encode.so",
       "runtimeFiles": []
     },
-    "jpge::@6890427a1f51a3e7e1df": {
-      "toolchain": "toolchain",
-      "abi": "arm64-v8a",
-      "artifactName": "jpge",
-      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\11161i1l\\arm64-v8a\\libjpge.a"
-    },
     "straighten::@6890427a1f51a3e7e1df": {
       "toolchain": "toolchain",
       "abi": "arm64-v8a",
       "artifactName": "straighten",
       "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\arm64-v8a\\libstraighten.so",
       "runtimeFiles": []
+    },
+    "transform::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "transform",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\11161i1l\\arm64-v8a\\libtransform.a"
     }
   },
   "toolchains": {

@@ -59,8 +59,11 @@
     "deleteTooltip": "Delete",
     "@deleteTooltip": {"description": "Message shown when delete button is long pressed"},
 
-    "exportTooltip": "Export to gallery",
-    "@exportTooltip": {"description": "Message shown when export to gallery button is long pressed"},
+    "galleryExportTooltip": "Export to gallery",
+    "@galleryExportTooltip": {"description": "Message shown when export to gallery button is long pressed"},
+
+    "pdfTooltip": "Create a PDF file and export it to Downloads",
+    "@pdfTooltip": {"description": "Message shown when PDF button is long pressed"}, 
 
     "editTooltip": "Edit",
     "@editTooltip": {"description": "Message shown when edit button is long pressed"},
@@ -88,15 +91,25 @@
 
     "exportConfirmTitle": "Confirm export",
     "@exportConfirmTitle": {
-        "description": "Title of a dialog asking user to confirm export to gallery"
+        "description": "Title of a dialog asking user to confirm export of a file"
     },
-    "exportConfirmContent": "Are you sure you want to export file '{filename}' to gallery?",
-    "@exportConfirmContent": {
+    "galleryExportConfirmContent": "Are you sure you want to export file '{filename}' to gallery?",
+    "@galleryExportConfirmContent": {
         "description": "Content of a dialog asking user to confirm export to gallery",
         "placeholders": {
             "filename": {
                 "type": "String",
                 "example": "myFileName.jpg"
+            }
+        }
+    },
+    "downloadsExportConfirmContent": "Are you sure you want to export file '{filename}' to downloads?",
+    "@downloadsExportConfirmContent": {
+        "description": "Content of a dialog asking user to confirm export to downloads",
+        "placeholders":{
+            "filename":{
+                "type": "String",
+                "example": "myFileName.pdf"
             }
         }
     },
@@ -113,13 +126,24 @@
     "@openSettings": {"description": "Title of a button leading to phone settings"},
     "tryAgain": "Try again",
     "@tryAgain": {"description": "Title of a button for trying again"},
-    "exportConfirmation": "File '{filename}' exported to gallery",
-    "@exportConfirmation": {
-        "description": "File export confirmation",
+
+    "galleryExportConfirmation": "File '{filename}' exported to gallery",
+    "@galleryExportConfirmation": {
+        "description": "Confirmation message when export to gallery is done",
         "placeholders": {
             "filename": {
                 "type": "String",
                 "example": "myFileName.jpg"
+            }
+        }
+    },
+    "downloadsExportConfirmation": "File '{filename}' exported to downloads",
+    "@downloadsExportConfirmation": {
+        "description": "Confirmation message when export to downloads is done",
+        "placeholders": {
+            "filename": {
+                "type": "String",
+                "example": "myFileName.pdf"
             }
         }
     },

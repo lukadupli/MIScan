@@ -10,3 +10,17 @@
 2400	2555	731095194	libjpge.a	43aa4e9fac5c2a96
 2556	2808	731095195	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/armeabi-v7a/libjpg_encode.so	6edb966a10b26db
 2544	2815	731095195	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/armeabi-v7a/libstraighten.so	4fccef12e9c57ac2
+5	462	733242589	CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o	452bfbc9e54705bd
+26	1743	733242591	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/quad_transform.cpp.o	999cb348981150ec
+55	1744	733242591	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/parallel_for.cpp.o	2ac274a5d0ca127a
+10	1746	733242591	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/bitmap.cpp.o	ad696cb486f6af0e
+84	1767	733242591	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/straighten/exports.cpp.o	e72bc4aef1f25d1a
+157	1803	733242591	CMakeFiles/image_processing.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/image_processing/image_processing.cpp.o	ca321b3a2c6878
+67	1972	733242591	CMakeFiles/jpeg_compressor.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpge.cpp.o	db1f1d31e9307751
+61	2021	733242591	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/book_transform.cpp.o	b609cc06b9646598
+2022	2138	733242591	libtransform.a	411285ae5924fcb9
+2138	2356	733242591	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/armeabi-v7a/libstraighten.so	e5ef4f51c47f8660
+73	2645	733242592	CMakeFiles/jpeg_compressor.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpgd.cpp.o	41e738a9645d232d
+2645	2728	733242592	libjpeg_compressor.a	6a2b930fefd76318
+2728	2837	733242592	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/armeabi-v7a/libjpg_encode.so	33065b89b37fbb3f
+2734	2848	733242592	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/armeabi-v7a/libimage_processing.so	36fe0e36371a147a
