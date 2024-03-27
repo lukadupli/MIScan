@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -118,7 +119,7 @@ class _ImagePageState extends State<ImagePage> {
                       final pdfName = removeExtension(getName(imageFile.path));
                       final pdf = pw.Document(title: pdfName);
                       final imageBytes = imageFile.readAsBytesSync();
-                      pdf.addPage(pw.Page(margin: const pw.EdgeInsets.all(0.0),build: (context) => pw.Center(child: pw.Image(pw.MemoryImage(imageBytes)))));
+                      pdf.addPage(pw.Page(pageFormat: PdfPageFormat.undefined ,build: (context) => pw.Center(child: pw.Image(pw.MemoryImage(imageBytes)))));
 
                       final pdfBytes = await pdf.save();
                       final tempFile = File("${(await getApplicationDocumentsDirectory()).path}/$pdfName.pdf");
