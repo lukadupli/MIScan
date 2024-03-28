@@ -44,7 +44,7 @@ class _BookTransformPageState extends State<BookTransformPage>{
     return Scaffold(
       appBar: MediaQuery.orientationOf(context) == Orientation.landscape ? null : AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(apploc.transformPageTitle),
+        title: Text(apploc.bookTransformPageTitle),
       ), 
       body: SafeArea(
         child: Flex(

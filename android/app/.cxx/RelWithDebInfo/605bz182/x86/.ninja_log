@@ -1,0 +1,20 @@
+# ninja log v5
+2	128	733254190	CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o	62ca3250cb25420d
+15	267	733254190	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/helpers.cpp.o	7088b1e9be32700a
+21	268	733254190	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/line.cpp.o	bbcfaa8366cf4ab
+11	328	733254190	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/vector.cpp.o	a406f6f156d91d9d
+6	1139	733254191	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/plane.cpp.o	de91d07362fd3f4e
+75	1266	733254191	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/straighten/exports.cpp.o	6d3ca0b63294f6db
+1141	1266	733254191	libbasic_linear.a	13e3e170d8bbaab6
+27	1321	733254191	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/quad_transform.cpp.o	b2a2cdbc933043f4
+32	1340	733254191	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/parallel_for.cpp.o	e82993942279b7e4
+38	1359	733254191	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/bitmap.cpp.o	bf3e6322c6215025
+82	1484	733254192	CMakeFiles/image_processing.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/image_processing/image_processing.cpp.o	64dadf2ffe7b5474
+60	1485	733254192	CMakeFiles/jpeg_compressor.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpge.cpp.o	225ec41c6c791822
+45	1555	733254192	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/book_transform.cpp.o	a2a5e2edb1b670a3
+1556	1636	733254192	libtransform.a	411285ae5924fcb9
+1637	1769	733254192	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/RelWithDebInfo/605bz182/obj/x86/libstraighten.so	28ef039350b06f56
+52	2892	733254193	CMakeFiles/jpeg_compressor.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpeg_compressor/jpgd.cpp.o	3cc2a9017c5d601
+2894	2987	733254193	libjpeg_compressor.a	6a2b930fefd76318
+2987	3101	733254193	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/RelWithDebInfo/605bz182/obj/x86/libjpg_encode.so	2b347f55adacb15e
+2994	3114	733254193	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/RelWithDebInfo/605bz182/obj/x86/libimage_processing.so	db7b4d2f066b649f

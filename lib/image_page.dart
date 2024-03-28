@@ -105,7 +105,7 @@ class _ImagePageState extends State<ImagePage> {
                     tooltip: apploc.editTooltip, 
                     onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EditPage(imageFile: imageFile)))),
                   IconButton(
-                    icon: const Icon(Icons.exit_to_app), 
+                    icon: const Icon(Icons.photo_library), 
                     tooltip: apploc.galleryExportTooltip,
                     onPressed: () async => await FileExport.export(imageFile, await Locations.getGallerySaveDirectory(),
                       exportConfirmTitle: apploc.exportConfirmTitle,
@@ -115,11 +115,12 @@ class _ImagePageState extends State<ImagePage> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.picture_as_pdf),
+                    tooltip: apploc.pdfTooltip,
                     onPressed: () async{
                       final pdfName = removeExtension(getName(imageFile.path));
                       final pdf = pw.Document(title: pdfName);
                       final imageBytes = imageFile.readAsBytesSync();
-                      pdf.addPage(pw.Page(pageFormat: PdfPageFormat.undefined ,build: (context) => pw.Center(child: pw.Image(pw.MemoryImage(imageBytes)))));
+                      pdf.addPage(pw.Page(pageFormat: PdfPageFormat.undefined, build: (context) => pw.Center(child: pw.Image(pw.MemoryImage(imageBytes)))));
 
                       final pdfBytes = await pdf.save();
                       final tempFile = File("${(await getApplicationDocumentsDirectory()).path}/$pdfName.pdf");

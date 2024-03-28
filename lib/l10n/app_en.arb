@@ -62,7 +62,7 @@
     "galleryExportTooltip": "Export to gallery",
     "@galleryExportTooltip": {"description": "Message shown when export to gallery button is long pressed"},
 
-    "pdfTooltip": "Create a PDF file and export it to Downloads",
+    "pdfTooltip": "Create a PDF file",
     "@pdfTooltip": {"description": "Message shown when PDF button is long pressed"}, 
 
     "editTooltip": "Edit",
@@ -153,6 +153,9 @@
 
     "transformPageTitle": "Select corners",
     "@transformPageTitle": {"description": "Title of transform page"},
+
+    "bookTransformPageTitle": "Select curve",
+    "@bookTransformPageTitle": {"description": "Title of book transform page"},
 
     "cannotTransformTitle": "Cannot transform",
     "@cannotTransformTitle": {
