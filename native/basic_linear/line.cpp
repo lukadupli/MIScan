@@ -4,8 +4,6 @@
 Line::Line(const Vector3& point1, const Vector3& point2) {
 	base = point1;
 	dir = (point2 - point1).Unit();
-
-	assert(!dir.IsNull());
 }
 
 double Line::Distance(const Vector3& point) const{
