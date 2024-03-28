@@ -2,6 +2,9 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'dart:core';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 /// Scales [value] from range [oldMin], [oldMax] to range [newMin], [newMax]
 double scale(double value, double oldMin, double oldMax, double newMin, double newMax){
   return (value - oldMin) * (newMax - newMin) / (oldMax - oldMin) + newMin;
@@ -49,3 +52,14 @@ String removeExtension(String name){
   if(lim == -1) return name;
   return name.substring(0, lim);
 }
+
+Future<dynamic> cannotTransformDialog(BuildContext context, AppLocalizations apploc) {
+    return showDialog(
+                  context: context, 
+                  builder: (context) => AlertDialog.adaptive(
+                    title: Text(apploc.cannotTransformTitle),
+                    content: Text(apploc.cannotTransformContent),
+                    actions: [TextButton(child: Text(apploc.ok), onPressed: () => Navigator.of(context).pop())]
+                  )
+                );
+  }

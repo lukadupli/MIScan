@@ -7,6 +7,7 @@ bool BookTransform::canTransform(Point2D p1, Point2D p2, Point2D p3, Point2D p4)
 }
 
 bool BookTransform::loadCoordinates(Point2D p1, Point2D p2, Point2D p3, Point2D p4, const std::vector<Point2D> curve, bool curvePosition) {
+    try{
     if (!quad.loadCoordinates(p1, p2, p3, p4)) return false;
 
     Plane fplane = quad.floorPlane();
@@ -64,6 +65,8 @@ bool BookTransform::loadCoordinates(Point2D p1, Point2D p2, Point2D p3, Point2D 
     }
     neww = xzValues.size();
     return true;
+    } 
+    catch (const BasicLinearException&) {return false;}
 }
 
 int BookTransform::newWidth() { return neww; }

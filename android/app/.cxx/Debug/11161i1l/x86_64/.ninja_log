@@ -26,3 +26,16 @@
 2275	2352	733242598	libjpeg_compressor.a	6a2b930fefd76318
 2352	2462	733242598	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86_64/libjpg_encode.so	16c1777e073c2069
 2357	2470	733242598	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86_64/libimage_processing.so	7fc575058c711035
+9	83	733359099	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/line.cpp.o	304197d2684d18ff
+5	776	733359099	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/plane.cpp.o	e6e0d85308c86120
+776	890	733359100	libbasic_linear.a	13e3e170d8bbaab6
+890	1120	733359100	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86_64/libstraighten.so	ada14df23f429e57
+9	668	733360565	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/helpers.cpp.o	ea611619eb01c217
+14	669	733360565	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/line.cpp.o	304197d2684d18ff
+5	846	733360565	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/plane.cpp.o	e6e0d85308c86120
+29	870	733360565	CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/straighten/exports.cpp.o	940fc3f5e74e8fcd
+846	946	733360565	libbasic_linear.a	13e3e170d8bbaab6
+18	985	733360565	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/quad_transform.cpp.o	fcbb032436263bca
+23	1188	733360565	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/book_transform.cpp.o	b61a7c57522ddf5d
+1188	1283	733360565	libtransform.a	411285ae5924fcb9
+1284	1457	733360565	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86_64/libstraighten.so	ada14df23f429e57

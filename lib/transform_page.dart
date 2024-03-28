@@ -13,6 +13,7 @@ import 'transform.dart';
 import 'edit_page.dart';
 import 'jpg_encode.dart';
 import 'dart:ui' as ui;
+import 'main.dart';
 
 class TransformPage extends StatefulWidget{
   final ui.Image image;
@@ -119,14 +120,7 @@ class _TransformPageState extends State<TransformPage> {
                       fController.corners[2] * ratio,
                       fController.corners[3] * ratio,
                     )){
-                      showDialog(
-                        context: context, 
-                        builder: (context) => AlertDialog.adaptive(
-                          title: Text(apploc.cannotTransformTitle),
-                          content: Text(apploc.cannotTransformContent),
-                          actions: [TextButton(child: Text(apploc.ok), onPressed: () => Navigator.of(context).pop())]
-                        )
-                      );
+                      cannotTransformDialog(context, apploc);
                       return;
                     }
                   
@@ -151,20 +145,27 @@ class _TransformPageState extends State<TransformPage> {
     );
   }
 
-  Future<File> _transformAndSaveToTemporary() async{
-    final transformed = await QuadTransform.transform(
-      widget.image, 
-      fController.corners[0] * ratio, 
-      fController.corners[1] * ratio, 
-      fController.corners[2] * ratio,
-      fController.corners[3] * ratio,
-    );
+  Future<File?> _transformAndSaveToTemporary() async{
+    try{
+      final transformed = await QuadTransform.transform(
+        widget.image, 
+        fController.corners[0] * ratio, 
+        fController.corners[1] * ratio, 
+        fController.corners[2] * ratio,
+        fController.corners[3] * ratio,
+      );
 
-    final path = "${(await getTemporaryDirectory()).path}/${generateImageName(format: "jpg")}";
-    final file = File(path);
+      final path = "${(await getTemporaryDirectory()).path}/${generateImageName(format: "jpg")}";
+      final file = File(path);
 
-    await JpgEncode.encodeToFile(file.path, transformed.content, transformed.width, transformed.height, 4); // 4 channels - RGBA
+      await JpgEncode.encodeToFile(file.path, transformed.content, transformed.width, transformed.height, 4); // 4 channels - RGBA
 
-    return file;
+      return file;
+    } on FormatException {
+      cannotTransformDialog(navigatorKey.currentContext!, AppLocalizations.of(navigatorKey.currentContext!)!).then(
+        (_) => Navigator.of(navigatorKey.currentContext!).pop() // pop future builder
+      );
+    }
+    return null;
   }
 }

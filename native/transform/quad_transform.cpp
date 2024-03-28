@@ -39,6 +39,7 @@ double QuadTransform::cameraHeight() const {
 }
 
 bool QuadTransform::canTransform(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
+    try{
     Vector3 A{ p1.x, p1.y, 0. };
     Vector3 D{ p2.x, p2.y, 0. };
     Vector3 C{ p3.x, p3.y, 0. };
@@ -53,12 +54,17 @@ bool QuadTransform::canTransform(Point2D p1, Point2D p2, Point2D p3, Point2D p4)
     if (eq(a, c) && eq(b, d) && eq(a, b)) return true;
 
     return !(eq(a * b, c * d) || eq(b * c, a * d));
+    }
+    catch (const BasicLinearException&){
+        return false;
+    }
 }
 
 int QuadTransform::newWidth() { return neww; }
 int QuadTransform::newHeight() { return newh; }
 
 bool QuadTransform::loadCoordinates(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
+    try{
     Vector3 A{ p1.x, p1.y, 0. };
     Vector3 D{ p2.x, p2.y, 0. };
     Vector3 C{ p3.x, p3.y, 0. };
@@ -124,6 +130,10 @@ bool QuadTransform::loadCoordinates(Point2D p1, Point2D p2, Point2D p3, Point2D 
     neww = xedge.Abs(); newh = yedge.Abs();
 
     return true;
+    }
+    catch (const BasicLinearException&){
+        return false;
+    }
 }
 
 void QuadTransform::process(BitmapSegment& src, BitmapSegment& dst) {

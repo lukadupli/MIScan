@@ -82,16 +82,6 @@ class _BookTransformPageState extends State<BookTransformPage>{
     );
   }
 
-  Future<dynamic> cannotTransformDialog(BuildContext context, AppLocalizations apploc) {
-    return showDialog(
-                  context: context, 
-                  builder: (context) => AlertDialog.adaptive(
-                    title: Text(apploc.cannotTransformTitle),
-                    content: Text(apploc.cannotTransformContent),
-                    actions: [TextButton(child: Text(apploc.ok), onPressed: () => Navigator.of(context).pop())]
-                  )
-                );
-  }
   Future<File?> _transformAndSaveToTemporary(List<Offset> corners) async{
     try{
       final transformed = await BookTransform.transformFromSpline(
