@@ -85,8 +85,8 @@ class Frame extends StatefulWidget{
   /// 
   /// [controller] contains information about corner positions and child's size
   /// 
-  /// Corners are indexed in clockwise order starting from bottom left 
-  /// (note that on the screen they are actually in counterclockwise order starting from top left because (0, 0) coordinate is in upper left corner)
+  /// Corners are indexed in counterclockwise order starting from bottom left 
+  /// (note that on the screen they are actually in clockwise order starting from top left because (0, 0) coordinate is in upper left corner)
   /// 
   /// [onDragStart], [onPositionChange], [onDragEnd] are called with an index (from 0 to 3) to the corner whose position was altered
   /// 

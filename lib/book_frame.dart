@@ -3,6 +3,7 @@ import 'cubic_spline.dart';
 import 'glider.dart';
 import 'helpers.dart';
 
+/// Provides info about [BookFrame] and gives info for constructing a [BookFrame]
 class BookFrameController {
   final int splinePoints;
   final List<Offset> corners;
@@ -11,11 +12,16 @@ class BookFrameController {
   // only upper curve will be shown, I have concluded that having 2 curves for selection is unnecessary
   // all code regarding the other curve is commented
   //late final List<Offset> curvePointsDown;
+
+  // used for repainting
   final notifier = ValueNotifier<bool>(true);
 
   Rect boundary;
   Size get childSize => boundary.size;
 
+  /// [splinePoints] determines how many points can user drag for spline approximating book page curvature,
+  /// [corners] should correspond to corners of the book page,
+  /// [boundary] is the boundary of corresponding [BookFrame] widget
   BookFrameController({required this.splinePoints, required this.corners, required this.boundary}){
     double dx = (corners[1].dx - corners[0].dx) / (splinePoints + 1);
     double dy = (corners[1].dy - corners[0].dy) / (splinePoints + 1);
@@ -29,6 +35,7 @@ class BookFrameController {
   CubicSpline get curveUp => CubicSpline([corners[0], for(final p in curvePointsUp) p, corners[1]]);
   //CubicSpline get curveDown => CubicSpline([corners[3], for(final p in curvePointsDown) p, corners[2]]);
 
+  // notifies listeners through notifier
   void setCurvePointUp(int index, Offset pos){
     curvePointsUp[index] = pos;
     notifier.value = !notifier.value;
@@ -40,7 +47,8 @@ class BookFrameController {
   }*/
 }
 
-/// every other spline selector's delta is multiplied by [splineSelectorUpDownMul]
+/// [splineSelectorDelta] determines how much is draggable part of a spline selector moved down from the actual curve
+/// every other spline selector's delta is multiplied by [splineSelectorUpDownMul] so that draggable parts don't collide (they go in a zig-zag pattern)
 class BookFramePainter extends CustomPainter{
   final BookFrameController controller;
   final double cornerSize;
@@ -122,7 +130,10 @@ class BookFrame extends StatefulWidget{
   final Color splineLineColor;
 
   final Widget child;
-
+  
+  /// Creates a widget which shows a frame which allows the user to select curvature of the book page
+  /// 
+  /// [whenResized] is called when [child]'s size is changed
   const BookFrame({
     super.key, 
     required this.controller, 

@@ -18,6 +18,9 @@ class BookTransformPage extends StatefulWidget{
   final ui.Image image;
   late final BookFrameController controller;
 
+  /// Page for performing book transform
+  /// 
+  /// This is only called from [TransformPage] and [fController] is a copy of [TransformPage]'s [FrameController]
   BookTransformPage({super.key, required this.image, required FrameController fController}){
     controller = BookFrameController(splinePoints: 4, corners: fController.corners, boundary: fController.boundary);
   }

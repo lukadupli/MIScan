@@ -2,9 +2,10 @@
 
 Line::Line(const Vector3& point1, const Vector3& point2) {
 	base = point1;
-	dir = (point2 - point1).Unit();
-
+	dir = point2 - point1;
 	basicLinearAssert(!dir.IsNull());
+
+	dir = dir.Unit();
 }
 
 double Line::Distance(const Vector3& point) const{
