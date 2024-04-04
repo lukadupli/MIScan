@@ -14,7 +14,7 @@ void Bitmap::setPadding(bool padded) {
     if (padded && stride % 4) stride += 4 - (stride % 4);
 }
 bool Bitmap::inRange(int x, int y, int channel) {
-    return x < width && y < height && channel < channels;
+    return x >= 0 && x < width && y >= 0 && y < height && channel >= 0 && channel < channels;
 }
 unsigned char& Bitmap::operator()(int x, int y, int channel) {
     return data[y * stride + x * channels + channel];

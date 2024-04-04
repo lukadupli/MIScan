@@ -23,6 +23,13 @@
       "artifactName": "basic_linear",
       "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\android\\app\\.cxx\\Debug\\11161i1l\\x86\\libbasic_linear.a"
     },
+    "console_print::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "console_print",
+      "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\x86\\libconsole_print.so",
+      "runtimeFiles": []
+    },
     "image_processing::@6890427a1f51a3e7e1df": {
       "toolchain": "toolchain",
       "abi": "x86",
@@ -48,7 +55,9 @@
       "abi": "x86",
       "artifactName": "straighten",
       "output": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\x86\\libstraighten.so",
-      "runtimeFiles": []
+      "runtimeFiles": [
+        "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\x86\\libconsole_print.so"
+      ]
     },
     "transform::@6890427a1f51a3e7e1df": {
       "toolchain": "toolchain",

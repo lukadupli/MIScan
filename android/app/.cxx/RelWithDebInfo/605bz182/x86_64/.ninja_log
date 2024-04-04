@@ -27,3 +27,10 @@
 25	1284	733423668	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/book_transform.cpp.o	d0e58386214586cf
 1285	1404	733423668	libtransform.a	411285ae5924fcb9
 1404	1626	733423668	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/RelWithDebInfo/605bz182/obj/x86_64/libstraighten.so	aeeea1c12af11568
+5	713	733950206	CMakeFiles/basic_linear.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/basic_linear/line.cpp.o	b77e29a60bce289f
+713	841	733950206	libbasic_linear.a	13e3e170d8bbaab6
+841	1123	733950207	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/RelWithDebInfo/605bz182/obj/x86_64/libstraighten.so	aeeea1c12af11568
+9	720	733960589	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/bitmap.cpp.o	926002ae547ff8cb
+4	947	733960590	CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/book_transform.cpp.o	d0e58386214586cf
+947	1045	733960590	libtransform.a	411285ae5924fcb9
+1045	1235	733960590	C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/RelWithDebInfo/605bz182/obj/x86_64/libstraighten.so	aeeea1c12af11568

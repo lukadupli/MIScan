@@ -36,10 +36,21 @@ Vector3 Intersection(const Line& l1, const Line& l2) {
 	else lambda2 = num / denom;
 
 	basicLinearAssert(lambda1 != SIGNAL || lambda2 != SIGNAL);
-	if (lambda1 == SIGNAL) return l1.base + lambda2 * l1.dir;
-	if (lambda2 == SIGNAL) return l1.base + lambda1 * l1.dir;
+	double lambda;
+	if (lambda1 == SIGNAL) lambda = lambda2;
+	else if (lambda2 == SIGNAL) lambda = lambda1;
+	else {
+		basicLinearAssert(eq(lambda1, lambda2));
+		lambda = lambda1;
+	}
 
-	basicLinearAssert(eq(lambda1, lambda2));
+	// check if l1.base + lambda * l1.dir is on l2
+	Vector3 v = (l1.base + lambda * l1.dir - l2.base);
+	if (!v.IsNull()) {
+		v = v.Unit();
+		Vector3 u = l2.dir.Unit();
+		basicLinearAssert((eq(v.x, u.x) && eq(v.y, u.y) && eq(v.z, u.z)) || (eq(-v.x, u.x) && eq(-v.y, u.y) && eq(-v.z, u.z)));
+	}
 
 	return l1.base + lambda1 * l1.dir;
 }

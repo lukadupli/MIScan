@@ -35,42 +35,6 @@ CONFIGURATION = Debug
 include CMakeFiles/rules.ninja
 
 # =============================================================================
-# Object build statements for SHARED_LIBRARY target jpg_encode
-
-
-#############################################
-# Order-only phony target for jpg_encode
-
-build cmake_object_order_depends_target_jpg_encode: phony || cmake_object_order_depends_target_jpeg_compressor
-
-build CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o: CXX_COMPILER__jpg_encode_Debug C$:/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp || cmake_object_order_depends_target_jpg_encode
-  DEFINES = -Djpg_encode_EXPORTS
-  DEP_FILE = CMakeFiles\jpg_encode.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\jpg_encode\jpg_encode.cpp.o.d
-  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
-  OBJECT_DIR = CMakeFiles\jpg_encode.dir
-  OBJECT_FILE_DIR = CMakeFiles\jpg_encode.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\jpg_encode
-
-
-# =============================================================================
-# Link build statements for SHARED_LIBRARY target jpg_encode
-
-
-#############################################
-# Link the shared library C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\11161i1l\obj\x86\libjpg_encode.so
-
-build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libjpg_encode.so: CXX_SHARED_LIBRARY_LINKER__jpg_encode_Debug CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o | libjpeg_compressor.a || libjpeg_compressor.a
-  LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
-  LINK_FLAGS = -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments
-  LINK_LIBRARIES = libjpeg_compressor.a  -latomic -lm
-  OBJECT_DIR = CMakeFiles\jpg_encode.dir
-  POST_BUILD = cd .
-  PRE_LINK = cd .
-  SONAME = libjpg_encode.so
-  SONAME_FLAG = -Wl,-soname,
-  TARGET_FILE = C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\11161i1l\obj\x86\libjpg_encode.so
-  TARGET_PDB = jpg_encode.so.dbg
-
-# =============================================================================
 # Object build statements for STATIC_LIBRARY target basic_linear
 
 
@@ -120,13 +84,49 @@ build libbasic_linear.a: CXX_STATIC_LIBRARY_LINKER__basic_linear_Debug CMakeFile
   TARGET_PDB = basic_linear.a.dbg
 
 # =============================================================================
+# Object build statements for SHARED_LIBRARY target jpg_encode
+
+
+#############################################
+# Order-only phony target for jpg_encode
+
+build cmake_object_order_depends_target_jpg_encode: phony || cmake_object_order_depends_target_jpeg_compressor
+
+build CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o: CXX_COMPILER__jpg_encode_Debug C$:/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp || cmake_object_order_depends_target_jpg_encode
+  DEFINES = -Djpg_encode_EXPORTS
+  DEP_FILE = CMakeFiles\jpg_encode.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\jpg_encode\jpg_encode.cpp.o.d
+  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
+  OBJECT_DIR = CMakeFiles\jpg_encode.dir
+  OBJECT_FILE_DIR = CMakeFiles\jpg_encode.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\jpg_encode
+
+
+# =============================================================================
+# Link build statements for SHARED_LIBRARY target jpg_encode
+
+
+#############################################
+# Link the shared library C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\11161i1l\obj\x86\libjpg_encode.so
+
+build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libjpg_encode.so: CXX_SHARED_LIBRARY_LINKER__jpg_encode_Debug CMakeFiles/jpg_encode.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/jpg_encode/jpg_encode.cpp.o | libjpeg_compressor.a || libjpeg_compressor.a
+  LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
+  LINK_FLAGS = -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments
+  LINK_LIBRARIES = libjpeg_compressor.a  -latomic -lm
+  OBJECT_DIR = CMakeFiles\jpg_encode.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  SONAME = libjpg_encode.so
+  SONAME_FLAG = -Wl,-soname,
+  TARGET_FILE = C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\11161i1l\obj\x86\libjpg_encode.so
+  TARGET_PDB = jpg_encode.so.dbg
+
+# =============================================================================
 # Object build statements for STATIC_LIBRARY target transform
 
 
 #############################################
 # Order-only phony target for transform
 
-build cmake_object_order_depends_target_transform: phony || cmake_object_order_depends_target_basic_linear
+build cmake_object_order_depends_target_transform: phony || cmake_object_order_depends_target_basic_linear cmake_object_order_depends_target_console_print
 
 build CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/bitmap.cpp.o: CXX_COMPILER__transform_Debug C$:/Users/lukad/Desktop/flutterapps/MIScan/native/transform/bitmap.cpp || cmake_object_order_depends_target_transform
   DEP_FILE = CMakeFiles\transform.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\transform\bitmap.cpp.o.d
@@ -160,7 +160,7 @@ build CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/
 #############################################
 # Link the static library libtransform.a
 
-build libtransform.a: CXX_STATIC_LIBRARY_LINKER__transform_Debug CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/bitmap.cpp.o CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/parallel_for.cpp.o CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/quad_transform.cpp.o CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/book_transform.cpp.o || libbasic_linear.a
+build libtransform.a: CXX_STATIC_LIBRARY_LINKER__transform_Debug CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/bitmap.cpp.o CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/parallel_for.cpp.o CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/quad_transform.cpp.o CMakeFiles/transform.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/transform/book_transform.cpp.o || C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libconsole_print.so libbasic_linear.a C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libconsole_print.so
   LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
   OBJECT_DIR = CMakeFiles\transform.dir
   POST_BUILD = cd .
@@ -235,7 +235,7 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 #############################################
 # Order-only phony target for straighten
 
-build cmake_object_order_depends_target_straighten: phony || cmake_object_order_depends_target_basic_linear cmake_object_order_depends_target_transform
+build cmake_object_order_depends_target_straighten: phony || cmake_object_order_depends_target_basic_linear cmake_object_order_depends_target_console_print cmake_object_order_depends_target_transform
 
 build CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/straighten/exports.cpp.o: CXX_COMPILER__straighten_Debug C$:/Users/lukad/Desktop/flutterapps/MIScan/native/straighten/exports.cpp || cmake_object_order_depends_target_straighten
   DEFINES = -Dstraighten_EXPORTS
@@ -252,10 +252,10 @@ build CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native
 #############################################
 # Link the shared library C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\11161i1l\obj\x86\libstraighten.so
 
-build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libstraighten.so: CXX_SHARED_LIBRARY_LINKER__straighten_Debug CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/straighten/exports.cpp.o | libtransform.a libbasic_linear.a || libbasic_linear.a libtransform.a
+build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libstraighten.so: CXX_SHARED_LIBRARY_LINKER__straighten_Debug CMakeFiles/straighten.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/straighten/exports.cpp.o | libtransform.a C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libconsole_print.so libbasic_linear.a || C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libconsole_print.so libbasic_linear.a libtransform.a
   LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
   LINK_FLAGS = -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments
-  LINK_LIBRARIES = libtransform.a  libbasic_linear.a  -latomic -lm
+  LINK_LIBRARIES = libtransform.a  C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libconsole_print.so  libbasic_linear.a  -latomic -lm
   OBJECT_DIR = CMakeFiles\straighten.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
@@ -301,15 +301,55 @@ build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Deb
   TARGET_PDB = image_processing.so.dbg
 
 # =============================================================================
+# Object build statements for SHARED_LIBRARY target console_print
+
+
+#############################################
+# Order-only phony target for console_print
+
+build cmake_object_order_depends_target_console_print: phony || CMakeFiles/console_print.dir
+
+build CMakeFiles/console_print.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/console_print/console_print.cpp.o: CXX_COMPILER__console_print_Debug C$:/Users/lukad/Desktop/flutterapps/MIScan/native/console_print/console_print.cpp || cmake_object_order_depends_target_console_print
+  DEFINES = -Dconsole_print_EXPORTS
+  DEP_FILE = CMakeFiles\console_print.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\console_print\console_print.cpp.o.d
+  FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC
+  OBJECT_DIR = CMakeFiles\console_print.dir
+  OBJECT_FILE_DIR = CMakeFiles\console_print.dir\C_\Users\lukad\Desktop\flutterapps\MIScan\native\console_print
+
+
+# =============================================================================
+# Link build statements for SHARED_LIBRARY target console_print
+
+
+#############################################
+# Link the shared library C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\11161i1l\obj\x86\libconsole_print.so
+
+build C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libconsole_print.so: CXX_SHARED_LIBRARY_LINKER__console_print_Debug CMakeFiles/console_print.dir/C_/Users/lukad/Desktop/flutterapps/MIScan/native/console_print/console_print.cpp.o
+  LANGUAGE_COMPILE_FLAGS = -Wall -Wextra -O3 -fno-limit-debug-info
+  LINK_FLAGS = -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments
+  LINK_LIBRARIES = -latomic -lm
+  OBJECT_DIR = CMakeFiles\console_print.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  SONAME = libconsole_print.so
+  SONAME_FLAG = -Wl,-soname,
+  TARGET_FILE = C:\Users\lukad\Desktop\flutterapps\MIScan\build\app\intermediates\cxx\Debug\11161i1l\obj\x86\libconsole_print.so
+  TARGET_PDB = console_print.so.dbg
+
+# =============================================================================
 # Target aliases.
 
 build basic_linear: phony libbasic_linear.a
+
+build console_print: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libconsole_print.so
 
 build image_processing: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libimage_processing.so
 
 build jpeg_compressor: phony libjpeg_compressor.a
 
 build jpg_encode: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libjpg_encode.so
+
+build libconsole_print.so: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libconsole_print.so
 
 build libimage_processing.so: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libimage_processing.so
 
@@ -329,7 +369,7 @@ build transform: phony libtransform.a
 #############################################
 # Folder: C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86
 
-build all: phony C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libjpg_encode.so libbasic_linear.a libtransform.a libjpeg_compressor.a C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libstraighten.so C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libimage_processing.so
+build all: phony libbasic_linear.a C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libjpg_encode.so libtransform.a libjpeg_compressor.a C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libstraighten.so C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libimage_processing.so C$:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libconsole_print.so
 
 # =============================================================================
 # Built-in targets

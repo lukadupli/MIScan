@@ -264,7 +264,7 @@ jpg_encode_LIB_DEPENDS:STATIC=general;jpeg_compressor;
 straighten_LIB_DEPENDS:STATIC=general;transform;
 
 //Dependencies for the target
-transform_LIB_DEPENDS:STATIC=general;basic_linear;
+transform_LIB_DEPENDS:STATIC=general;console_print;general;basic_linear;
 
 
 ########################
