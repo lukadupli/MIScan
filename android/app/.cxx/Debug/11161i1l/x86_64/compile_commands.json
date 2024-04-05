@@ -1,6 +1,11 @@
 [
 {
   "directory": "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86_64",
+  "command": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android21 --gcc-toolchain=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Djpg_encode_EXPORTS -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC -o CMakeFiles\\jpg_encode.dir\\C_\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\jpg_encode\\jpg_encode.cpp.o -c C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\jpg_encode\\jpg_encode.cpp",
+  "file": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\jpg_encode\\jpg_encode.cpp"
+},
+{
+  "directory": "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86_64",
   "command": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android21 --gcc-toolchain=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC -o CMakeFiles\\basic_linear.dir\\C_\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\basic_linear\\helpers.cpp.o -c C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\basic_linear\\helpers.cpp",
   "file": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\basic_linear\\helpers.cpp"
 },
@@ -18,11 +23,6 @@
   "directory": "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86_64",
   "command": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android21 --gcc-toolchain=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC -o CMakeFiles\\basic_linear.dir\\C_\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\basic_linear\\vector.cpp.o -c C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\basic_linear\\vector.cpp",
   "file": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\basic_linear\\vector.cpp"
-},
-{
-  "directory": "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86_64",
-  "command": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android21 --gcc-toolchain=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Djpg_encode_EXPORTS -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC -o CMakeFiles\\jpg_encode.dir\\C_\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\jpg_encode\\jpg_encode.cpp.o -c C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\jpg_encode\\jpg_encode.cpp",
-  "file": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\jpg_encode\\jpg_encode.cpp"
 },
 {
   "directory": "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86_64",
@@ -63,10 +63,5 @@
   "directory": "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86_64",
   "command": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android21 --gcc-toolchain=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dimage_processing_EXPORTS -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC -o CMakeFiles\\image_processing.dir\\C_\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\image_processing\\image_processing.cpp.o -c C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\image_processing\\image_processing.cpp",
   "file": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\image_processing\\image_processing.cpp"
-},
-{
-  "directory": "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86_64",
-  "command": "C:\\Users\\lukad\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android21 --gcc-toolchain=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/lukad/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dconsole_print_EXPORTS -Wall -Wextra -O3 -fno-limit-debug-info  -fPIC -o CMakeFiles\\console_print.dir\\C_\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\console_print\\console_print.cpp.o -c C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\console_print\\console_print.cpp",
-  "file": "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\native\\console_print\\console_print.cpp"
 }
 ]

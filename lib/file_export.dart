@@ -111,9 +111,8 @@ class FileExport{
   }
 
   static void _copyWithMessage(File file, String newPath, String exportConfirmation) {
-    // this is like this to prevent OS errno 17: File exists error
     final dst = File(newPath);
-    dst.createSync();
+    if(!dst.existsSync()) dst.createSync();
     dst.writeAsBytesSync(file.readAsBytesSync());
     
     final context = navigatorKey.currentContext!;

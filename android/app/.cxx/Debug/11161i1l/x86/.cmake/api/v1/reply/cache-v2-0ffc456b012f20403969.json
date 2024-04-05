@@ -11,7 +11,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86_64"
+			"value" : "x86"
 		},
 		{
 			"name" : "ANDROID_NDK",
@@ -63,7 +63,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86_64"
+			"value" : "x86"
 		},
 		{
 			"name" : "CMAKE_ANDROID_NDK",
@@ -151,7 +151,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86_64"
+			"value" : "c:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -695,7 +695,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\x86_64"
+			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\x86"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -967,7 +967,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\x86_64"
+			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\x86"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1239,7 +1239,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86_64"
+			"value" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86"
 		},
 		{
 			"name" : "MIScan_SOURCE_DIR",
@@ -1263,7 +1263,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86_64"
+			"value" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86"
 		},
 		{
 			"name" : "Project_SOURCE_DIR",
@@ -1323,7 +1323,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "general;console_print;general;basic_linear;"
+			"value" : "general;basic_linear;"
 		}
 	],
 	"kind" : "cache",

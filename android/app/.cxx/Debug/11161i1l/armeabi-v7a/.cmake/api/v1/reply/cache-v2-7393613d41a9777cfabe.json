@@ -1323,7 +1323,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "general;console_print;general;basic_linear;"
+			"value" : "general;basic_linear;"
 		}
 	],
 	"kind" : "cache",

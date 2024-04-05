@@ -191,12 +191,14 @@ class _BookFrameState extends State<BookFrame>{
     double delta = widget.splineSelectorDelta;
     if(index % 2 == 1) delta *= widget.splineSelectorUpDownMul;
 
+    final bound = widget.controller.boundary.topLeft & Size(widget.controller.boundary.width, widget.controller.boundary.height - delta);
+
     return Glider(
       key: GlobalKey(),
       startPosition: widget.controller.curvePointsUp[index],
       positionOffset: Offset(widget.splineSelectorSize / 2, widget.splineSelectorSize / 2) * hitboxMul - Offset(0.0, delta),
       size: size,
-      boundary: widget.controller.boundary,
+      boundary: bound,
       onPositionChange: (pos) => widget.controller.setCurvePointUp(index, pos),
       child: Container(
         width: widget.splineSelectorSize * hitboxMul,

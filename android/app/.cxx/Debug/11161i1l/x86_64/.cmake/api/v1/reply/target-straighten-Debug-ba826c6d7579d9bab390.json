@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86/libstraighten.so"
+			"path" : "C:/Users/lukad/Desktop/flutterapps/MIScan/build/app/intermediates/cxx/Debug/11161i1l/obj/x86_64/libstraighten.so"
 		}
 	],
 	"backtrace" : 1,
@@ -31,7 +31,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 58,
+				"line" : 48,
 				"parent" : 0
 			}
 		]
@@ -71,10 +71,6 @@
 		{
 			"backtrace" : 2,
 			"id" : "transform::@6890427a1f51a3e7e1df"
-		},
-		{
-			"backtrace" : 2,
-			"id" : "console_print::@6890427a1f51a3e7e1df"
 		}
 	],
 	"id" : "straighten::@6890427a1f51a3e7e1df",
@@ -89,10 +85,6 @@
 			{
 				"backtrace" : 2,
 				"fragment" : "libtransform.a",
-				"role" : "libraries"
-			},
-			{
-				"fragment" : "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\x86\\libconsole_print.so",
 				"role" : "libraries"
 			},
 			{

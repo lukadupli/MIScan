@@ -11,7 +11,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "ANDROID_NDK",
@@ -63,7 +63,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_ANDROID_NDK",
@@ -151,7 +151,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86"
+			"value" : "c:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -695,7 +695,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\x86"
+			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -967,7 +967,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\x86"
+			"value" : "C:\\Users\\lukad\\Desktop\\flutterapps\\MIScan\\build\\app\\intermediates\\cxx\\Debug\\11161i1l\\obj\\arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1230,6 +1230,18 @@
 			"value" : "FALSE"
 		},
 		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenCV",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding OpenCV"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[C:/OpenCV-android-sdk][v4.9.0()]"
+		},
+		{
 			"name" : "MIScan_BINARY_DIR",
 			"properties" : 
 			[
@@ -1239,7 +1251,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86"
+			"value" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/arm64-v8a"
 		},
 		{
 			"name" : "MIScan_SOURCE_DIR",
@@ -1254,6 +1266,18 @@
 			"value" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app"
 		},
 		{
+			"name" : "OpenCV_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for OpenCV."
+				}
+			],
+			"type" : "PATH",
+			"value" : "OpenCV_DIR-NOTFOUND"
+		},
+		{
 			"name" : "Project_BINARY_DIR",
 			"properties" : 
 			[
@@ -1263,7 +1287,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/x86"
+			"value" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/Debug/11161i1l/arm64-v8a"
 		},
 		{
 			"name" : "Project_SOURCE_DIR",
@@ -1323,7 +1347,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "general;console_print;general;basic_linear;"
+			"value" : "general;basic_linear;"
 		}
 	],
 	"kind" : "cache",
