@@ -7,6 +7,7 @@ import 'helpers.dart';
 class BookFrameController {
   final int splinePoints;
   final List<Offset> corners;
+  
   late final List<Offset> curvePointsUp;
 
   // only upper curve will be shown, I have concluded that having 2 curves for selection is unnecessary
