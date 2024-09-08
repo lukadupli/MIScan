@@ -1,4 +1,4 @@
-package com.example.straighten
+package com.miscan.android
 
 import io.flutter.embedding.android.FlutterActivity
 

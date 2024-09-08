@@ -55,7 +55,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "image_processing::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-image_processing-RelWithDebInfo-8ef080c1595dcfaed49b.json",
+					"jsonFile" : "target-image_processing-RelWithDebInfo-6bdfe327b4b87b6e9220.json",
 					"name" : "image_processing",
 					"projectIndex" : 0
 				},
@@ -69,14 +69,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "jpg_encode::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-jpg_encode-RelWithDebInfo-fbf612ecf2ab685ad52d.json",
+					"jsonFile" : "target-jpg_encode-RelWithDebInfo-b70bfe363b7675205f5a.json",
 					"name" : "jpg_encode",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "straighten::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-straighten-RelWithDebInfo-0ec78c9590cb6f8f84a3.json",
+					"jsonFile" : "target-straighten-RelWithDebInfo-f6863617cd5f6812dbfe.json",
 					"name" : "straighten",
 					"projectIndex" : 0
 				},
@@ -93,7 +93,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/RelWithDebInfo/605bz182/x86_64",
+		"build" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app/.cxx/RelWithDebInfo/605bz182/x86",
 		"source" : "C:/Users/lukad/Desktop/flutterapps/MIScan/android/app"
 	},
 	"version" : 
