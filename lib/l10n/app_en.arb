@@ -172,5 +172,32 @@
     "@contrast": {"description": "Contrast in image processing"},
 
     "brightness": "Brightness",
-    "@brightness": {"description": "Brightness in image processing"}
+    "@brightness": {"description": "Brightness in image processing"},
+
+    "welcome": "Welcome!",
+    "@welcome": {"description": "Introduction screen greeting"},
+
+    "aboutApp": "MIScan is a lightweight app for fast scanning of documents and book pages.",
+    "@aboutApp": {"description": "Short description of the app"},
+
+    "documentScanningTitle": "Document scanning",
+    "@documentScanningTitle": {"description": "Title of an intro screen explaining the document scanning function."},
+
+    "documentScanningContent": "To scan a flat piece of paper select its corners by dragging the black circles and press the check button.",
+    "@documentScanningContent": {"description": "Content of an intro screen explaining the document scanning function."},
+
+    "bookPageScanningTitle": "Book page scanning",
+    "@bookPageScanningTitle": {"description": "Title of intro screens explaining the book page scanning function."},
+
+    "bookPageScanningContent1": "To scan a curved page of paper first select its corners and press the book button ...",
+    "@bookPageScanningContent1": {"description": "Content of the first intro screen about book page scanning."},
+
+    "bookPageScanningContent2": "... then, by dragging the white circles, fit the curve to match the curvature of the page and press the check button.",
+    "@bookPageScanningContent2": {"description": "Content of the second intro screen about book page scanning."},
+
+    "next": "Next",
+    "@next": {"description": "Intro screen button."},
+
+    "done": "Done",
+    "@done": {"description": "Intro screen button."}
 }

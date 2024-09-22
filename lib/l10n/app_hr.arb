@@ -37,5 +37,14 @@
     "cannotTransformContent": "Nemoguće je transformirati sliku iz odabranih vrhova",
     "ok": "OK",
     "contrast": "Kontrast",
-    "brightness": "Svjetlina"
+    "brightness": "Svjetlina",
+    "welcome": "Dobrodošli!",
+    "aboutApp": "MIScan je aplikacija za brzo i jednostavno skeniranje dokumenata i stranica knjiga.",
+    "documentScanningTitle": "Skeniranje dokumenata",
+    "documentScanningContent": "Kako biste skenirali dokument, povlačenjem crnih krugova odaberite kutove dokumenta te pritisnite gumb s kvačicom.",
+    "bookPageScanningTitle": "Skeniranje stranice knjige",
+    "bookPageScanningContent1": "Kako biste skenirali stranicu knjige prvo odaberite kutove stranice te pritisnite gumb s ikonom knjige ...",
+    "bookPageScanningContent2": "... zatim, povlačeći bijele kružiće, namjestite krivulju tako da se podudara s zakrivljenim rubom stranice te pritisnite gumb s kvačicom.",
+    "next": "Sljedeće",
+    "done": "Gotovo"
 }
