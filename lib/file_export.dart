@@ -21,7 +21,8 @@ class FileExport{
     required String exportConfirmTitle, 
     required String exportConfirmDescription,
     required String exportConfirmation,
-    bool askForPermission = false
+    bool askForPermission = false,
+    Future Function(String, String)? saveFunction,
   }) async {
     return await showDialog(
       context: navigatorKey.currentContext!,
@@ -34,9 +35,9 @@ class FileExport{
             onPressed: () {
               Navigator.of(context).pop(); 
               if(askForPermission) {
-                _exportWithPermission(file, directory, exportConfirmation);
+                _exportWithPermission(file, directory, exportConfirmation, saveFunction);
               } else {
-                _export(file, directory, exportConfirmation);
+                _export(file, directory, exportConfirmation, saveFunction);
               }
             }
           ),
@@ -47,7 +48,7 @@ class FileExport{
   }
 
   static const permission = Permission.manageExternalStorage;
-  static Future _exportWithPermission(File file, Directory dir, String confirmation) async{
+  static Future _exportWithPermission(File file, Directory dir, String confirmation, Future Function(String, String)? saveFunction) async{
     var status = await permission.request();
     bool cancelled = false;
     
@@ -85,10 +86,10 @@ class FileExport{
       status = await permission.request();
     }
 
-    _export(file, dir, confirmation);
+    _export(file, dir, confirmation, saveFunction);
   }
 
-  static Future _export(File file, Directory dir, String confirmation) async{
+  static Future _export(File file, Directory dir, String confirmation, Future Function(String, String)? saveFunction) async{
     final name = getName(file.path);
     final newPath = "${dir.path}/$name";
 
@@ -99,25 +100,35 @@ class FileExport{
           title: Text(AppLocalizations.of(context)!.fileExistsTitle),
           content: Text(AppLocalizations.of(context)!.fileExistsContent(name)),
           actions: [
-            TextButton(child: Text(AppLocalizations.of(context)!.yes), onPressed: () {Navigator.of(context).pop(); _copyWithMessage(file, newPath, confirmation);}),
+            TextButton(child: Text(AppLocalizations.of(context)!.yes), onPressed: () {Navigator.of(context).pop(); _copyWithMessage(file, newPath, confirmation, saveFunction);}),
             TextButton(child: Text(AppLocalizations.of(context)!.cancel), onPressed: () => Navigator.of(context).pop()),
           ]
         )
       );
     }
     else{
-      _copyWithMessage(file, newPath, confirmation);
+      _copyWithMessage(file, newPath, confirmation, saveFunction);
     }
   }
 
-  static void _copyWithMessage(File file, String newPath, String exportConfirmation) {
-    final dst = File(newPath);
-    if(!dst.existsSync()) dst.createSync();
-    dst.writeAsBytesSync(file.readAsBytesSync());
-    
-    final context = navigatorKey.currentContext!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(exportConfirmation)) 
-    );
+  static void _copyWithMessage(File file, String newPath, String exportConfirmation, Future Function(String, String)? saveFunction) {
+    if(saveFunction == null){
+      final dst = File(newPath);
+      if(!dst.existsSync()) dst.createSync();
+      dst.writeAsBytesSync(file.readAsBytesSync());
+      
+      final context = navigatorKey.currentContext!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(exportConfirmation)) 
+      );
+    }
+    else{
+      saveFunction(file.path, newPath).then((_) {
+        final context = navigatorKey.currentContext!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(exportConfirmation)) 
+        );
+      });
+    }
   }
 }

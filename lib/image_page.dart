@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 
 import 'edit_page.dart';
 import 'file_export.dart';
@@ -111,6 +112,14 @@ class _ImagePageState extends State<ImagePage> {
                       exportConfirmTitle: apploc.exportConfirmTitle,
                       exportConfirmDescription: apploc.galleryExportConfirmContent(getName(imageFile.path)),
                       exportConfirmation: apploc.galleryExportConfirmation(getName(imageFile.path)),
+                      saveFunction: (path1, path2) async{
+                        await SaverGallery.saveFile(
+                          file: path1, 
+                          name: getName(path2), 
+                          androidRelativePath: "Pictures/${Locations.galleryAlbumName}",
+                          androidExistNotSave: false,
+                        );
+                      }
                     ),
                   ),
                   IconButton(

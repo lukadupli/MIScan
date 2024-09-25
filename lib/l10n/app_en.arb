@@ -62,6 +62,9 @@
     "galleryExportTooltip": "Export to gallery",
     "@galleryExportTooltip": {"description": "Message shown when export to gallery button is long pressed"},
 
+    "downloadTooltip": "Download",
+    "@downloadTooltip": {"description": "Message shown when download button is long pressed"},
+
     "pdfTooltip": "Create a PDF file",
     "@pdfTooltip": {"description": "Message shown when PDF button is long pressed"}, 
 
@@ -103,7 +106,7 @@
             }
         }
     },
-    "downloadsExportConfirmContent": "Are you sure you want to export file '{filename}' to downloads?",
+    "downloadsExportConfirmContent": "Are you sure you want to download file '{filename}'?",
     "@downloadsExportConfirmContent": {
         "description": "Content of a dialog asking user to confirm export to downloads",
         "placeholders":{
@@ -137,7 +140,7 @@
             }
         }
     },
-    "downloadsExportConfirmation": "File '{filename}' exported to downloads",
+    "downloadsExportConfirmation": "File '{filename}' downloaded",
     "@downloadsExportConfirmation": {
         "description": "Confirmation message when export to downloads is done",
         "placeholders": {
