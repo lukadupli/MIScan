@@ -112,6 +112,7 @@ class _ImagePageState extends State<ImagePage> {
                       exportConfirmTitle: apploc.exportConfirmTitle,
                       exportConfirmDescription: apploc.galleryExportConfirmContent(getName(imageFile.path)),
                       exportConfirmation: apploc.galleryExportConfirmation(getName(imageFile.path)),
+                      warnIfExists: false,
                       saveFunction: (path1, path2) async{
                         await SaverGallery.saveFile(
                           file: path1, 

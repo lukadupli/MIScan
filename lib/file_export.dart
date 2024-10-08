@@ -22,6 +22,7 @@ class FileExport{
     required String exportConfirmDescription,
     required String exportConfirmation,
     bool askForPermission = false,
+    bool warnIfExists = true,
     Future Function(String, String)? saveFunction,
   }) async {
     return await showDialog(
@@ -35,9 +36,9 @@ class FileExport{
             onPressed: () {
               Navigator.of(context).pop(); 
               if(askForPermission) {
-                _exportWithPermission(file, directory, exportConfirmation, saveFunction);
+                _exportWithPermission(file, directory, exportConfirmation, warnIfExists, saveFunction);
               } else {
-                _export(file, directory, exportConfirmation, saveFunction);
+                _export(file, directory, exportConfirmation, warnIfExists, saveFunction);
               }
             }
           ),
@@ -48,7 +49,7 @@ class FileExport{
   }
 
   static const permission = Permission.manageExternalStorage;
-  static Future _exportWithPermission(File file, Directory dir, String confirmation, Future Function(String, String)? saveFunction) async{
+  static Future _exportWithPermission(File file, Directory dir, String confirmation, bool warnIfExists, Future Function(String, String)? saveFunction) async{
     var status = await permission.request();
     bool cancelled = false;
     
@@ -86,28 +87,34 @@ class FileExport{
       status = await permission.request();
     }
 
-    _export(file, dir, confirmation, saveFunction);
+    await _export(file, dir, confirmation, warnIfExists, saveFunction);
+
   }
 
-  static Future _export(File file, Directory dir, String confirmation, Future Function(String, String)? saveFunction) async{
+  static Future _export(File file, Directory dir, String confirmation, bool warnIfExists, Future Function(String, String)? saveFunction) async{
     final name = getName(file.path);
     final newPath = "${dir.path}/$name";
 
-    if(await File(newPath).exists()){
-      showDialog(
-        context: navigatorKey.currentContext!,
-        builder: (context) => AlertDialog(
-          title: Text(AppLocalizations.of(context)!.fileExistsTitle),
-          content: Text(AppLocalizations.of(context)!.fileExistsContent(name)),
-          actions: [
-            TextButton(child: Text(AppLocalizations.of(context)!.yes), onPressed: () {Navigator.of(context).pop(); _copyWithMessage(file, newPath, confirmation, saveFunction);}),
-            TextButton(child: Text(AppLocalizations.of(context)!.cancel), onPressed: () => Navigator.of(context).pop()),
-          ]
-        )
-      );
+    if(!warnIfExists){
+      _copyWithMessage(file, newPath, confirmation, saveFunction);
     }
     else{
-      _copyWithMessage(file, newPath, confirmation, saveFunction);
+      if(await File(newPath).exists()){
+        showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) => AlertDialog(
+            title: Text(AppLocalizations.of(context)!.fileExistsTitle),
+            content: Text(AppLocalizations.of(context)!.fileExistsContent(name)),
+            actions: [
+              TextButton(child: Text(AppLocalizations.of(context)!.yes), onPressed: () {Navigator.of(context).pop(); _copyWithMessage(file, newPath, confirmation, saveFunction);}),
+              TextButton(child: Text(AppLocalizations.of(context)!.cancel), onPressed: () => Navigator.of(context).pop()),
+            ]
+          )
+        );
+      }
+      else{
+        _copyWithMessage(file, newPath, confirmation, saveFunction);
+      }
     }
   }
 

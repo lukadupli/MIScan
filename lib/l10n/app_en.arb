@@ -150,6 +150,10 @@
             }
         }
     },
+    "exportFailed": "File couldn't be exported. Try changing the name of the file.",
+    "@exportFailed": {
+        "description": "Message shown when export fails."
+    },
 
     "loading": "Loading",
     "@loading": {"description": "Loading page text"},

@@ -31,6 +31,7 @@
     "tryAgain": "Pokušaj ponovo",
     "galleryExportConfirmation": "Datoteka '{filename}' uspješno izvedena u galeriju",
     "downloadsExportConfirmation": "Datoteka '{filename}' uspješno preuzeta",
+    "exportFailed": "Datoteku nije moguće izvesti. Pokušajte promijeniti naziv datoteke.",
     "loading": "Učitavanje",
     "transformPageTitle": "Odaberi vrhove",
     "bookTransformPageTitle": "Odaberi krivulju",
