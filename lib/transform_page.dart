@@ -3,7 +3,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:miscan/l10n/app_localizations.dart';
 import 'book_transform_page.dart';
 import 'helpers.dart';
 import 'corner_showcase.dart';

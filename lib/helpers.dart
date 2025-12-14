@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:miscan/l10n/app_localizations.dart';
 
 /// Scales [value] from range [oldMin], [oldMax] to range [newMin], [newMax]
 double scale(double value, double oldMin, double oldMax, double newMin, double newMax){

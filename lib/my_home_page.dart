@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:miscan/l10n/app_localizations.dart';
 
 import 'dart:io';
 import 'dart:ui' as ui;

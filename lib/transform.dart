@@ -2,7 +2,8 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'dart:io';
 
-import 'package:bitmap/bitmap.dart';
+//import 'package:bitmap/bitmap.dart';
+import 'bitmap.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 

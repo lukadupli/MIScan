@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:native_exif/native_exif.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:miscan/l10n/app_localizations.dart';
 import 'jpg_process.dart';
 import 'loading_page.dart';
 import 'main.dart';

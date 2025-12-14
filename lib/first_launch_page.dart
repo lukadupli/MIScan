@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:miscan/l10n/app_localizations.dart';
 
 import 'my_home_page.dart';
 

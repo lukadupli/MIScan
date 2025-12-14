@@ -31,6 +31,6 @@ class Locations{
   }
 
   static Future<Directory> getDownloadsSaveDirectory() async{
-    return Directory(await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS));
+    return Directory(await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOAD));
   }
 }

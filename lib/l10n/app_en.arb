@@ -9,7 +9,7 @@
         "description": "Title of the home page list of previous scans"
     },
     "noScansYet": "No scans yet!",
-    "@noRecentScans": {
+    "@noScansYet": {
         "description": "Message to display when there are no previous scans"
     },
     "tipForCreatingScans": "Click on the button below to create a new scan!",
