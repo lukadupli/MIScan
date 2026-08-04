@@ -42,3 +42,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android build output and CMake cache
+android/app/.cxx/
+android/app/build/
+android/build/

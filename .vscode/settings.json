@@ -1,5 +1,8 @@
 {
     "cmake.configureOnOpen": true,
+    "terminal.integrated.env.osx": {
+        "FLUTTER_DEVICE_ID": "android"
+    },
     "files.associations": {
         "algorithm": "cpp",
         "cstdlib": "cpp",

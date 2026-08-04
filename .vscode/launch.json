@@ -7,19 +7,22 @@
         {
             "name": "straighten",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "deviceId": "android"
         },
         {
             "name": "straighten (profile mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "deviceId": "android"
         },
         {
             "name": "straighten (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "deviceId": "android"
         }
     ]
 }
