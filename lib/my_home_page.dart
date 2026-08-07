@@ -149,17 +149,16 @@ class _MyHomePageState extends State<MyHomePage> {
       icon: icon,
       label: Text(label),
       style: IconButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
-      onPressed: () {
-        ImagePicker().pickImage(source: source).then((xfile) {
-          if(xfile != null) {
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FutureBuilder(
-                future: crossFileToImage(xfile),
-                builder: (context, snapshot) => snapshot.hasData ? TransformPage(image: snapshot.data!) : const LoadingPage(),
-              )
-            ));
-          }
-        });
+      onPressed: () async {
+        final xfile = await ImagePicker().pickImage(source: source);
+        if (xfile != null && mounted) {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FutureBuilder(
+              future: crossFileToImage(xfile),
+              builder: (context, snapshot) => snapshot.hasData ? TransformPage(image: snapshot.data!) : const LoadingPage(),
+            )
+          ));
+        }
       },
     );
   }

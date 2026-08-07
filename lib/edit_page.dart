@@ -146,7 +146,7 @@ class _EditPageState extends State<EditPage> {
             Container(
               padding: MediaQuery.orientationOf(context) == Orientation.portrait ? const EdgeInsets.only(top: 20.0) : null,
               child: SliderTheme(
-                data: const SliderThemeData(showValueIndicator: ShowValueIndicator.always),
+                data: const SliderThemeData(showValueIndicator: ShowValueIndicator.onDrag),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

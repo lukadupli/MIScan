@@ -61,7 +61,7 @@ class ListViewImage extends StatelessWidget{
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      IconButton(icon: const Icon(Icons.share), tooltip: apploc.shareTooltip, onPressed: () => Share.shareXFiles([XFile(imageFile.path)])),
+                      IconButton(icon: const Icon(Icons.share), tooltip: apploc.shareTooltip, onPressed: () => SharePlus.instance.share(ShareParams(files: [XFile(imageFile.path)]))),
                       IconButton(icon: const Icon(Icons.delete), tooltip: apploc.deleteTooltip, onPressed: () => onDeletion(index)),
                       IconButton(
                         icon: const Icon(Icons.photo_library), 

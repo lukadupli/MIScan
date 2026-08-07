@@ -99,7 +99,7 @@ class _ImagePageState extends State<ImagePage> {
                   IconButton(
                     icon: const Icon(Icons.share), 
                     tooltip: apploc.shareTooltip,
-                    onPressed: () => Share.shareXFiles([XFile(imageFile.path)])
+                    onPressed: () => SharePlus.instance.share(ShareParams(files: [XFile(imageFile.path)]))
                   ),
                   IconButton(
                     icon: const Icon(Icons.edit), 

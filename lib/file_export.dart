@@ -61,7 +61,7 @@ class FileExport{
             title: Text(AppLocalizations.of(context)!.exportPermissionTitle),
             content: Text(AppLocalizations.of(context)!.exportPermissionContent),
             actions: [
-              TextButton(child: Text(AppLocalizations.of(context)!.openSettings), onPressed: () => openAppSettings().then((_) => Navigator.of(context).pop())),
+              TextButton(child: Text(AppLocalizations.of(context)!.openSettings), onPressed: () => openAppSettings().then((_) { if (context.mounted) Navigator.of(context).pop(); })),
               TextButton(child: Text(AppLocalizations.of(context)!.cancel), onPressed: () {Navigator.of(context).pop(); cancelled = true;}),
             ],
           ),
@@ -132,8 +132,9 @@ class FileExport{
     else{
       saveFunction(file.path, newPath).then((_) {
         final context = navigatorKey.currentContext!;
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(exportConfirmation)) 
+          SnackBar(content: Text(exportConfirmation))
         );
       });
     }
