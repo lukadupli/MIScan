@@ -47,3 +47,6 @@ app.*.map.json
 android/app/.cxx/
 android/app/build/
 android/build/
+
+# Native host test build output
+native/test/build/

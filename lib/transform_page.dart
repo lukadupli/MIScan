@@ -114,16 +114,6 @@ class _TransformPageState extends State<TransformPage> {
                 OutlinedButton(
                   child: const Icon(Icons.check),
                   onPressed: () {
-                    if(!QuadTransform.canTransform(
-                      fController.corners[0] * ratio, 
-                      fController.corners[1] * ratio, 
-                      fController.corners[2] * ratio,
-                      fController.corners[3] * ratio,
-                    )){
-                      cannotTransformDialog(context, apploc);
-                      return;
-                    }
-                  
                     Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
                       future: _transformAndSaveToTemporary(),
                       builder: (context, snapshot) => snapshot.hasData ? EditPage(imageFile: snapshot.data!) : const LoadingPage(),
@@ -148,9 +138,10 @@ class _TransformPageState extends State<TransformPage> {
   Future<File?> _transformAndSaveToTemporary() async{
     try{
       final transformed = await QuadTransform.transform(
-        widget.image, 
-        fController.corners[0] * ratio, 
-        fController.corners[1] * ratio, 
+        widget.image,
+        Offset(widget.image.width / 2, widget.image.height / 2),
+        fController.corners[0] * ratio,
+        fController.corners[1] * ratio,
         fController.corners[2] * ratio,
         fController.corners[3] * ratio,
       );

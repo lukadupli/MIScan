@@ -14,24 +14,19 @@ extern "C" {
         output4 = output_padded;
     }
 
-    API bool CanTransform(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3) {
-        return engine.canTransform({ x0, y0 }, { x1, y1 }, { x2, y2 }, { x3, y3 });
-    }
-
-    API bool BookCanTransform(double* cornerXs, double* cornerYs, int curveLength, double* curveXs, double* curveYs, bool curvePos) {
-        return bookEngine.canTransform({ cornerXs[0], cornerYs[0] }, { cornerXs[1], cornerYs[1] }, { cornerXs[2], cornerYs[2] }, {cornerXs[3], cornerYs[3]});
-    }
-    
-    API bool LoadCoordinates(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3) {
-        bool ret = engine.loadCoordinates({ x0, y0 }, { x1, y1 }, { x2, y2 }, { x3, y3 });
+    API bool LoadCoordinates(double xp, double yp, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3) {
+        bool ret = engine.loadCoordinates({ xp, yp }, { x0, y0 }, { x1, y1 }, { x2, y2 }, { x3, y3 });
         neww = engine.newWidth();
         newh = engine.newHeight();
         return ret;
     }
-    API bool BookLoadCoordinates(double* cornerXs, double* cornerYs, int curveLength, double* curveXs, double* curveYs, bool curvePos) {
+
+    API bool BookLoadCoordinates(double xp, double yp, double *cornerXs, double *cornerYs, int curveLength, double *curveXs, double *curveYs, bool curvePos)
+    {
         std::vector<Point2D> curveV;
         for (int i = 0; i < curveLength; i++) curveV.push_back({ curveXs[i], curveYs[i] });
         bool ret = bookEngine.loadCoordinates(
+            { xp, yp },
             { cornerXs[0], cornerYs[0] }, { cornerXs[1], cornerYs[1] }, { cornerXs[2], cornerYs[2] }, { cornerXs[3], cornerYs[3] },
             curveV,
             curvePos

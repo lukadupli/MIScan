@@ -68,11 +68,6 @@ class _BookTransformPageState extends State<BookTransformPage>{
               onPressed: () {
                 final corners = List<Offset>.generate(4, (i) => widget.controller.corners[i] * ratio);
 
-                if(!BookTransform.canTransform(corners)){
-                  cannotTransformDialog(context, apploc);
-                  return;
-                }
-
                 Navigator.push(context, MaterialPageRoute(builder: (context) => FutureBuilder(
                   future: _transformAndSaveToTemporary(corners),
                   builder: (context, snapshot) => snapshot.hasData ? EditPage(imageFile: snapshot.data!) : const LoadingPage(),
@@ -88,7 +83,8 @@ class _BookTransformPageState extends State<BookTransformPage>{
   Future<File?> _transformAndSaveToTemporary(List<Offset> corners) async{
     try{
       final transformed = await BookTransform.transformFromSpline(
-        widget.image, 
+        widget.image,
+        Offset(widget.image.width / 2, widget.image.height / 2),
         corners,
         widget.controller.curveUp,
         false,

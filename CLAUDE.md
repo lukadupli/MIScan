@@ -27,6 +27,9 @@ flutter test
 # Run a single test file
 flutter test test/<filename>_test.dart
 
+# Run the native C++ transform tests on the host (no device needed)
+native/test/run_tests.sh
+
 # Regenerate localization files after editing .arb files
 flutter gen-l10n
 ```
@@ -59,6 +62,26 @@ The keystore file lives at `android/upload-keystore.jks` (also not committed).
 - `libimage_processing.so` — contrast/brightness on JPEG files (links against `jpeg_compressor`)
 
 The `externalNativeBuild { cmake { path = file("CMakeLists.txt") } }` block in `android/app/build.gradle.kts` wires CMake into the Gradle build — **do not remove it**.
+
+### Native Tests
+
+`native/test/` holds a standalone host build (`native/test/CMakeLists.txt`, separate from the Android one) that exercises the transform maths without a device. Run it with `native/test/run_tests.sh` after **any** change under `native/transform/` or `native/basic_linear/` — the geometry has no runtime safety net, and a wrong plane normal shows up as a multi-gigabyte allocation request rather than a visible error.
+
+`synthetic_scene.h` builds the ground truth: it takes a rectangle that really is flat and rectangular in 3D, projects it through the same pinhole camera the transforms assume, and hands back the quadrilateral a photo would have contained. `QuadTransform` then has to recover the camera height, plane normal, and aspect ratio it was built from. `test_util.h` is a small zero-dependency harness (`TEST`, `CHECK*`); add new files to the `add_executable` list in `CMakeLists.txt`.
+
+### When the Quad Transform Cannot Recover the Camera Height
+
+`QuadTransform` gets the camera height from the two vanishing points of the selected quadrilateral, which only works while both are close enough to the picture to say anything. Photograph a page square-on, or tilted about one axis only, and an edge pair comes out parallel — its vanishing point is at infinity and the height drops out of the equations entirely. The constraint is already noise-dominated well before that point, and corners are dragged with a fingertip.
+
+So `loadCoordinates` solves for the height only while both vanishing points are within `VANISHING_POINT_REACH` scene scales of the principal point, clamps the result to a plausible focal-length range, and otherwise assumes `DEFAULT_HEIGHT_FACTOR` (all in `quad_transform.cpp`). The scan then comes out stable and usable but with an approximate aspect ratio — which is the best available, since the picture genuinely does not contain the information. Do not replace these with an exact-zero or absolute-epsilon test on `Sh.z`/`Th.z`: those are homogeneous coordinates whose scale depends on the picture resolution, so a fixed epsilon means nothing.
+
+### What Sets the Output Resolution
+
+The rectified page is built by projecting onto `fplane`, so how far that plane sits from the camera decides how many pixels the result gets. `fplane.b` used to be left at zero, putting it through the principal point — output size then tracked `h * fplane.v.z`, the camera height times the tilt, which says nothing about how finely the photo resolved the page. That quietly discarded up to 25% of the linear resolution on angled shots, and since the height above is only *assumed* for a square-on page, the output size of the most common scan was following a guessed constant.
+
+`loadCoordinates` now scales the plane so one output pixel covers at most one source pixel, taking the longest source edge on each axis and applying the larger of the two ratios **uniformly**, so the recovered aspect ratio is untouched. The scale is clamped to `MAX_OUTPUT_SIDE` per side and `MAX_OUTPUT_PIXELS` (25 MP / 100 MB RGBA, matching the guards in `lib/transform.dart`) in total; when it binds, the scale is clamped and detail lost rather than the scan being refused.
+
+Edge lengths are averages, so this is exact for the axis parallel to the near edge and falls short by `sqrt(|AB|/|CD|)` on the perpendicular one — a few percent at normal tilts. Closing that needs per-point magnification sampling and grows the output by the square of the same factor; deliberately not done. `BookTransform` needs nothing here: it works in the same floor-plane units and inherits the scale (measured worst case 17 MP, comfortably inside the guard).
 
 ### 16KB Page Size
 

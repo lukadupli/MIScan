@@ -2,13 +2,9 @@
 
 #include <cmath>
 
-bool BookTransform::canTransform(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
-    return quad.canTransform(p1, p2, p3, p4);
-}
-
-bool BookTransform::loadCoordinates(Point2D p1, Point2D p2, Point2D p3, Point2D p4, const std::vector<Point2D> curve, bool curvePosition) {
+bool BookTransform::loadCoordinates(Point2D pp, Point2D p1, Point2D p2, Point2D p3, Point2D p4, const std::vector<Point2D> curve, bool curvePosition) {
     try{
-    if (!quad.loadCoordinates(p1, p2, p3, p4)) return false;
+    if (!quad.loadCoordinates(pp, p1, p2, p3, p4)) return false;
 
     Plane fplane = quad.floorPlane();
     Vector3 floorOrigin = quad.floorPlaneOrigin();
@@ -23,14 +19,14 @@ bool BookTransform::loadCoordinates(Point2D p1, Point2D p2, Point2D p3, Point2D 
         perpPlane.b = perpPlane.v * floorOrigin;
     }
     else {
-        Vector3 D = Vector3{ p4.x, p4.y, 0 } - quad.referentOrigin();
+        Vector3 D = Vector3{ p4.x, p4.y, 0 } - quad.principalPoint();
         Vector3 floorD = QuadTransform::putOnFloor(D, fplane, h);
         perpPlane.b = perpPlane.v * floorD;
     }
 
     std::vector<std::pair<double, double>> xzPairs; // (x, z) pairs for points on floor plane
     for (auto& point : curve) {
-        Vector3 pnt = Vector3{ point.x, point.y, 0 } - quad.referentOrigin();
+        Vector3 pnt = Vector3{ point.x, point.y, 0 } - quad.principalPoint();
 
         Vector3 proj = perpPlane.Intersection(Line{ Vector3{0, 0, h}, pnt }) - floorOrigin; // coordinates relative to floor plane
         double x = proj * unitX;
@@ -88,7 +84,7 @@ void BookTransform::process(BitmapSegment& src, BitmapSegment& dst) {
 
                 // lightRay.dir.z is never 0 because cameraHeight is never 0
                 Vector3 sourceCoors = lightRay.base - (lightRay.base.z / lightRay.dir.z) * lightRay.dir; // intersection with xy plane
-                sourceCoors = sourceCoors + quad.referentOrigin(); // (0, 0) is now not diagonal intersection, but upper-left corner of src
+                sourceCoors = sourceCoors + quad.principalPoint(); // (0, 0) is now not diagonal intersection, but upper-left corner of src
 
                 int srcX = sourceCoors.x, srcY = sourceCoors.y;
                 for (int z = 0; z < dst.bitmap.channels; z++) {
