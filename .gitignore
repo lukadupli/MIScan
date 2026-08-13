@@ -50,3 +50,11 @@ android/build/
 
 # Native host test build output
 native/test/build/
+
+# ML training pipeline: environment, datasets, checkpoints.
+# The only ML artifact that belongs in git is the exported model the app ships
+# (assets/models/), not anything under here.
+ml/.venv/
+ml/data/
+ml/runs/
+**/__pycache__/

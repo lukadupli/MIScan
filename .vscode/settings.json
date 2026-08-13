@@ -1,5 +1,10 @@
 {
-    "cmake.configureOnOpen": true,
+    // The Android build drives CMake through Gradle, so the only CMake project
+    // worth opening in the IDE is the standalone host test build.
+    // Don't configure it on open -- native/test/run_tests.sh is the real entry point.
+    "cmake.configureOnOpen": false,
+    "cmake.sourceDirectory": "${workspaceFolder}/native/test",
+    "python.defaultInterpreterPath": "${workspaceFolder}/ml/.venv/bin/python",
     "terminal.integrated.env.osx": {
         "FLUTTER_DEVICE_ID": "android"
     },
@@ -78,6 +83,5 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp"
-    },
-    "cmake.sourceDirectory": "C:/Users/lukad/Desktop/flutterapps/MIScan/linux"
+    }
 }

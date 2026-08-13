@@ -1,0 +1,30 @@
+# Training-side dependencies for the corner-detection model.
+#
+# None of this ships in the app. The only artifact that crosses from here into
+# MIScan is a single exported .onnx file (see ml/export.py, stage 4).
+#
+# Deliberately unpinned: this pipeline is not something we redeploy, and pinning
+# versions we cannot verify ages worse than letting pip resolve. If a future
+# install breaks, pin at that point with a comment saying why.
+
+torch
+torchvision
+
+# Image loading, homography warping, and the perspective maths in synth.py.
+# NOTE: opencv here is a *training-time* tool only. The on-device code stays
+# dependency-free -- see the plan.
+opencv-python
+numpy
+pillow
+
+# Export + parity checking against the PyTorch model (stage 4).
+onnx
+onnxruntime
+
+# Required by torch >= 2.9's ONNX exporter, which is dynamo-based: torch.onnx.export
+# fails with ModuleNotFoundError without it. Not a direct import of ours.
+onnxscript
+
+# Visualisation of generated samples and training curves.
+matplotlib
+tqdm
