@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,6 +7,7 @@ import 'package:miscan/l10n/app_localizations.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'debug/live_preview_page.dart';
 import 'helpers.dart';
 import 'transform_page.dart';
 import 'loading_page.dart';
@@ -114,7 +116,16 @@ class _MyHomePageState extends State<MyHomePage> {
               TextSpan(text: " ${apploc.homePageTitle}", style: Theme.of(context).textTheme.titleLarge),
             ]
           )
-        )
+        ),
+        actions: [
+          if (kDebugMode)
+            IconButton(
+              icon: const Icon(Icons.center_focus_strong),
+              tooltip: 'Live corner preview (debug)',
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const LivePreviewPage())),
+            ),
+        ],
       ),
       body: SafeArea(
         child: body,

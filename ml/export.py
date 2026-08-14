@@ -21,6 +21,7 @@ import argparse
 from pathlib import Path
 
 import numpy as np
+import onnx
 import torch
 
 from common import INPUT_SIZE
@@ -30,6 +31,13 @@ from model import CornerNet
 # plain conv net needs. Raising it gains nothing here and risks the mobile build
 # not implementing a newer operator.
 OPSET = 17
+
+# The onnxruntime Flutter plugin bundles a mobile ORT build that has been
+# observed to reject IR version 10 ("Unsupported model IR version: 10, max
+# supported IR version: 9") even though desktop onnxruntime -- what
+# check_parity() below uses -- reads it fine. That gap is exactly why this
+# constant exists: parity passing is not proof the phone can load the file.
+MAX_MOBILE_IR_VERSION = 9
 
 DEFAULT_OUT = Path(__file__).resolve().parents[1] / "assets" / "models" / "corners.onnx"
 
@@ -62,6 +70,14 @@ def export(model: torch.nn.Module, out_path: Path) -> None:
         # for a sibling file to live on, and a Flutter asset is not a real path
         # anyway. Weights must be inline in the single file we ship.
         external_data=False,
+        # torch's default (dynamo=True) exporter writes ONNX IR version 10.
+        # The desktop onnxruntime used by check_parity() below happily reads
+        # that, so it says nothing about whether the phone can -- and the
+        # onnxruntime Flutter plugin bundles a mobile ORT build that maxes out
+        # at IR version 9 and fails to load the file at all. The legacy
+        # TorchScript-based exporter (dynamo=False) writes IR version 8 for
+        # the same opset and graph, which both runtimes accept.
+        dynamo=False,
     )
 
     size_mb = out_path.stat().st_size / 1e6
@@ -71,6 +87,14 @@ def export(model: torch.nn.Module, out_path: Path) -> None:
     sidecar = out_path.with_suffix(out_path.suffix + ".data")
     if sidecar.exists():
         raise SystemExit(f"weights landed in {sidecar}; external_data did not take effect")
+    ir_version = onnx.load(out_path).ir_version
+    if ir_version > MAX_MOBILE_IR_VERSION:
+        raise SystemExit(
+            f"IR version {ir_version} exceeds the mobile runtime's max of "
+            f"{MAX_MOBILE_IR_VERSION}; the phone will fail to load this file "
+            "even though it is valid ONNX. Re-export with dynamo=False."
+        )
+
     expected_mb = sum(p.numel() for p in model.parameters()) * 4 / 1e6
     if size_mb < 0.5 * expected_mb:
         raise SystemExit(
