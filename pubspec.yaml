@@ -92,7 +92,11 @@ flutter:
     - assets/paper0tap.jpg
     - assets/book0tap.jpg
     - assets/book1tap.jpg
-    - assets/models/corners.onnx
+    # The segmentation model the app actually runs. corners.onnx, the older
+    # 8-coordinate regressor, is kept in the repo as the artifact of that
+    # approach but is deliberately not bundled -- nothing loads it any more,
+    # and it is 4.3 MB in every build.
+    - assets/models/segmentation.onnx
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

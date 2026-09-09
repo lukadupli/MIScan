@@ -25,6 +25,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 from collections import defaultdict
 from pathlib import Path
 
@@ -34,6 +35,7 @@ from torch.utils.data import DataLoader
 
 from common import describe_device, get_device
 from dataset import CornerDataset
+from postprocess import mask_to_quad
 
 
 # ---------------------------------------------------------------------------
@@ -116,10 +118,22 @@ def corner_error(pred: np.ndarray, true: np.ndarray) -> float:
 
     Both inputs are in normalised [0, 1] coordinates, so the diagonal of the unit
     square (sqrt(2)) is the reference length. Multiply by 100 for a percentage.
+
+    Taken as the best of the four cyclic shifts. Corner order is canonicalised
+    by image position (corner 0 = nearest the frame's top-left), and now that
+    roll is sampled across the full +/- 90 there are poses where two corners sit
+    almost equidistant from that origin -- so prediction and ground truth can
+    canonicalise to starts one apart on quadrilaterals that are otherwise on top
+    of each other. Without the shift that scores as a large error, which is a
+    labelling artefact rather than anything the user would see. Winding is
+    already fixed by canonicalisation, so shifts alone are enough.
     """
     pred = np.asarray(pred, dtype=np.float64).reshape(4, 2)
     true = np.asarray(true, dtype=np.float64).reshape(4, 2)
-    return float(np.mean(np.linalg.norm(pred - true, axis=1)) / np.sqrt(2.0))
+    return min(
+        float(np.mean(np.linalg.norm(np.roll(pred, shift, axis=0) - true, axis=1)) / np.sqrt(2.0))
+        for shift in range(4)
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -134,31 +148,66 @@ def evaluate(
     device: torch.device,
     batch_size: int = 64,
     group_by: str | None = None,
+    task: str = "corner",
+    group_fn=None,
 ) -> dict:
-    """Run the model over a dataset and summarise both metrics."""
+    """Run the model over a dataset and summarise both metrics.
+
+    `task="seg"` routes the model's mask through postprocess.mask_to_quad first,
+    so both tasks are scored by the same corner_error / polygon_iou on the same
+    corner labels -- which is the only way the two architectures' numbers mean
+    the same thing.
+    """
     model.eval().to(device)
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=2)
 
     errors: list[float] = []
     ious: list[float] = []
+    misses = 0
     groups: dict[str, list[tuple[float, float]]] = defaultdict(list)
 
     index = 0
     for images, targets in loader:
-        preds = model(images.to(device)).cpu().numpy()
+        raw = model(images.to(device)).cpu().numpy()
         trues = targets.numpy()
-        for pred, true in zip(preds, trues):
+        for output, true in zip(raw, trues):
+            if task == "seg":
+                mask = np.squeeze(output)
+                quad = mask_to_quad(mask, logits=True)
+                if quad is None:
+                    # No plausible document. Counted as a miss and scored as
+                    # zero overlap, which is what it is; left out of the corner
+                    # error, where there is no value to average.
+                    misses += 1
+                    ious.append(0.0)
+                    if group_by:
+                        key = group_fn(dataset.records[index]) if group_fn else str(
+                            dataset.records[index].get(group_by, "?")
+                        )
+                        groups[key].append((float("nan"), 0.0))
+                    index += 1
+                    continue
+                # mask_to_quad works in mask pixels; targets are normalised.
+                pred = quad / np.array([mask.shape[1], mask.shape[0]], dtype=np.float64)
+            else:
+                pred = output
+
             err = corner_error(pred, true)
             iou = polygon_iou(pred, true)
             errors.append(err)
             ious.append(iou)
             if group_by:
-                groups[str(dataset.records[index].get(group_by, "?"))].append((err, iou))
+                key = group_fn(dataset.records[index]) if group_fn else str(
+                    dataset.records[index].get(group_by, "?")
+                )
+                groups[key].append((err, iou))
             index += 1
 
     errors_arr, ious_arr = np.array(errors), np.array(ious)
     result = {
-        "count": len(errors),
+        "count": len(ious),
+        "detected": len(errors),
+        "misses": misses,
         "corner_error_pct_mean": 100 * float(errors_arr.mean()),
         "corner_error_pct_median": 100 * float(np.median(errors_arr)),
         "corner_error_pct_p90": 100 * float(np.percentile(errors_arr, 90)),
@@ -172,8 +221,11 @@ def evaluate(
         result["groups"] = {
             key: {
                 "count": len(values),
-                "corner_error_pct_mean": 100 * float(np.mean([v[0] for v in values])),
+                # nanmean: a miss contributes its IoU of 0 but has no corner
+                # error, and must not drag the group's error to nan.
+                "corner_error_pct_mean": 100 * float(np.nanmean([v[0] for v in values])),
                 "iou_mean": float(np.mean([v[1] for v in values])),
+                "misses": int(sum(1 for v in values if np.isnan(v[0]))),
             }
             for key, values in sorted(groups.items())
         }
@@ -182,6 +234,12 @@ def evaluate(
 
 def print_report(result: dict) -> None:
     print(f"\n  frames evaluated       {result['count']}")
+    if result.get("misses"):
+        print(
+            f"  no document found      {result['misses']} "
+            f"({100 * result['misses'] / max(result['count'], 1):.1f}%)"
+        )
+        print("                         (scored as IoU 0; excluded from corner error)")
     print("\n  corner error (% of image diagonal, lower is better)")
     print(f"    mean                 {result['corner_error_pct_mean']:.2f}%")
     print(f"    median               {result['corner_error_pct_median']:.2f}%")
@@ -212,7 +270,25 @@ def main() -> None:
         "--by",
         default=None,
         metavar="FIELD",
-        help="break results down by a label field, e.g. 'background' or 'modeltype'",
+        help="break results down by a label field, e.g. 'background' or 'modeltype'. "
+        "'document' is computed from the video name; 'seen' needs --holdout-from",
+    )
+    parser.add_argument(
+        "--task",
+        choices=["corner", "seg"],
+        default="corner",
+        help="'seg' pipes the predicted mask through postprocess.mask_to_quad "
+        "before scoring, so both tasks are judged on the same corner labels",
+    )
+    parser.add_argument(
+        "--holdout-from",
+        type=Path,
+        default=None,
+        metavar="TRAIN_DIR",
+        help="a training dataset directory; reads its meta.json 'excluded_documents' "
+        "so '--by seen' can separate pages the model trained on from pages it never "
+        "saw. The SmartDoc test set reuses the same 30 documents this project warps "
+        "for synthetic training, so without this the score silently mixes the two.",
     )
     parser.add_argument("--limit", type=int, default=None)
     args = parser.parse_args()
@@ -229,10 +305,35 @@ def main() -> None:
             "construct your model and load_state_dict into it, then re-save"
         )
 
+    # Corner mode even for --task seg: the mask is what the model predicts, but
+    # the corner labels are what both architectures are scored against.
     dataset = CornerDataset(list(args.data), augment=False, limit=args.limit)
     print(f"dataset: {len(dataset)} frames from {', '.join(str(d) for d in args.data)}")
 
-    print_report(evaluate(model, dataset, device, args.batch_size, args.by))
+    group_fn = None
+    if args.by in ("document", "seen"):
+        def document_of(row: dict) -> str:
+            # smartdoc.py writes video as "background01/datasheet001"
+            return Path(str(row.get("video", ""))).name or "?"
+
+        if args.by == "document":
+            group_fn = document_of
+        else:
+            if not args.holdout_from:
+                raise SystemExit("--by seen needs --holdout-from pointing at the training set")
+            meta = json.loads((args.holdout_from / "meta.json").read_text())
+            held = set(meta.get("excluded_documents", []))
+            if not held:
+                raise SystemExit(
+                    f"{args.holdout_from}/meta.json lists no excluded_documents, so every "
+                    "test page was trained on and there is no unseen split to report"
+                )
+            print(f"held out of training: {', '.join(sorted(held))}")
+            group_fn = lambda row: "unseen" if document_of(row) in held else "seen"
+
+    print_report(
+        evaluate(model, dataset, device, args.batch_size, args.by, args.task, group_fn)
+    )
 
 
 if __name__ == "__main__":

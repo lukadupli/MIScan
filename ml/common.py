@@ -32,7 +32,19 @@ RUNS_DIR = ML_ROOT / "runs"
 # produces a model that scores well in Python and returns nonsense on-device --
 # the single most common way this kind of project fails. Change them here and
 # nowhere else, then re-run the parity check.
-INPUT_SIZE = 224
+#
+# INPUT_SIZE is (height, width) and does not have to be square. It used to be a
+# bare 224 because CornerNet ended in Linear(7*7*576, 8) -- a fixed-size flatten
+# that structurally admits exactly one input size. The segmentation nets are
+# fully convolutional and accept any spatial size (verified: square or not,
+# multiple of 32 or not), returning a mask at exactly the input dims. So this is
+# now a latency/precision dial rather than an architectural constant:
+#   - bigger costs compute roughly in proportion to area,
+#   - bigger preserves the edge detail the network localises against, which a
+#     squash from 1920 wide destroys,
+#   - matching the camera's 4:3 removes the aspect distortion a square input
+#     forces the network to learn around.
+INPUT_SIZE = (240, 320)  # (H, W) -- 4:3, matching the camera, so no aspect squash
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 

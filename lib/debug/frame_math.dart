@@ -3,9 +3,11 @@ import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
-/// Contract enforced here has to match ml/common.py exactly, or the model
-/// sees input unlike anything it was trained on and returns garbage.
-const int kModelInputSize = 224;
+/// Contract enforced here has to match ml/common.py's INPUT_SIZE exactly, or
+/// the model sees input unlike anything it was trained on and returns garbage.
+/// Not square: 4:3 matches the camera, so nothing is stretched on the way in.
+const int kModelInputHeight = 240;
+const int kModelInputWidth = 320;
 const List<double> kImagenetMean = [0.485, 0.456, 0.406];
 const List<double> kImagenetStd = [0.229, 0.224, 0.225];
 
@@ -19,7 +21,7 @@ Size rotatedFrameSize(int sensorOrientationDeg, int rawWidth, int rawHeight) {
 }
 
 /// Converts one YUV420 [image] straight into a normalized, rotated, resized
-/// CHW Float32 tensor of length 3*224*224 -- one pass, no intermediate
+/// CHW Float32 tensor of length 3*H*W -- one pass, no intermediate
 /// full-resolution buffer.
 ///
 /// For each of the 224x224 output pixels: walk backwards through output ->
@@ -40,13 +42,15 @@ Float32List yuv420ToChwTensor(CameraImage image, int sensorOrientationDeg) {
   final uPixelStride = uPlane.bytesPerPixel ?? 1;
   final vPixelStride = vPlane.bytesPerPixel ?? 1;
 
-  const n = kModelInputSize;
-  final out = Float32List(3 * n * n);
+  const outH = kModelInputHeight;
+  const outW = kModelInputWidth;
+  const plane = outH * outW;
+  final out = Float32List(3 * plane);
 
-  for (int oy = 0; oy < n; oy++) {
-    final uy = (oy + 0.5) * rotH / n;
-    for (int ox = 0; ox < n; ox++) {
-      final ux = (ox + 0.5) * rotW / n;
+  for (int oy = 0; oy < outH; oy++) {
+    final uy = (oy + 0.5) * rotH / outH;
+    for (int ox = 0; ox < outW; ox++) {
+      final ux = (ox + 0.5) * rotW / outW;
 
       // Inverse-rotate (ux, uy) in the upright frame back into raw sensor
       // coordinates (sx, sy).
@@ -84,10 +88,10 @@ Float32List yuv420ToChwTensor(CameraImage image, int sensorOrientationDeg) {
       final g = (yD - 0.344136 * uD - 0.714136 * vD).clamp(0, 255);
       final b = (yD + 1.772 * uD).clamp(0, 255);
 
-      final idx = oy * n + ox;
-      out[0 * n * n + idx] = (r / 255.0 - kImagenetMean[0]) / kImagenetStd[0];
-      out[1 * n * n + idx] = (g / 255.0 - kImagenetMean[1]) / kImagenetStd[1];
-      out[2 * n * n + idx] = (b / 255.0 - kImagenetMean[2]) / kImagenetStd[2];
+      final idx = oy * outW + ox;
+      out[idx] = (r / 255.0 - kImagenetMean[0]) / kImagenetStd[0];
+      out[plane + idx] = (g / 255.0 - kImagenetMean[1]) / kImagenetStd[1];
+      out[2 * plane + idx] = (b / 255.0 - kImagenetMean[2]) / kImagenetStd[2];
     }
   }
   return out;

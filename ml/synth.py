@@ -39,7 +39,7 @@ FRAME_W, FRAME_H = 640, 480
 
 # Pose sampling limits. These are the knobs that shape the dataset -- run with
 # --stats after changing any of them to see what actually came out.
-MAX_ROLL_DEG = 25.0  # in-plane rotation cap; see sample_scene for why 25 and not 45
+MAX_ROLL_DEG = 90.0  # in-plane rotation cap; see sample_scene for why 90 covers everything
 MIN_AREA_FRACTION = 0.04  # below this the page is too small to localise reliably
 MAX_AREA_FRACTION = 1.30  # above this the page is mostly outside the frame
 MIN_CORNERS_IN_FRAME = 2  # some corners off-frame is wanted; all four is not
@@ -201,18 +201,22 @@ def sample_scene(rng: random.Random, frame_w: int, frame_h: int) -> Scene:
         worth over-sampling mild tilts rather than centring on zero.
       - document_center: negative z (in front of the picture plane), with x/y
         offsets so the page is not always dead centre.
-      - roll: in-plane rotation, in radians. Cap this at roughly +/- 25 degrees.
-        The cap is not only realism. Labels are canonicalised by image position
-        (corner 0 = nearest the frame's top-left), and near 45 degrees two
-        corners are almost equidistant from it, so a tiny pose change flips the
+      - roll: in-plane rotation, in radians, sampled across the full +/- 90.
+        This used to be capped at +/- 25, and the reason was never realism: the
+        old corner-regression target was canonicalised by image position
+        (corner 0 = nearest the frame's top-left), so near 45 degrees two
+        corners sit almost equidistant from it and a tiny pose change flips the
         label. That is a discontinuity in the target function, and networks
         cannot fit those -- they average across the jump and get both sides
-        wrong. Staying well clear of 45 degrees keeps the labels stable.
+        wrong. The segmentation target has no corner ordering to flip, so the
+        discontinuity is gone and the cap with it; corner ordering is now
+        decided in postprocessing, where it is plain geometry.
+        +/- 90 is the *complete* range, not a partial one: a rectangle rolled
+        by 180 degrees produces an identical mask, so [-90, 90] already covers
+        every distinct appearance exactly once.
       - half_width / half_height: pick an aspect ratio. A4 is 1:1.414, US Letter
         1:1.294, but people scan receipts and book pages too. Sample both
-        portrait and landscape -- this also covers most of what a 90-degree roll
-        would have given you, since a sideways portrait page and an upright
-        landscape page produce much the same quad.
+        portrait and landscape.
 
     Constraint to enforce before returning: all four projected corners must land
     somewhere sane relative to the frame. Reject and redraw if the page is
@@ -443,11 +447,18 @@ class ImageBank:
         max_side: int = 1000,
         limit: int | None = None,
         eager: bool = True,
+        exclude: set[str] | None = None,
     ) -> None:
         patterns = ("*.png", "*.jpg", "*.jpeg", "*.JPG", "*.PNG", "*.JPEG")
         paths = sorted({p for pattern in patterns for p in Path(directory).rglob(pattern)})
         if not paths:
             raise FileNotFoundError(f"no images found under {directory}")
+        if exclude:
+            kept = [p for p in paths if p.stem not in exclude]
+            missing = exclude - {p.stem for p in paths}
+            if missing:
+                raise SystemExit(f"--exclude-docs names nothing under {directory}: {sorted(missing)}")
+            paths = kept
         if limit:
             paths = paths[:limit]
 
@@ -540,14 +551,22 @@ def make_placeholder_background(rng: random.Random, w: int, h: int) -> np.ndarra
     return np.clip(bg, 0, 255).astype(np.uint8)
 
 
-def render(document: np.ndarray, background: np.ndarray, corners: np.ndarray) -> np.ndarray:
-    """Warp `document` so its corners land on `corners`, and composite onto `background`.
+def render(
+    document: np.ndarray, background: np.ndarray, corners: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
+    """Warp `document` onto `corners` over `background`; return (composite, mask).
 
     The key fact making this cheap: projecting a *planar* rectangle through a
     pinhole camera is exactly a homography. So once `sample_scene` has told us
     where the four corners go, a single 3x3 matrix reproduces the whole page --
     we do not have to ray-trace anything. The pinhole model's job is only to
     constrain *which* quadrilaterals are physically possible; cv2 does the pixels.
+
+    The mask is the page's alpha, which compositing needs anyway -- it is also
+    exactly the segmentation label, so it is returned rather than thrown away.
+    It comes back antialiased (0-255, soft only on the boundary) rather than
+    hard 0/255; that keeps the sub-pixel edge coverage, and dataset.py can
+    threshold it at load time if a strictly binary target is wanted.
     """
     h, w = document.shape[:2]
     src = np.array([[0, 0], [w - 1, 0], [w - 1, h - 1], [0, h - 1]], dtype=np.float32)
@@ -562,7 +581,8 @@ def render(document: np.ndarray, background: np.ndarray, corners: np.ndarray) ->
     )
     alpha = (mask.astype(np.float32) / 255.0)[:, :, None]
 
-    return (warped * alpha + background * (1 - alpha)).astype(np.uint8)
+    composite = (warped * alpha + background * (1 - alpha)).astype(np.uint8)
+    return composite, mask
 
 
 def augment(img: np.ndarray, rng: random.Random) -> np.ndarray:
@@ -709,12 +729,17 @@ def generate(
     grid: int = 0,
     stats: bool = False,
     documents: Path | None = None,
+    exclude_docs: set[str] | None = None,
     backgrounds: Path | None = None,
 ) -> None:
     rng = random.Random(seed)
     set_seed(seed)
 
-    doc_bank = ImageBank(documents, max_side=1000, eager=True) if documents else None
+    doc_bank = (
+        ImageBank(documents, max_side=1000, eager=True, exclude=exclude_docs)
+        if documents
+        else None
+    )
     # max_side 800: backgrounds are cropped down to the 640x480 frame anyway, so
     # holding more resolution than that only slows the decode.
     bg_bank = ImageBank(backgrounds, max_side=800, eager=False) if backgrounds else None
@@ -729,7 +754,8 @@ def generate(
         )
 
     images_dir = out_dir / "images"
-    ensure_dirs(out_dir, images_dir)
+    masks_dir = out_dir / "masks"
+    ensure_dirs(out_dir, images_dir, masks_dir)
 
     sheet_samples: list[tuple[np.ndarray, np.ndarray]] = []
     stat_scenes: list[Scene] = []
@@ -747,19 +773,26 @@ def generate(
                 else make_placeholder_background(rng, FRAME_W, FRAME_H)
             )
 
-            img = render(document, background, corners)
+            img, mask = render(document, background, corners)
+            # augment() is photometric only -- no geometry -- so the mask stays
+            # aligned with the image and must not be put through it.
             img = augment(img, rng)
 
             name = f"{i:06d}.jpg"
+            mask_name = f"{i:06d}.png"  # lossless; JPEG would blur the boundary
             cv2.imwrite(str(images_dir / name), img)
+            cv2.imwrite(str(masks_dir / mask_name), mask)
             labels.write(
                 json.dumps(
                     {
                         "file": name,
+                        "mask": mask_name,
                         "width": FRAME_W,
                         "height": FRAME_H,
                         # pixel coordinates, canonical order: corner 0 nearest
-                        # the frame's top-left, then following the winding
+                        # the frame's top-left, then following the winding.
+                        # Kept alongside the mask: eval.py still scores corner
+                        # error, and it is what the old model is compared against.
                         "corners": corners.tolist(),
                         "aspect": scene.true_aspect,
                     }
@@ -779,7 +812,17 @@ def generate(
     # source without caring which produced it.
     with (out_dir / "meta.json").open("w") as handle:
         json.dump(
-            {"source": "synthetic", "images_root": "images", "count": count, "seed": seed},
+            {
+                "source": "synthetic",
+                "images_root": "images",
+                "masks_root": "masks",
+                "count": count,
+                "seed": seed,
+                # Recorded so eval.py can split the SmartDoc score by whether the
+                # page was in training, rather than being told the list twice and
+                # risking the two drifting apart.
+                "excluded_documents": sorted(exclude_docs) if exclude_docs else [],
+            },
             handle,
             indent=2,
         )
@@ -844,17 +887,28 @@ def main() -> None:
         help="directory of real background photos (recursive). Without it, "
         "smooth colour gradients are used instead.",
     )
+    parser.add_argument(
+        "--exclude-docs",
+        nargs="+",
+        default=None,
+        metavar="STEM",
+        help="document filename stems to leave out (e.g. letter005 tax005). The "
+        "SmartDoc test set is shot with the same 30 pages this generator warps, "
+        "so a page used here is not unseen at eval time. Holding a few out lets "
+        "eval.py report seen-vs-unseen separately and measure what that is worth.",
+    )
     args = parser.parse_args()
 
     generate(
         args.out,
         args.count,
         args.seed,
-        args.visualize,
-        args.grid,
-        args.stats,
-        args.documents,
-        args.backgrounds,
+        visualize=args.visualize,
+        grid=args.grid,
+        stats=args.stats,
+        documents=args.documents,
+        exclude_docs=set(args.exclude_docs) if args.exclude_docs else None,
+        backgrounds=args.backgrounds,
     )
 
 

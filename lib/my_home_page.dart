@@ -7,6 +7,7 @@ import 'package:miscan/l10n/app_localizations.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'debug/benchmark_page.dart';
 import 'debug/live_preview_page.dart';
 import 'helpers.dart';
 import 'transform_page.dart';
@@ -118,13 +119,20 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ),
         actions: [
-          if (kDebugMode)
+          if (kDebugMode) ...[
+            IconButton(
+              icon: const Icon(Icons.speed),
+              tooltip: 'Model latency (debug)',
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const BenchmarkPage())),
+            ),
             IconButton(
               icon: const Icon(Icons.center_focus_strong),
               tooltip: 'Live corner preview (debug)',
               onPressed: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const LivePreviewPage())),
             ),
+          ],
         ],
       ),
       body: SafeArea(

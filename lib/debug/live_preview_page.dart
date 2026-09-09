@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../frame.dart';
-import 'corner_model.dart';
+import 'document_model.dart';
 import 'frame_math.dart';
 
 /// Debug-only screen: overlays the corner-detection model's live prediction
@@ -21,10 +21,11 @@ class LivePreviewPage extends StatefulWidget {
 class _LivePreviewPageState extends State<LivePreviewPage>
     with WidgetsBindingObserver {
   CameraController? _controller;
-  CornerModel? _model;
+  DocumentModel? _model;
   bool _busy = false;
   bool _disposed = false;
   String? _error;
+  String? _inferenceError;
   List<Offset> _corners = const [];
   Size _sourceSize = Size.zero;
   int? _lastLatencyMs;
@@ -76,7 +77,7 @@ class _LivePreviewPageState extends State<LivePreviewPage>
       previewSize.height.toInt(),
     );
 
-    _model ??= await CornerModel.load();
+    _model ??= await DocumentModel.load();
     if (_disposed) {
       controller.dispose();
       return;
@@ -95,12 +96,21 @@ class _LivePreviewPageState extends State<LivePreviewPage>
         .then((corners) {
       if (!_disposed && mounted) {
         setState(() {
-          _corners = corners;
+          // null means the mask did not reduce to a plausible quadrilateral.
+          // Drawing nothing is the honest response; the readout below says so,
+          // so a blank overlay is distinguishable from a frozen one.
+          _corners = corners ?? const [];
           _lastLatencyMs = sw.elapsedMilliseconds;
         });
       }
-    }).catchError((_) {
-      // A dropped/malformed frame shouldn't take the stream down.
+    }).catchError((Object e) {
+      // One bad frame should not take the stream down -- but silently
+      // swallowing every failure makes a model that errors on every single
+      // frame look identical to one that simply sees no document. Keep going,
+      // and surface the first message so the difference is visible.
+      if (!_disposed && mounted && _inferenceError == null) {
+        setState(() => _inferenceError = '$e');
+      }
     }).whenComplete(() => _busy = false);
   }
 
@@ -160,7 +170,7 @@ class _LivePreviewPageState extends State<LivePreviewPage>
       appBar: AppBar(
         title: Text(_lastLatencyMs == null
             ? 'Live corner preview (debug)'
-            : 'Live corner preview  ${_lastLatencyMs}ms/frame'),
+            : '${_corners.isEmpty ? "no doc" : "tracking"}  ${_lastLatencyMs}ms/frame'),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -190,6 +200,20 @@ class _LivePreviewPageState extends State<LivePreviewPage>
                       cornerLineThickness: 3.0,
                       points: mapped,
                       notifier: _repaintNotifier,
+                    ),
+                  ),
+                if (_inferenceError != null)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      color: Colors.black87,
+                      padding: const EdgeInsets.all(12),
+                      child: Text(
+                        'inference failing: $_inferenceError',
+                        style: const TextStyle(color: Colors.orangeAccent, fontSize: 12),
+                      ),
                     ),
                   ),
               ],

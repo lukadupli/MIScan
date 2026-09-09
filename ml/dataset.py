@@ -48,12 +48,14 @@ class CornerDataset(Dataset):
     def __init__(
         self,
         dirs: list[Path] | Path,
-        input_size: int = INPUT_SIZE,
+        input_size: tuple[int, int] = INPUT_SIZE,  # (H, W)
         augment: bool = False,
         limit: int | None = None,
+        masks: bool = False,
     ) -> None:
         self.input_size = input_size
         self.augment = augment
+        self.masks = masks
         self.records: list[dict] = []
 
         for directory in [dirs] if isinstance(dirs, Path) else dirs:
@@ -61,6 +63,7 @@ class CornerDataset(Dataset):
             meta_path = directory / "meta.json"
             meta = json.loads(meta_path.read_text()) if meta_path.exists() else {}
             images_root = directory / meta.get("images_root", "")
+            masks_root = directory / meta.get("masks_root", "")
 
             labels_path = directory / "labels.jsonl"
             if not labels_path.exists():
@@ -72,6 +75,16 @@ class CornerDataset(Dataset):
                     path = Path(row["file"])
                     row["_path"] = path if path.is_absolute() else images_root / path
                     row.setdefault("source", meta.get("source", "unknown"))
+                    if masks:
+                        if "mask" not in row:
+                            raise ValueError(
+                                f"{labels_path} has no 'mask' field -- it predates mask "
+                                "output; regenerate with the current synth.py"
+                            )
+                        mask_path = Path(row["mask"])
+                        row["_mask_path"] = (
+                            mask_path if mask_path.is_absolute() else masks_root / mask_path
+                        )
                     self.records.append(row)
 
         if limit is not None:
@@ -94,9 +107,26 @@ class CornerDataset(Dataset):
         corners[:, 0] /= row["width"]
         corners[:, 1] /= row["height"]
 
-        img = cv2.resize(img, (self.input_size, self.input_size), interpolation=cv2.INTER_AREA)
+        mask = None
+        if self.masks:
+            mask = cv2.imread(str(row["_mask_path"]), cv2.IMREAD_GRAYSCALE)
+            if mask is None:
+                raise RuntimeError(f"could not read {row['_mask_path']}")
+
+        # cv2.resize takes (width, height); input_size is (height, width).
+        img = cv2.resize(img, self.input_size[::-1], interpolation=cv2.INTER_AREA)
+        if mask is not None:
+            # INTER_NEAREST, then threshold: the label should stay a hard
+            # decision per pixel. INTER_AREA would blur the boundary into
+            # intermediate values that the loss then treats as genuine
+            # uncertainty rather than as a resampling artefact.
+            mask = cv2.resize(mask, self.input_size[::-1], interpolation=cv2.INTER_NEAREST)
+            mask = (mask >= 128).astype(np.float32)
+
         if self.augment:
             img = _photometric_augment(img)
+            if mask is not None:
+                img, mask = _geometric_augment(img, mask)
 
         # HWC uint8 -> CHW float, normalised. The channel order (RGB), the
         # normalisation constants and the layout all have to match what the C++
@@ -106,17 +136,47 @@ class CornerDataset(Dataset):
         std = torch.tensor(IMAGENET_STD).view(3, 1, 1)
         tensor = (tensor - mean) / std
 
+        if mask is not None:
+            return tensor, torch.from_numpy(mask).unsqueeze(0)
         return tensor, torch.from_numpy(corners.reshape(8))
+
+
+def _geometric_augment(img: np.ndarray, mask: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Flips, applied to image and mask together. Mask targets only.
+
+    This is the augmentation the corner-regression path could not have (see
+    _photometric_augment below). A mask transforms by exactly the same operation
+    as its image, so there is no separate label transform to get subtly wrong --
+    the class of bug that docstring warns about cannot occur here.
+
+    Flips rather than arbitrary rotation, for two reasons: synth.py now samples
+    roll across the full +/- 90, so document orientation is already covered
+    physically correctly, with the perspective that a real rolled camera would
+    produce; and a k*90 rotation would transpose a non-square input, which does
+    not survive batching. Horizontal and vertical flips compose to give 180
+    degrees, cost nothing, and preserve the shape.
+
+    A mirrored page is not physically realistic -- the text reads backwards --
+    but nothing here is asked to read text, only to find where the paper stops.
+    """
+    if random.random() < 0.5:
+        img, mask = np.fliplr(img), np.fliplr(mask)
+    if random.random() < 0.5:
+        img, mask = np.flipud(img), np.flipud(mask)
+    # flips return views with negative strides; torch.from_numpy rejects those.
+    return np.ascontiguousarray(img), np.ascontiguousarray(mask)
 
 
 def _photometric_augment(img: np.ndarray) -> np.ndarray:
     """Appearance-only augmentation: brightness, contrast, blur, noise.
 
-    Deliberately nothing geometric. Flips, crops and rotations would all move the
-    corners, so every one of them would need a matching label transform -- and a
-    geometric augmentation whose label transform is subtly wrong is invisible in
-    the loss curve and fatal to the result. synth.py already supplies geometric
-    variety by construction, at the point where the labels come for free.
+    Deliberately nothing geometric *for the corner path*. Flips, crops and
+    rotations would all move the corners, so every one of them would need a
+    matching label transform -- and a geometric augmentation whose label
+    transform is subtly wrong is invisible in the loss curve and fatal to the
+    result. synth.py already supplies geometric variety by construction, at the
+    point where the labels come for free. See _geometric_augment above for what
+    a mask target makes safe.
     """
     out = img.astype(np.float32)
     out = out * random.uniform(0.8, 1.2) + random.uniform(-20, 20)

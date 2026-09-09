@@ -25,7 +25,7 @@ import onnx
 import torch
 
 from common import INPUT_SIZE
-from model import CornerNet
+from model import CornerNet, DocSegNet
 
 # opset 17 is widely supported by ONNX Runtime Mobile and covers everything a
 # plain conv net needs. Raising it gains nothing here and risks the mobile build
@@ -42,26 +42,45 @@ MAX_MOBILE_IR_VERSION = 9
 DEFAULT_OUT = Path(__file__).resolve().parents[1] / "assets" / "models" / "corners.onnx"
 
 
-def export(model: torch.nn.Module, out_path: Path) -> None:
-    """Write the model to ONNX with a fixed 1x3x224x224 input.
+def export(
+    model: torch.nn.Module,
+    out_path: Path,
+    size: tuple[int, int] = INPUT_SIZE,
+    output_name: str = "corners",
+    dynamic: bool = False,
+) -> None:
+    """Write the model to ONNX with a fixed 1x3xHxW input.
 
     Static shapes on purpose. Dynamic batch would be one line more, but the app
     only ever runs a single frame, and fixed shapes let the runtime plan memory
     once at session creation -- which matters for the live-preview path, where
     the session is created once and reused across frames.
+
+    `dynamic=True` frees the two spatial axes, and exists for one job: the
+    Phase 0 resolution sweep, where one session is fed several input sizes to
+    time them against each other. Do not ship it. ORT optimises a dynamic graph
+    less aggressively and re-plans memory whenever the shape changes, so its
+    numbers are only good for comparing sizes -- once a size is chosen, re-export
+    statically at that size and re-measure.
     """
     out_path.parent.mkdir(parents=True, exist_ok=True)
     model.eval().cpu()
-    dummy = torch.zeros(1, 3, INPUT_SIZE, INPUT_SIZE)
+    height, width = size
+    dummy = torch.zeros(1, 3, height, width)
 
     torch.onnx.export(
         model,
         dummy,
         str(out_path),
         input_names=["image"],
-        output_names=["corners"],
+        output_names=[output_name],
         opset_version=OPSET,
         do_constant_folding=True,
+        dynamic_axes=(
+            {"image": {2: "height", 3: "width"}, output_name: {2: "height", 3: "width"}}
+            if dynamic
+            else None
+        ),
         # Critical for how the app loads this. torch's exporter defaults to
         # external_data=True, which writes the graph to model.onnx and the
         # weights to a sibling model.onnx.data -- 4 KB and 4.3 MB respectively.
@@ -116,9 +135,16 @@ def check_parity(model: torch.nn.Module, onnx_path: Path, trials: int = 8) -> fl
     session = ort.InferenceSession(str(onnx_path), providers=["CPUExecutionProvider"])
     input_name = session.get_inputs()[0].name
 
+    # Take the shape from the file rather than from INPUT_SIZE, so this checks
+    # the graph that was actually written even when export() was told a
+    # different size. A dynamic export reports its free axes as strings, and
+    # there is no single right answer for those -- fall back to the contract.
+    shape = session.get_inputs()[0].shape
+    height, width = (d if isinstance(d, int) else s for d, s in zip(shape[2:], INPUT_SIZE))
+
     worst = 0.0
     for _ in range(trials):
-        x = np.random.randn(1, 3, INPUT_SIZE, INPUT_SIZE).astype(np.float32)
+        x = np.random.randn(1, 3, height, width).astype(np.float32)
         with torch.no_grad():
             torch_out = model(torch.from_numpy(x)).numpy()
         onnx_out = session.run(None, {input_name: x})[0]
@@ -134,15 +160,37 @@ def main() -> None:
     parser.add_argument(
         "--self-test",
         action="store_true",
-        help="export a freshly initialised CornerNet to a temp path; validates the "
+        help="export a freshly initialised model to a temp path; validates the "
         "export and parity machinery without needing a trained checkpoint",
+    )
+    parser.add_argument(
+        "--arch",
+        choices=["corner", "seg"],
+        default="corner",
+        help="which architecture --self-test should instantiate",
+    )
+    parser.add_argument(
+        "--size",
+        type=int,
+        nargs=2,
+        metavar=("H", "W"),
+        default=None,
+        help=f"input height and width (default: {INPUT_SIZE[0]} {INPUT_SIZE[1]})",
+    )
+    parser.add_argument(
+        "--dynamic",
+        action="store_true",
+        help="free the spatial axes. For the resolution sweep only -- see export(). "
+        "Never ship a graph exported this way.",
     )
     parser.add_argument("--tolerance", type=float, default=1e-4)
     args = parser.parse_args()
 
+    size = tuple(args.size) if args.size else INPUT_SIZE
+
     if args.self_test:
-        model = CornerNet()
-        out_path = Path("/tmp/corners_selftest.onnx")
+        model = DocSegNet() if args.arch == "seg" else CornerNet()
+        out_path = Path(f"/tmp/{args.arch}_selftest.onnx")
     elif args.checkpoint:
         model = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
         if isinstance(model, dict):
@@ -151,7 +199,14 @@ def main() -> None:
     else:
         parser.error("pass --checkpoint, or --self-test")
 
-    export(model, out_path)
+    is_seg = isinstance(model, DocSegNet)
+    export(
+        model,
+        out_path,
+        size=size,
+        output_name="mask" if is_seg else "corners",
+        dynamic=args.dynamic,
+    )
 
     worst = check_parity(model, out_path)
     print(f"parity: worst absolute difference over 8 random inputs = {worst:.3e}")
