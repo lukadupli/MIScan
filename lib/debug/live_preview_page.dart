@@ -7,10 +7,14 @@ import '../frame.dart';
 import 'document_model.dart';
 import 'frame_math.dart';
 
-/// Debug-only screen: overlays the corner-detection model's live prediction
-/// on the camera feed, so model quality can be judged in real-world use.
-/// Reached only via the kDebugMode-gated icon in MyHomePage -- never part of
-/// the real capture flow, so its strings are not localized.
+/// Dev-only screen: overlays the segmentation model's live prediction on the
+/// camera feed, so model quality can be judged in real-world use, with a
+/// per-stage timing panel for finding what is actually slow.
+///
+/// Reached only via the icon in MyHomePage, which is hidden in release builds
+/// (but deliberately not in profile builds -- those are the ones whose timings
+/// mean anything). Never part of the real capture flow, so its strings are not
+/// localized.
 class LivePreviewPage extends StatefulWidget {
   const LivePreviewPage({super.key});
 
@@ -30,6 +34,20 @@ class _LivePreviewPageState extends State<LivePreviewPage>
   Size _sourceSize = Size.zero;
   int? _lastLatencyMs;
   final _repaintNotifier = ValueNotifier<bool>(false);
+
+  // Profiling. A rolling window for the per-stage averages -- single frames
+  // swing too much to read -- plus fallback totals since the screen opened,
+  // because the fallback is rare enough that a 30-frame window would mostly
+  // show zero and hide how often it really fires.
+  static const _window = 30;
+  final _recent = <Detection>[];
+  final _recentWallUs = <int>[];
+  int _frames = 0;
+  int _fallbacks = 0;
+  int _fallbackMaxN = 0;
+  int _fallbackMaxUs = 0;
+  int _fallbackTotalUs = 0;
+  bool _showStats = true;
 
   @override
   void initState() {
@@ -93,14 +111,15 @@ class _LivePreviewPageState extends State<LivePreviewPage>
     final sw = Stopwatch()..start();
     _model!
         .predict(image, _controller!.description.sensorOrientation)
-        .then((corners) {
+        .then((det) {
       if (!_disposed && mounted) {
         setState(() {
           // null means the mask did not reduce to a plausible quadrilateral.
           // Drawing nothing is the honest response; the readout below says so,
           // so a blank overlay is distinguishable from a frozen one.
-          _corners = corners ?? const [];
+          _corners = det.corners ?? const [];
           _lastLatencyMs = sw.elapsedMilliseconds;
+          _record(det, sw.elapsedMicroseconds);
         });
       }
     }).catchError((Object e) {
@@ -112,6 +131,66 @@ class _LivePreviewPageState extends State<LivePreviewPage>
         setState(() => _inferenceError = '$e');
       }
     }).whenComplete(() => _busy = false);
+  }
+
+  void _record(Detection det, int wallUs) {
+    _recent.add(det);
+    _recentWallUs.add(wallUs);
+    if (_recent.length > _window) {
+      _recent.removeAt(0);
+      _recentWallUs.removeAt(0);
+    }
+    _frames++;
+    final mask = det.mask;
+    if (mask.fallbackRan) {
+      _fallbacks++;
+      _fallbackTotalUs += mask.fallbackUs;
+      if (mask.fallbackN > _fallbackMaxN) _fallbackMaxN = mask.fallbackN;
+      if (mask.fallbackUs > _fallbackMaxUs) _fallbackMaxUs = mask.fallbackUs;
+    }
+  }
+
+  String _statsText() {
+    if (_recent.isEmpty) return 'waiting for first frame...';
+    double avgMs(int Function(Detection) f) =>
+        _recent.map(f).reduce((a, b) => a + b) / _recent.length / 1000.0;
+    String row(String label, double ms) =>
+        '${label.padRight(12)}${ms.toStringAsFixed(1).padLeft(7)} ms';
+
+    final wallMs =
+        _recentWallUs.reduce((a, b) => a + b) / _recentWallUs.length / 1000.0;
+    final recentFallbacks = _recent.where((d) => d.mask.fallbackRan).length;
+    final pct = 100.0 * _fallbacks / _frames;
+    final last = _recent.last.mask;
+
+    return [
+      'avg of last ${_recent.length} frames',
+      row('yuv->floats', avgMs((d) => d.yuvUs)),
+      row('tensor wrap', avgMs((d) => d.tensorUs)),
+      row('inference', avgMs((d) => d.inferenceUs)),
+      row('unpack', avgMs((d) => d.unpackUs)),
+      row('postprocess', avgMs((d) => d.postprocessUs)),
+      row(' threshold', avgMs((d) => d.mask.thresholdUs)),
+      row(' component', avgMs((d) => d.mask.componentUs)),
+      row(' boundary', avgMs((d) => d.mask.boundaryUs)),
+      row(' hull', avgMs((d) => d.mask.hullUs)),
+      row(' simplify', avgMs((d) => d.mask.simplifyUs)),
+      row(' fallback', avgMs((d) => d.mask.fallbackUs)),
+      row('stage sum',
+          avgMs((d) => d.yuvUs + d.tensorUs + d.inferenceUs + d.unpackUs + d.postprocessUs)),
+      // Wall is measured around the whole predict() call from this page, so a
+      // gap between it and the stage sum is async scheduling overhead.
+      row('wall', wallMs),
+      '',
+      'fallback $recentFallbacks/${_recent.length} recent, '
+          '$_fallbacks/$_frames total (${pct.toStringAsFixed(1)}%)',
+      if (_fallbacks > 0)
+        ' when run: n max $_fallbackMaxN, '
+            'avg ${(_fallbackTotalUs / _fallbacks / 1000).toStringAsFixed(1)} ms, '
+            'max ${(_fallbackMaxUs / 1000).toStringAsFixed(1)} ms',
+      'last: ${last.path}, hull ${last.hullSize}'
+          '${last.fallbackRan ? ', n ${last.fallbackN}' : ''}',
+    ].join('\n');
   }
 
   @override
@@ -202,6 +281,33 @@ class _LivePreviewPageState extends State<LivePreviewPage>
                       notifier: _repaintNotifier,
                     ),
                   ),
+                Positioned(
+                  left: 8,
+                  top: 8,
+                  child: GestureDetector(
+                    // Tap to collapse: the full panel covers a fair slice of
+                    // the preview, which gets in the way when aiming.
+                    onTap: () => setState(() => _showStats = !_showStats),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.72),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        _showStats
+                            ? _statsText()
+                            : 'stats (tap)  fallback $_fallbacks/$_frames',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.5,
+                          fontFamily: 'monospace',
+                          height: 1.25,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 if (_inferenceError != null)
                   Positioned(
                     left: 0,

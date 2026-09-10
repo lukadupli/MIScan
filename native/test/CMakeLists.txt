@@ -18,6 +18,9 @@ set(NATIVE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
 add_executable(native_tests
     test_main.cpp
     quad_transform_test.cpp
+    yuv_to_tensor_test.cpp
+
+    ${NATIVE_DIR}/image_processing/yuv_to_tensor.cpp
 
     ${NATIVE_DIR}/basic_linear/helpers.cpp
     ${NATIVE_DIR}/basic_linear/line.cpp

@@ -1,22 +1,22 @@
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:onnxruntime/onnxruntime.dart';
 
+import 'document_model.dart';
 import 'frame_math.dart';
+import 'ort_tensor_io.dart';
 
-/// Debug-only: times the shipped segmentation model on this actual device.
+/// Debug-only: times the shipped segmentation model on this device under
+/// different ONNX Runtime execution providers, and checks they agree.
 ///
-/// The resolution sweep this page originally ran is done -- 4:3 sizes cost
-/// almost exactly in proportion to pixel count on real hardware (190ms at
-/// 256x192 up to 1156ms at 640x480), which settled the input size at 320x240.
-/// Those figures came from a dynamic-axis export, which ORT optimises less
-/// aggressively, so they were an upper bound.
-///
-/// What it measures now is the real thing: the static model the app loads, at
-/// the size it actually runs, so the number is the one the live preview is
-/// living with rather than a proxy for it.
+/// Inference is most of a live-preview frame, so how ORT executes the graph is
+/// the main lever left. Configs run round-robin in a rotating order within
+/// one session, because inference time drifts ~20% between sessions with the
+/// phone's thermal and battery state -- comparisons across separate runs are
+/// not trustworthy, comparisons within one are.
 class BenchmarkPage extends StatefulWidget {
   const BenchmarkPage({super.key});
 
@@ -24,18 +24,33 @@ class BenchmarkPage extends StatefulWidget {
   State<BenchmarkPage> createState() => _BenchmarkPageState();
 }
 
-/// The one size the shipped graph accepts, from ml/common.py's INPUT_SIZE.
-const _sizes = <List<int>>[
-  [kModelInputHeight, kModelInputWidth],
+class _Config {
+  final String label;
+  final OrtSessionOptions Function() build;
+  const _Config(this.label, this.build);
+}
+
+// The first config is the reference the others are compared against.
+final _configs = [
+  _Config('cpu (default)', OrtSessionOptions.new),
+  _Config('xnnpack x4', () => DocumentModel.xnnpackOptions(4)),
+  _Config('xnnpack x8', () => DocumentModel.xnnpackOptions(8)),
 ];
 
-const _warmupRuns = 3; // first runs pay one-off allocation and page-in costs
-const _timedRuns = 20;
+const _warmupRounds = 3;
+const _timedRounds = 15;
+
+class _Result {
+  double? meanMs;
+  double? maxAbsDiff; // logits vs the cpu config
+  double? maskFlipPct; // % of pixels landing on the other side of the threshold
+  String? error;
+}
 
 class _BenchmarkPageState extends State<BenchmarkPage> {
-  final _results = <String, double>{};
-  final _stopwatch = Stopwatch();
+  final _results = {for (final c in _configs) c.label: _Result()};
   String _status = 'loading model...';
+  String _providers = '';
   bool _done = false;
 
   @override
@@ -45,94 +60,150 @@ class _BenchmarkPageState extends State<BenchmarkPage> {
   }
 
   Future<void> _run() async {
-    OrtSession? session;
+    final sessions = <String, OrtSession>{};
+    OrtValueTensor? input;
     try {
       OrtEnv.instance.init();
+      _providers = OrtEnv.instance.availableProviders().map((p) => p.value).join(', ');
       final raw = await rootBundle.load('assets/models/segmentation.onnx');
-      session = OrtSession.fromBuffer(
-        raw.buffer.asUint8List(raw.offsetInBytes, raw.lengthInBytes),
-        OrtSessionOptions(),
-      );
+      final bytes = raw.buffer.asUint8List(raw.offsetInBytes, raw.lengthInBytes);
 
-      for (final size in _sizes) {
-        final h = size[0], w = size[1];
-        final label = '$w x $h';
-        if (mounted) setState(() => _status = 'timing $label...');
-
-        final data = Float32List(1 * 3 * h * w); // zeros: timing only
-        final shape = [1, 3, h, w];
-
-        for (int i = 0; i < _warmupRuns + _timedRuns; i++) {
-          if (i == _warmupRuns) _stopwatch.reset();
-          _stopwatch.start();
-          final input = OrtValueTensor.createTensorWithDataList(data, shape);
-          final runOptions = OrtRunOptions();
-          List<OrtValue?>? outputs;
-          try {
-            outputs = await session.runAsync(runOptions, {'image': input});
-          } finally {
-            input.release();
-            runOptions.release();
-            outputs?.forEach((o) => o?.release());
-          }
-          _stopwatch.stop();
+      for (final c in _configs) {
+        try {
+          final options = c.build();
+          sessions[c.label] = OrtSession.fromBuffer(bytes, options);
+          options.release();
+        } catch (e) {
+          _results[c.label]!.error = '$e';
         }
-
-        if (!mounted) return;
-        setState(() {
-          _results[label] = _stopwatch.elapsedMicroseconds / 1000.0 / _timedRuns;
-        });
       }
 
+      // One fixed input for every config and every run. Values spread over
+      // roughly the range ImageNet-normalised pixels occupy.
+      const plane = kModelInputHeight * kModelInputWidth;
+      final rng = math.Random(42);
+      final data = Float32List(3 * plane);
+      for (var i = 0; i < data.length; i++) {
+        data[i] = rng.nextDouble() * 4 - 2;
+      }
+      input = OrtValueTensor.createTensorWithDataList(
+        data,
+        [1, 3, kModelInputHeight, kModelInputWidth],
+      );
+
+      // Agreement: every config against cpu, on the same input.
+      final outputs = <String, Float32List>{};
+      for (final entry in sessions.entries) {
+        outputs[entry.key] = await _infer(entry.value, input, plane);
+      }
+      final reference = outputs[_configs.first.label];
+      if (reference != null) {
+        for (final entry in outputs.entries) {
+          var maxDiff = 0.0;
+          var flips = 0;
+          for (var i = 0; i < plane; i++) {
+            final a = reference[i], b = entry.value[i];
+            maxDiff = math.max(maxDiff, (a - b).abs());
+            if ((a >= 0) != (b >= 0)) flips++;
+          }
+          _results[entry.key]!
+            ..maxAbsDiff = maxDiff
+            ..maskFlipPct = 100.0 * flips / plane;
+        }
+      }
+
+      // Timing, round-robin with the order rotated each round.
+      final labels = sessions.keys.toList();
+      final totals = {for (final l in labels) l: 0};
+      for (var round = 0; round < _warmupRounds + _timedRounds; round++) {
+        if (mounted) {
+          setState(() => _status = round < _warmupRounds
+              ? 'warming up...'
+              : 'timing round ${round - _warmupRounds + 1}/$_timedRounds');
+        }
+        for (var k = 0; k < labels.length; k++) {
+          final label = labels[(round + k) % labels.length];
+          final sw = Stopwatch()..start();
+          await _infer(sessions[label]!, input, null);
+          if (round >= _warmupRounds) totals[label] = totals[label]! + sw.elapsedMicroseconds;
+        }
+      }
+      for (final l in labels) {
+        _results[l]!.meanMs = totals[l]! / _timedRounds / 1000.0;
+      }
+
+      debugPrint('EP_BENCHMARK providers=[$_providers] ${[
+        for (final c in _configs)
+          '${c.label}: ${_results[c.label]!.meanMs?.toStringAsFixed(1) ?? "-"}ms '
+              'diff=${_results[c.label]!.maxAbsDiff?.toStringAsExponential(2) ?? "-"} '
+              'flip=${_results[c.label]!.maskFlipPct?.toStringAsFixed(3) ?? "-"}% '
+              '${_results[c.label]!.error ?? ""}'
+      ].join(' | ')}');
       if (mounted) setState(() { _status = 'done'; _done = true; });
     } catch (e) {
       if (mounted) setState(() { _status = 'failed: $e'; _done = true; });
     } finally {
-      session?.release();
+      input?.release();
+      for (final s in sessions.values) {
+        s.release();
+      }
+    }
+  }
+
+  /// One inference. Returns the mask when [count] is given, otherwise just
+  /// runs and releases.
+  Future<Float32List> _infer(OrtSession session, OrtValueTensor input, int? count) async {
+    final ro = OrtRunOptions();
+    List<OrtValue?>? outs;
+    try {
+      outs = await session.runAsync(ro, {'image': input});
+      return count == null ? Float32List(0) : readFloat32Output(outs![0]!, count);
+    } finally {
+      ro.release();
+      outs?.forEach((o) => o?.release());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // The size the current corner model runs at, for reference.
-    const baseline = 150.0;
+    final cpuMs = _results[_configs.first.label]!.meanMs;
     return Scaffold(
-      appBar: AppBar(title: const Text('Model latency (debug)')),
+      appBar: AppBar(title: const Text('Execution providers (debug)')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(_status, style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: 8),
-          const Text(
-            'LR-ASPP MobileNetV3, the shipped static model.\n'
-            'This is the real per-frame inference cost, preprocessing excluded.',
-            style: TextStyle(fontSize: 12, color: Colors.grey),
-          ),
+          Text(_status),
+          const SizedBox(height: 4),
+          Text('available: $_providers',
+              style: const TextStyle(fontSize: 12, color: Colors.grey)),
           const Divider(height: 24),
-          for (final entry in _results.entries)
+          for (final c in _configs)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(entry.key, style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()])),
-                  Text(
-                    '${entry.value.toStringAsFixed(0)} ms',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                      color: entry.value > baseline * 3 ? Colors.redAccent : null,
-                    ),
-                  ),
-                ],
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: _row(c.label, _results[c.label]!, cpuMs),
             ),
-          if (!_done) const Padding(
-            padding: EdgeInsets.only(top: 24),
-            child: Center(child: CircularProgressIndicator()),
-          ),
+          if (!_done)
+            const Padding(
+              padding: EdgeInsets.only(top: 24),
+              child: Center(child: CircularProgressIndicator()),
+            ),
         ],
       ),
+    );
+  }
+
+  Widget _row(String label, _Result r, double? cpuMs) {
+    const mono = TextStyle(fontFamily: 'monospace', fontSize: 13);
+    if (r.error != null) {
+      return Text('$label\n  failed: ${r.error}', style: mono.copyWith(color: Colors.redAccent));
+    }
+    final speed = (r.meanMs != null && cpuMs != null) ? ' (${(cpuMs / r.meanMs!).toStringAsFixed(2)}x)' : '';
+    return Text(
+      '$label\n'
+      '  ${r.meanMs?.toStringAsFixed(1) ?? '...'} ms$speed\n'
+      '  vs cpu: max|diff| ${r.maxAbsDiff?.toStringAsExponential(2) ?? '...'}, '
+      'mask pixels flipped ${r.maskFlipPct?.toStringAsFixed(3) ?? '...'}%',
+      style: mono,
     );
   }
 }

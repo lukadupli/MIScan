@@ -39,6 +39,7 @@ add_library(
     image_processing
     SHARED
     ../../native/image_processing/image_processing.cpp
+    ../../native/image_processing/yuv_to_tensor.cpp
 )
 
 target_link_libraries(

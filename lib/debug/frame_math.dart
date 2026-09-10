@@ -1,6 +1,9 @@
+import 'dart:ffi' as ffi;
+import 'dart:io' show Platform;
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
+import 'package:ffi/ffi.dart' show malloc;
 import 'package:flutter/material.dart';
 
 /// Contract enforced here has to match ml/common.py's INPUT_SIZE exactly, or
@@ -20,81 +23,94 @@ Size rotatedFrameSize(int sensorOrientationDeg, int rawWidth, int rawHeight) {
       : Size(rawWidth.toDouble(), rawHeight.toDouble());
 }
 
-/// Converts one YUV420 [image] straight into a normalized, rotated, resized
-/// CHW Float32 tensor of length 3*H*W -- one pass, no intermediate
-/// full-resolution buffer.
+typedef _YuvToChwNative = ffi.Void Function(
+    ffi.Pointer<ffi.Uint8>, ffi.Int32, ffi.Int32,
+    ffi.Pointer<ffi.Uint8>, ffi.Int32, ffi.Int32,
+    ffi.Pointer<ffi.Uint8>, ffi.Int32, ffi.Int32,
+    ffi.Int32, ffi.Int32, ffi.Int32,
+    ffi.Pointer<ffi.Float>, ffi.Int32, ffi.Int32,
+    ffi.Pointer<ffi.Double>);
+typedef _YuvToChwDart = void Function(
+    ffi.Pointer<ffi.Uint8>, int, int,
+    ffi.Pointer<ffi.Uint8>, int, int,
+    ffi.Pointer<ffi.Uint8>, int, int,
+    int, int, int,
+    ffi.Pointer<ffi.Float>, int, int,
+    ffi.Pointer<ffi.Double>);
+
+/// native/image_processing/yuv_to_tensor.cpp.
+final _yuvToChw = (Platform.isAndroid
+        ? ffi.DynamicLibrary.open('libimage_processing.so')
+        : ffi.DynamicLibrary.process())
+    .lookupFunction<_YuvToChwNative, _YuvToChwDart>('YuvToChwTensor');
+
+/// Converts camera frames into the network's input: a normalised, upright,
+/// resized CHW float tensor of 3 * [kModelInputHeight] * [kModelInputWidth].
 ///
-/// For each of the 224x224 output pixels: walk backwards through output ->
-/// point in the upright rotated frame (plain per-axis resize; the aspect
-/// distortion this causes on a non-square source is expected, see
-/// ml/dataset.py) -> point in the raw sensor buffer (inverse of the
-/// sensorOrientation rotation) -> nearest Y/U/V sample, respecting each
-/// plane's own bytesPerRow/bytesPerPixel stride.
-Float32List yuv420ToChwTensor(CameraImage image, int sensorOrientationDeg) {
-  final w = image.width, h = image.height;
-  final rot = rotatedFrameSize(sensorOrientationDeg, w, h);
-  final rotW = rot.width, rotH = rot.height;
+/// The work happens in native/image_processing/yuv_to_tensor.cpp, which walks
+/// each output pixel back to its source sample in one pass: output -> upright
+/// frame (plain per-axis resize) -> raw sensor buffer (inverse of the sensor's
+/// mounting rotation) -> nearest Y/U/V sample, respecting each plane's own
+/// row and pixel stride. Doing this in Dart cost ~90 ms a frame.
+///
+/// The camera's planes are Dart-heap byte arrays, so they have to be copied
+/// into native memory for the call. That buffer, and the output one, are
+/// allocated once and reused: the frame size does not change during a
+/// session, so per frame this is a few hundred KB of memcpy rather than a round
+/// of allocations.
+///
+/// The result stays in native memory, at [output], where ORT can read it in
+/// place (see wrapFloat32Tensor) instead of having it copied back into Dart and
+/// then out again. Call [dispose] when finished.
+class YuvConverter {
+  static const _outLength = 3 * kModelInputHeight * kModelInputWidth;
 
-  final yPlane = image.planes[0];
-  final uPlane = image.planes[1];
-  final vPlane = image.planes[2];
-  final yPixelStride = yPlane.bytesPerPixel ?? 1;
-  final uPixelStride = uPlane.bytesPerPixel ?? 1;
-  final vPixelStride = vPlane.bytesPerPixel ?? 1;
+  final ffi.Pointer<ffi.Float> _out = malloc<ffi.Float>(_outLength);
+  final ffi.Pointer<ffi.Double> _norm = malloc<ffi.Double>(6);
+  final _planes = List<ffi.Pointer<ffi.Uint8>>.filled(3, ffi.nullptr);
+  final _capacity = List<int>.filled(3, 0);
 
-  const outH = kModelInputHeight;
-  const outW = kModelInputWidth;
-  const plane = outH * outW;
-  final out = Float32List(3 * plane);
+  YuvConverter() {
+    // Per-channel means then stds: the layout YuvToChwTensor reads `norm` in.
+    _norm.asTypedList(6).setAll(0, [...kImagenetMean, ...kImagenetStd]);
+  }
 
-  for (int oy = 0; oy < outH; oy++) {
-    final uy = (oy + 0.5) * rotH / outH;
-    for (int ox = 0; ox < outW; ox++) {
-      final ux = (ox + 0.5) * rotW / outW;
+  /// Copies plane [i] into its native buffer, growing the buffer if needed.
+  ffi.Pointer<ffi.Uint8> _stage(int i, Uint8List bytes) {
+    if (bytes.length > _capacity[i]) {
+      if (_planes[i] != ffi.nullptr) malloc.free(_planes[i]);
+      _planes[i] = malloc<ffi.Uint8>(bytes.length);
+      _capacity[i] = bytes.length;
+    }
+    _planes[i].asTypedList(bytes.length).setAll(0, bytes);
+    return _planes[i];
+  }
 
-      // Inverse-rotate (ux, uy) in the upright frame back into raw sensor
-      // coordinates (sx, sy).
-      double sxD, syD;
-      switch (sensorOrientationDeg) {
-        case 90:
-          sxD = uy;
-          syD = h - 1 - ux;
-          break;
-        case 270:
-          sxD = w - 1 - uy;
-          syD = ux;
-          break;
-        case 180:
-          sxD = w - 1 - ux;
-          syD = h - 1 - uy;
-          break;
-        default: // 0
-          sxD = ux;
-          syD = uy;
-      }
-      final sx = sxD.clamp(0, w - 1).toInt();
-      final sy = syD.clamp(0, h - 1).toInt();
+  /// The converted frame, 3 * [kModelInputHeight] * [kModelInputWidth] floats
+  /// in CHW order. Overwritten by the next [convert] and freed by [dispose],
+  /// so anything reading it -- ORT, during inference -- must finish first.
+  ffi.Pointer<ffi.Float> get output => _out;
 
-      final yVal = yPlane.bytes[sy * yPlane.bytesPerRow + sx * yPixelStride];
-      final cx = sx >> 1, cy = sy >> 1;
-      final uVal = uPlane.bytes[cy * uPlane.bytesPerRow + cx * uPixelStride];
-      final vVal = vPlane.bytes[cy * vPlane.bytesPerRow + cx * vPixelStride];
+  /// Converts [image] into [output].
+  void convert(CameraImage image, int sensorOrientationDeg) {
+    final y = image.planes[0], u = image.planes[1], v = image.planes[2];
+    _yuvToChw(
+      _stage(0, y.bytes), y.bytesPerRow, y.bytesPerPixel ?? 1,
+      _stage(1, u.bytes), u.bytesPerRow, u.bytesPerPixel ?? 1,
+      _stage(2, v.bytes), v.bytesPerRow, v.bytesPerPixel ?? 1,
+      image.width, image.height, sensorOrientationDeg,
+      _out, kModelInputWidth, kModelInputHeight,
+      _norm,
+    );
+  }
 
-      final yD = yVal.toDouble();
-      final uD = uVal.toDouble() - 128.0;
-      final vD = vVal.toDouble() - 128.0;
-
-      final r = (yD + 1.402 * vD).clamp(0, 255);
-      final g = (yD - 0.344136 * uD - 0.714136 * vD).clamp(0, 255);
-      final b = (yD + 1.772 * uD).clamp(0, 255);
-
-      final idx = oy * outW + ox;
-      out[idx] = (r / 255.0 - kImagenetMean[0]) / kImagenetStd[0];
-      out[plane + idx] = (g / 255.0 - kImagenetMean[1]) / kImagenetStd[1];
-      out[2 * plane + idx] = (b / 255.0 - kImagenetMean[2]) / kImagenetStd[2];
+  void dispose() {
+    malloc.free(_out);
+    malloc.free(_norm);
+    for (final p in _planes) {
+      if (p != ffi.nullptr) malloc.free(p);
     }
   }
-  return out;
 }
 
 /// Maps model output corners (normalized [0,1] in the *upright rotated*

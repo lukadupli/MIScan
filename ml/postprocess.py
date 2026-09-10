@@ -197,6 +197,7 @@ def mask_to_quad(
     threshold: float = 0.5,
     min_area_fraction: float = 0.01,
     logits: bool = False,
+    stats: dict | None = None,
 ) -> np.ndarray | None:
     """Mask (H, W) -> (4, 2) corners in pixel coordinates, or None.
 
@@ -204,7 +205,16 @@ def mask_to_quad(
     than a guess from the value range: a uint8 mask read off disk spans 0-255,
     which any "looks unbounded, must be logits" heuristic would silently
     sigmoid into nonsense.
+
+    Pass a dict as `stats` to have the path taken recorded into it -- the same
+    fields lib/debug/mask_to_quad.dart's MaskToQuadStats records, so offline
+    and on-device diagnostics mean the same thing. It observes only; the
+    result is identical either way.
     """
+    if stats is None:
+        stats = {}
+    stats.update(path="", hull_size=0, fallback_ran=False, fallback_n=0)
+
     if mask.ndim != 2:
         mask = np.squeeze(mask)
     mask = mask.astype(np.float64)
@@ -215,15 +225,19 @@ def mask_to_quad(
 
     binary = mask >= threshold
     if binary.sum() < min_area_fraction * binary.size:
+        stats["path"] = "reject:empty"
         return None
 
     blob = largest_component(binary)
     points = boundary_points(blob)
     if len(points) < 4:
+        stats["path"] = "reject:few-points"
         return None
 
     hull = convex_hull(points)
+    stats["hull_size"] = len(hull)
     if len(hull) < 4:
+        stats["path"] = "reject:small-hull"
         return None
 
     # Epsilon relative to the blob's own scale, so it behaves the same on a
@@ -234,10 +248,16 @@ def mask_to_quad(
         simplified = simplify_closed(hull, factor * scale)
         if len(simplified) == 4:
             quad = simplified
+            stats["path"] = f"eps{factor}"
             break
     if quad is None:
-        quad = largest_quadrilateral(simplify_closed(hull, 0.02 * scale))
+        candidates = simplify_closed(hull, 0.02 * scale)
+        stats["fallback_ran"] = True
+        stats["fallback_n"] = len(candidates)
+        quad = largest_quadrilateral(candidates)
+        stats["path"] = "fallback"
     if quad is None or _quad_area(quad) < min_area_fraction * mask.size:
+        stats["path"] = "reject:tiny-quad"
         return None
 
     # Same ordering rule the labels use, so predictions and ground truth are

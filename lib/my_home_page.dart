@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:image_picker/image_picker.dart';
@@ -119,10 +119,12 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ),
         actions: [
-          if (kDebugMode) ...[
+          // Dev tooling. Hidden only in release: profile builds need these too,
+          // since debug-mode Dart runs unoptimised and gives misleading timings.
+          if (!kReleaseMode) ...[
             IconButton(
               icon: const Icon(Icons.speed),
-              tooltip: 'Model latency (debug)',
+              tooltip: 'Execution providers (debug)',
               onPressed: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const BenchmarkPage())),
             ),

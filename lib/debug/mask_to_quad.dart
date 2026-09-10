@@ -259,15 +259,53 @@ List<Offset> _canonicalize(List<_Pt> quad) {
   return [for (int i = 0; i < 4; i++) pts[(start + i) % 4].offset];
 }
 
+/// What maskToQuad did on one frame. Diagnostic only: the debug preview shows
+/// it, so where postprocessing time goes -- and how often the O(n^4) fallback
+/// runs, on how many points -- is measured rather than guessed.
+class MaskToQuadStats {
+  /// How the frame ended: 'eps0.02' etc. names the simplification factor that
+  /// landed on four vertices, 'fallback' means the brute-force search produced
+  /// the quad, and a 'reject:' prefix means no quad came out at all.
+  String path = '';
+  int hullSize = 0;
+
+  /// Whether the brute-force search ran. Tracked apart from [path] because a
+  /// fallback whose result is then rejected as too small still cost the time.
+  bool fallbackRan = false;
+
+  /// Vertex count fed to the brute-force search. Its cost is C(n, 4) quad
+  /// areas, so this number matters far more than whether it ran at all:
+  /// n = 20 is ~4.8k combinations, n = 60 is ~490k.
+  int fallbackN = 0;
+
+  int thresholdUs = 0;
+  int componentUs = 0;
+  int boundaryUs = 0;
+  int hullUs = 0;
+  int simplifyUs = 0;
+  int fallbackUs = 0;
+}
+
 /// Mask logits (row-major, [height] x [width]) -> 4 corners in mask pixels,
 /// or null if nothing document-shaped is there.
+///
+/// Pass [stats] to record the path taken and per-step timings. It observes
+/// only; the result is identical with or without it.
 List<Offset>? maskToQuad(
   Float32List logits,
   int width,
   int height, {
   double threshold = 0.5,
   double minAreaFraction = 0.01,
+  MaskToQuadStats? stats,
 }) {
+  final sw = Stopwatch()..start();
+  int lap() {
+    final t = sw.elapsedMicroseconds;
+    sw.reset();
+    return t;
+  }
+
   final total = width * height;
   // Comparing logits against logit(threshold) avoids a sigmoid per pixel;
   // sigmoid is monotonic so the decision is identical.
@@ -280,26 +318,55 @@ List<Offset>? maskToQuad(
       on++;
     }
   }
-  if (on < minAreaFraction * total) return null;
+  stats?.thresholdUs = lap();
+  if (on < minAreaFraction * total) {
+    stats?.path = 'reject:empty';
+    return null;
+  }
 
   final blob = _largestComponent(binary, width, height);
+  stats?.componentUs = lap();
   final points = _boundaryPoints(blob, width, height);
-  if (points.length < 4) return null;
+  stats?.boundaryUs = lap();
+  if (points.length < 4) {
+    stats?.path = 'reject:few-points';
+    return null;
+  }
 
   final hull = _convexHull(points);
-  if (hull.length < 4) return null;
+  stats?.hullUs = lap();
+  stats?.hullSize = hull.length;
+  if (hull.length < 4) {
+    stats?.path = 'reject:small-hull';
+    return null;
+  }
 
   final scale = math.sqrt(_quadArea(hull));
+  final eps = scale <= 0 ? 1.0 : scale;
   List<_Pt>? quad;
   for (final factor in const [0.02, 0.04, 0.01, 0.08, 0.005]) {
-    final simplified = _simplifyClosed(hull, factor * (scale <= 0 ? 1.0 : scale));
+    final simplified = _simplifyClosed(hull, factor * eps);
     if (simplified.length == 4) {
       quad = simplified;
+      stats?.path = 'eps$factor';
       break;
     }
   }
-  quad ??= _largestQuadrilateral(_simplifyClosed(hull, 0.02 * (scale <= 0 ? 1.0 : scale)));
-  if (quad == null || _quadArea(quad) < minAreaFraction * total) return null;
+  final reduced = quad == null ? _simplifyClosed(hull, 0.02 * eps) : null;
+  stats?.simplifyUs = lap();
+
+  if (quad == null) {
+    final candidates = reduced!;
+    stats?.fallbackRan = true;
+    stats?.fallbackN = candidates.length;
+    quad = _largestQuadrilateral(candidates);
+    stats?.fallbackUs = lap();
+    stats?.path = 'fallback';
+  }
+  if (quad == null || _quadArea(quad) < minAreaFraction * total) {
+    stats?.path = 'reject:tiny-quad';
+    return null;
+  }
 
   return _canonicalize(quad);
 }
