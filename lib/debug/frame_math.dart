@@ -113,11 +113,21 @@ class YuvConverter {
   }
 }
 
+/// How the camera frame is fitted into the preview. The single source of truth
+/// for both the FittedBox that draws the video and [mapCornersToWidget] that
+/// places the overlay on it: if those two ever used different fits, the quad
+/// would drift off the page it was found on.
+///
+/// contain, not cover: the preview must show exactly what the model sees. cover
+/// filled the screen by cropping the frame's sides -- ~10% each side on a
+/// SM-A137F -- so the model could detect corners the user could not see, and
+/// the overlay drew them off-screen.
+const kPreviewFit = BoxFit.contain;
+
 /// Maps model output corners (normalized [0,1] in the *upright rotated*
 /// frame -- that's what was fed to the network) to on-screen widget pixels,
-/// reproducing exactly what FittedBox(fit: BoxFit.cover) does for the
-/// preview, so the overlay and the video can never drift apart even when
-/// cover crops part of the frame.
+/// reproducing exactly what FittedBox(fit: [kPreviewFit]) does for the
+/// preview, so the overlay and the video line up whatever the fit.
 List<Offset> mapCornersToWidget({
   required List<Offset> normalizedCorners,
   required Size sourceSize,
@@ -125,7 +135,7 @@ List<Offset> mapCornersToWidget({
 }) {
   if (sourceSize.isEmpty || destinationSize.isEmpty) return normalizedCorners;
 
-  final fitted = applyBoxFit(BoxFit.cover, sourceSize, destinationSize);
+  final fitted = applyBoxFit(kPreviewFit, sourceSize, destinationSize);
   final sourceRect =
       Alignment.center.inscribe(fitted.source, Offset.zero & sourceSize);
   final destRect = Alignment.center

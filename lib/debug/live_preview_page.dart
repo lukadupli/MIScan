@@ -263,8 +263,11 @@ class _LivePreviewPageState extends State<LivePreviewPage>
             child: Stack(
               fit: StackFit.expand,
               children: [
+                // Fills the bars kPreviewFit = contain leaves around the frame,
+                // black as in any camera viewfinder.
+                const ColoredBox(color: Colors.black),
                 FittedBox(
-                  fit: BoxFit.cover,
+                  fit: kPreviewFit, // must match mapCornersToWidget -- see its docs
                   child: SizedBox(
                     width: _sourceSize.width,
                     height: _sourceSize.height,
