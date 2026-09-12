@@ -1,4 +1,4 @@
-"""Write the fixture that pins lib/debug/mask_to_quad.dart to postprocess.py.
+"""Write the fixture that pins lib/detection/mask_to_quad.dart to postprocess.py.
 
 The mask->quad algorithm exists twice: here in numpy, so eval.py can score a
 model, and in Dart, so the phone can act on one. Two implementations of the

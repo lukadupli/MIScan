@@ -7,7 +7,7 @@ static inline double clampTo(double x, double lo, double hi) {
 }
 
 // A port of the Dart loop that used to do this (yuv420ToChwTensor in
-// lib/debug/frame_math.dart), which cost ~90 ms a frame on a SM-A137F. One
+// lib/detection/frame_math.dart), which cost ~90 ms a frame on a SM-A137F. One
 // deliberate change: the rotation fix described at the switch below. Apart from
 // that the arithmetic is identical -- same operations, same order, doubles
 // throughout, rounded to float only on the final store -- which is what allowed

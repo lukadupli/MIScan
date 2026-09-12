@@ -158,18 +158,6 @@ abstract class AppLocalizations {
   /// **'Create a new scan'**
   String get newScanTooltip;
 
-  /// Title of dialog for choosing how to import an image
-  ///
-  /// In en, this message translates to:
-  /// **'Import from'**
-  String get chooseSourceTitle;
-
-  /// Image source options
-  ///
-  /// In en, this message translates to:
-  /// **'{source, select, camera{Camera} gallery{Gallery} other{Other}}'**
-  String imageSource(String source);
-
   /// Message shown when share button is long pressed
   ///
   /// In en, this message translates to:
@@ -391,6 +379,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Done'**
   String get done;
+
+  /// Title of the dialog for choosing how to start a new scan
+  ///
+  /// In en, this message translates to:
+  /// **'New scan'**
+  String get newScanTitle;
+
+  /// Option in the new scan dialog: take a picture with the in-app scanner camera
+  ///
+  /// In en, this message translates to:
+  /// **'Scanner'**
+  String get scannerOption;
+
+  /// Option in the new scan dialog: pick an existing image from the gallery
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get galleryOption;
+
+  /// Tooltip of the scanner's shutter button
+  ///
+  /// In en, this message translates to:
+  /// **'Take picture'**
+  String get takePictureTooltip;
+
+  /// Tooltip of the scanner's flash mode button
+  ///
+  /// In en, this message translates to:
+  /// **'Flash'**
+  String get flashTooltip;
+
+  /// Title shown when the scanner has no camera permission
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access'**
+  String get cameraPermissionTitle;
+
+  /// Explanation shown when camera permission was denied (can ask again)
+  ///
+  /// In en, this message translates to:
+  /// **'MIScan needs the camera to scan documents.'**
+  String get cameraPermissionContent;
+
+  /// Explanation shown when camera permission was permanently denied
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is turned off for MIScan. You can turn it on in the app settings.'**
+  String get cameraPermissionDeniedContent;
+
+  /// Shown when the scanner camera fails to start
+  ///
+  /// In en, this message translates to:
+  /// **'The camera could not be started.'**
+  String get cameraUnavailable;
+
+  /// Shown when taking a picture fails
+  ///
+  /// In en, this message translates to:
+  /// **'Could not take the picture. Please try again.'**
+  String get captureFailed;
+
+  /// Shown when a picked or captured image cannot be decoded
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open this image.'**
+  String get imageLoadFailed;
 }
 
 class _AppLocalizationsDelegate

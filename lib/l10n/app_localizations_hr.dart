@@ -42,22 +42,6 @@ class AppLocalizationsHr extends AppLocalizations {
   String get newScanTooltip => 'Izradi novi sken';
 
   @override
-  String get chooseSourceTitle => 'Uvezi iz';
-
-  @override
-  String imageSource(String source) {
-    String _temp0 = intl.Intl.selectLogic(
-      source,
-      {
-        'camera': 'Kamere',
-        'gallery': 'Galerije',
-        'other': 'Druga lokacija',
-      },
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get shareTooltip => 'Dijeli';
 
   @override
@@ -184,4 +168,39 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get done => 'Gotovo';
+
+  @override
+  String get newScanTitle => 'Novi sken';
+
+  @override
+  String get scannerOption => 'Skener';
+
+  @override
+  String get galleryOption => 'Galerija';
+
+  @override
+  String get takePictureTooltip => 'Snimi fotografiju';
+
+  @override
+  String get flashTooltip => 'Bljeskalica';
+
+  @override
+  String get cameraPermissionTitle => 'Pristup kameri';
+
+  @override
+  String get cameraPermissionContent =>
+      'MIScan treba kameru za skeniranje dokumenata.';
+
+  @override
+  String get cameraPermissionDeniedContent =>
+      'Pristup kameri za MIScan je isključen. Možete ga uključiti u postavkama aplikacije.';
+
+  @override
+  String get cameraUnavailable => 'Kameru nije moguće pokrenuti.';
+
+  @override
+  String get captureFailed => 'Fotografiranje nije uspjelo. Pokušajte ponovo.';
+
+  @override
+  String get imageLoadFailed => 'Ovu sliku nije moguće otvoriti.';
 }

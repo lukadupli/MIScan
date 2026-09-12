@@ -99,11 +99,16 @@ The version string and build number are set in `pubspec.yaml` (`version: x.y.z+N
 main.dart (FirstLaunchChecker)
   ├─ FirstLaunchPage  (introduction screen, shown once)
   └─ MyHomePage       (scan list)
-       └─ TransformPage     (quadrilateral corner selection)
-            ├─ BookTransformPage  (book page curve selection)
-            │    └─ EditPage → ImagePage
-            └─ EditPage          (contrast/brightness/rotation)
-                 └─ ImagePage    (view/share/export/rename)
+       └─ [new scan dialog: Scanner / Gallery]
+            ├─ ScanCameraPage        (live document detection, shutter)
+            │    └─ LoadingThen(prepareScanInput) → TransformPage
+            └─ LoadingThen(prepareScanInput) → TransformPage (gallery import)
+                 (quadrilateral corner selection, starting from the detected
+                 corners when detection found a page)
+                  ├─ BookTransformPage  (book page curve selection)
+                  │    └─ EditPage → ImagePage
+                  └─ EditPage          (contrast/brightness/rotation)
+                       └─ ImagePage    (view/share/export/rename)
 ```
 
 `navigatorKey` in `main.dart` is a global key used by non-widget code (like FFI callbacks and `FileExport`) to push dialogs and navigate without a `BuildContext`.
@@ -119,10 +124,48 @@ The native source is in `native/` (subdirectories: `straighten`, `jpg_encode`, `
 
 Heavy FFI calls run in a separate isolate via `compute()` to avoid blocking the UI thread.
 
+### Document Detection (`lib/detection/`, `lib/scan_camera_page.dart`, `lib/scan_input.dart`)
+
+An ONNX segmentation model finds the page automatically, both live in `ScanCameraPage`'s camera
+and once on a photo (scanner capture or gallery import), so `TransformPage` opens with the page's
+corners already selected instead of the image's own edges.
+
+- **`DocumentModel`** (`lib/detection/document_model.dart`) wraps the `segmentation.onnx` ORT
+  session. `DocumentModel.shared()` is the app-wide instance: loaded and warmed up on first use,
+  kept for the app's life, and never disposed — a failed load (no ORT build for x86_64 emulators
+  or ChromeOS) just retries on the next call, and callers treat a failure as "no detection".
+  Every inference, live or on a photo, goes through one internal serial queue (`_exclusive`),
+  because the plugin's `runAsync` is not safe to overlap.
+- **Model input is the camera sensor's own landscape frame**, not rotated to portrait — only the
+  detected corners are rotated upright afterwards (`sensorToUpright` in `frame_math.dart`).
+  Squashing a portrait frame into the model's 4:3 input was a measured accuracy regression.
+- **`maskToQuad`** (`lib/detection/mask_to_quad.dart`) turns the model's per-pixel mask into a
+  quadrilateral with ordinary geometry, not a second learned step, which is what lets the network
+  not care which corner is "corner 0". Quads come out ~1.5 mask px inside the true page edge,
+  deliberately: a slightly small quad is preferred to a slightly large one.
+- **`ScanCameraPage`** runs three camera outputs at once, each at its own size: a 1440x1080
+  preview, a 320x240 analysis stream (the model's input size — the hardware scaler downscales
+  for it), and a full-resolution photo. This needs the patched `camera` plugin in
+  `third_party/camera_android_camerax/` (see `MISCAN_PATCH.md`): upstream applies one resolution
+  to all three outputs, and its default resolution-selection mode never considers this phone's
+  full-resolution photo size. `DocumentModel.xnnpackThreads` is 2, the measured balance on a
+  SM-A137F between detection rate and UI jank while the camera streams alongside inference.
+- **`scan_input.dart`**'s `prepareScanInput(path, {deleteFile})` decodes a captured or picked
+  image and runs `DocumentModel.shared().detectImage()` on it with a timeout; any detection
+  failure, timeout, or "no page found" all collapse to `corners: null`, and `TransformPage` then
+  starts from the image's own corners — there is no separate "no document found" UI.
+- See `HANDOFF-document-detection.md` for the full design history, the on-device measurements
+  that picked these numbers, and what is still deferred (book mode with detected corners; see its
+  own section there before touching `book_frame.dart` / `book_transform_page.dart` for that).
+
 ### Image Processing Pipeline
 
-1. User picks image from camera or gallery → EXIF rotation corrected (`flutter_exif_rotation`)
-2. `TransformPage`: user drags 4 corners of the `Frame` widget to define the document boundary
+1. User picks image from `ScanCameraPage` (in-app camera, live document overlay) or the gallery →
+   `prepareScanInput` decodes it (the engine applies EXIF orientation itself, so no separate
+   rotation step is needed) and runs document detection on it (see Document Detection below)
+2. `TransformPage`: user drags 4 corners of the `Frame` widget to define the document boundary,
+   starting from the detected corners when detection found a page, or the image's own corners
+   otherwise (no page found, detection failed/timed out, or no ORT build for this device)
    - Corners are tracked by `FrameController` in counterclockwise order starting from bottom-left
    - `CornerShowcase` shows a magnified view of the active corner while dragging
 3. `QuadTransform.transform()` is called in an isolate → result saved to a temp JPEG via `JpgEncode`

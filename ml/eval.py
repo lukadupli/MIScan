@@ -34,7 +34,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from common import describe_device, get_device
-from dataset import CornerDataset
+from dataset import CornerDataset, from_rotated_cw
 from postprocess import mask_to_quad
 
 
@@ -192,6 +192,13 @@ def evaluate(
             else:
                 pred = output
 
+            if getattr(dataset, "rotate_cw", False):
+                # Score in the unrotated frame, so corner error is normalised
+                # by the same axes whichever way the network was fed. (IoU is
+                # unaffected either way: it is invariant under this map.)
+                pred = from_rotated_cw(np.asarray(pred, dtype=np.float64).reshape(4, 2))
+                true = from_rotated_cw(np.asarray(true, dtype=np.float64).reshape(4, 2))
+
             err = corner_error(pred, true)
             iou = polygon_iou(pred, true)
             errors.append(err)
@@ -291,6 +298,27 @@ def main() -> None:
         "for synthetic training, so without this the score silently mixes the two.",
     )
     parser.add_argument("--limit", type=int, default=None)
+    # How the phone feeds the network, to measure what each choice costs.
+    parser.add_argument(
+        "--crop-aspect",
+        default=None,
+        metavar="W:H",
+        help="crop frames to this aspect around the document (e.g. 4:3, the "
+        "phone camera's), dropping frames whose document does not fit",
+    )
+    parser.add_argument(
+        "--view",
+        choices=["landscape", "portrait"],
+        default="landscape",
+        help="'portrait' rotates each frame 90 degrees first, as the live path "
+        "does with an upright phone before squashing into the landscape input",
+    )
+    parser.add_argument(
+        "--resample",
+        choices=["area", "nearest"],
+        default="area",
+        help="downscale filter; 'nearest' is what yuv_to_tensor.cpp does",
+    )
     args = parser.parse_args()
 
     device = get_device(args.device)
@@ -307,8 +335,23 @@ def main() -> None:
 
     # Corner mode even for --task seg: the mask is what the model predicts, but
     # the corner labels are what both architectures are scored against.
-    dataset = CornerDataset(list(args.data), augment=False, limit=args.limit)
+    crop_aspect = None
+    if args.crop_aspect:
+        w, h = (float(v) for v in args.crop_aspect.split(":"))
+        crop_aspect = w / h
+    dataset = CornerDataset(
+        list(args.data),
+        augment=False,
+        limit=args.limit,
+        crop_aspect=crop_aspect,
+        rotate_cw=args.view == "portrait",
+        resample=args.resample,
+    )
     print(f"dataset: {len(dataset)} frames from {', '.join(str(d) for d in args.data)}")
+    if crop_aspect is not None:
+        print(f"cropped to {args.crop_aspect}; {dataset.dropped_by_crop} frames dropped "
+              "(document wider than the crop)")
+    print(f"view: {args.view}, resample: {args.resample}")
 
     group_fn = None
     if args.by in ("document", "seen"):

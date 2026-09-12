@@ -20,6 +20,43 @@ from torch.utils.data import Dataset
 
 from common import IMAGENET_MEAN, IMAGENET_STD, INPUT_SIZE
 
+_RESAMPLE = {
+    "area": cv2.INTER_AREA,
+    # _EXACT maps output pixel centres onto the source, as the phone does;
+    # plain INTER_NEAREST uses corners and lands half a pixel off.
+    "nearest": cv2.INTER_NEAREST_EXACT,
+}
+
+
+def to_rotated_cw(points: np.ndarray) -> np.ndarray:
+    """Normalised (x, y) in a frame -> the same points once the frame is
+    rotated 90 degrees clockwise: the left edge becomes the top."""
+    return np.stack([1.0 - points[:, 1], points[:, 0]], axis=1).astype(points.dtype)
+
+
+def from_rotated_cw(points: np.ndarray) -> np.ndarray:
+    """Inverse of to_rotated_cw."""
+    return np.stack([points[:, 1], 1.0 - points[:, 0]], axis=1).astype(points.dtype)
+
+
+def _crop_origin(row: dict, aspect: float) -> int | None:
+    """Left edge of a full-height crop of width/height `aspect` that contains
+    the whole document, centred on it; None if the document is too wide.
+    Frames already narrower than `aspect` are not cropped (origin 0)."""
+    width, height = row["width"], row["height"]
+    crop_w = round(height * aspect)
+    if crop_w >= width:
+        return 0
+    xs = np.asarray(row["corners"], dtype=np.float64).reshape(4, 2)[:, 0]
+    if xs.max() - xs.min() > crop_w:
+        return None
+    x0 = round((xs.min() + xs.max()) / 2 - crop_w / 2)
+    x0 = min(max(x0, 0), width - crop_w)
+    # Rounding can shave a corner by a pixel; that still counts as inside.
+    if xs.min() < x0 - 1 or xs.max() > x0 + crop_w + 1:
+        return None
+    return x0
+
 
 class CornerDataset(Dataset):
     """Images plus their four corners, normalised to [0, 1] of the source frame.
@@ -52,10 +89,32 @@ class CornerDataset(Dataset):
         augment: bool = False,
         limit: int | None = None,
         masks: bool = False,
+        crop_aspect: float | None = None,
+        rotate_cw: bool = False,
+        resample: str = "area",
     ) -> None:
+        """The last three reproduce how the phone feeds the network, for eval:
+
+        crop_aspect  crop each frame horizontally to this width/height ratio,
+                     centred on the document, and drop frames whose document is
+                     wider than the crop. 4/3 turns SmartDoc's 16:9 into what
+                     the phone's camera delivers.
+        rotate_cw    rotate the frame 90 degrees clockwise before resizing --
+                     an upright portrait phone frame squashed into the
+                     landscape input, which is what the live path does today.
+                     Targets are rotated to match, so they stay in the frame
+                     the network saw.
+        resample     'area' (training's filter) or 'nearest' (pixel-centre
+                     nearest neighbour, what yuv_to_tensor.cpp does).
+        """
+        if resample not in _RESAMPLE:
+            raise ValueError(f"resample must be one of {sorted(_RESAMPLE)}")
         self.input_size = input_size
         self.augment = augment
         self.masks = masks
+        self.crop_aspect = crop_aspect
+        self.rotate_cw = rotate_cw
+        self.resample = resample
         self.records: list[dict] = []
 
         for directory in [dirs] if isinstance(dirs, Path) else dirs:
@@ -87,6 +146,18 @@ class CornerDataset(Dataset):
                         )
                     self.records.append(row)
 
+        if crop_aspect is not None:
+            self.dropped_by_crop = 0
+            kept = []
+            for row in self.records:
+                x0 = _crop_origin(row, crop_aspect)
+                if x0 is None:
+                    self.dropped_by_crop += 1
+                else:
+                    row["_crop_x0"] = x0
+                    kept.append(row)
+            self.records = kept
+
         if limit is not None:
             self.records = self.records[:limit]
         if not self.records:
@@ -113,8 +184,23 @@ class CornerDataset(Dataset):
             if mask is None:
                 raise RuntimeError(f"could not read {row['_mask_path']}")
 
+        if "_crop_x0" in row:
+            x0 = row["_crop_x0"]
+            crop_w = min(round(row["height"] * self.crop_aspect), row["width"])
+            if img.shape[:2] != (row["height"], row["width"]):
+                raise RuntimeError(f"{row['_path']} is not the size its label says")
+            img = img[:, x0 : x0 + crop_w]
+            if mask is not None:
+                mask = mask[:, x0 : x0 + crop_w]
+            corners[:, 0] = (corners[:, 0] * row["width"] - x0) / crop_w
+        if self.rotate_cw:
+            img = np.ascontiguousarray(np.rot90(img, k=-1))
+            if mask is not None:
+                mask = np.ascontiguousarray(np.rot90(mask, k=-1))
+            corners = to_rotated_cw(corners)
+
         # cv2.resize takes (width, height); input_size is (height, width).
-        img = cv2.resize(img, self.input_size[::-1], interpolation=cv2.INTER_AREA)
+        img = cv2.resize(img, self.input_size[::-1], interpolation=_RESAMPLE[self.resample])
         if mask is not None:
             # INTER_NEAREST, then threshold: the label should stay a hard
             # decision per pixel. INTER_AREA would blur the boundary into

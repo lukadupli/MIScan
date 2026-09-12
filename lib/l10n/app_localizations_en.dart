@@ -42,22 +42,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newScanTooltip => 'Create a new scan';
 
   @override
-  String get chooseSourceTitle => 'Import from';
-
-  @override
-  String imageSource(String source) {
-    String _temp0 = intl.Intl.selectLogic(
-      source,
-      {
-        'camera': 'Camera',
-        'gallery': 'Gallery',
-        'other': 'Other',
-      },
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get shareTooltip => 'Share';
 
   @override
@@ -184,4 +168,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get done => 'Done';
+
+  @override
+  String get newScanTitle => 'New scan';
+
+  @override
+  String get scannerOption => 'Scanner';
+
+  @override
+  String get galleryOption => 'Gallery';
+
+  @override
+  String get takePictureTooltip => 'Take picture';
+
+  @override
+  String get flashTooltip => 'Flash';
+
+  @override
+  String get cameraPermissionTitle => 'Camera access';
+
+  @override
+  String get cameraPermissionContent =>
+      'MIScan needs the camera to scan documents.';
+
+  @override
+  String get cameraPermissionDeniedContent =>
+      'Camera access is turned off for MIScan. You can turn it on in the app settings.';
+
+  @override
+  String get cameraUnavailable => 'The camera could not be started.';
+
+  @override
+  String get captureFailed => 'Could not take the picture. Please try again.';
+
+  @override
+  String get imageLoadFailed => 'Could not open this image.';
 }

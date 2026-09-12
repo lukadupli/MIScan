@@ -18,15 +18,20 @@ import 'main.dart';
 class TransformPage extends StatefulWidget{
   final ui.Image image;
 
+  /// Where the corners start, as fractions of [image]'s size in top left, top
+  /// right, bottom right, bottom left order -- the detected page. Null (no
+  /// page found, or no detection) starts them at the image's own corners.
+  final List<Offset>? initialCorners;
+
   /// Creates a page which uses a [Frame] to select the corners to quadrilateraly transform an [image] and save it in JPEG format
-  const TransformPage({super.key, required this.image});
+  const TransformPage({super.key, required this.image, this.initialCorners});
 
   @override
   State<TransformPage> createState() => _TransformPageState();
 }
 
 class _TransformPageState extends State<TransformPage> {
-  final fController = FrameController();
+  late final fController = FrameController(initialCorners: widget.initialCorners);
   late double ratio;
   
   int active = 0;

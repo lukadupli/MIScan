@@ -41,18 +41,6 @@
     "newScanTooltip": "Create a new scan",
     "@newScanTooltip": {"description": "Message displayed when new scan button is long pressed"},
 
-    "chooseSourceTitle": "Import from",
-    "@chooseSourceTitle": {"description": "Title of dialog for choosing how to import an image"},
-    "imageSource": "{source, select, camera{Camera} gallery{Gallery} other{Other}}",
-    "@imageSource": {
-        "description": "Image source options",
-        "placeholders": {
-            "source": {
-                "type": "String"
-            }
-        }
-    },
-
     "shareTooltip": "Share",
     "@shareTooltip": {"description": "Message shown when share button is long pressed"},
 
@@ -206,5 +194,38 @@
     "@next": {"description": "Intro screen button."},
 
     "done": "Done",
-    "@done": {"description": "Intro screen button."}
+    "@done": {"description": "Intro screen button."},
+
+    "newScanTitle": "New scan",
+    "@newScanTitle": {"description": "Title of the dialog for choosing how to start a new scan"},
+
+    "scannerOption": "Scanner",
+    "@scannerOption": {"description": "Option in the new scan dialog: take a picture with the in-app scanner camera"},
+
+    "galleryOption": "Gallery",
+    "@galleryOption": {"description": "Option in the new scan dialog: pick an existing image from the gallery"},
+
+    "takePictureTooltip": "Take picture",
+    "@takePictureTooltip": {"description": "Tooltip of the scanner's shutter button"},
+
+    "flashTooltip": "Flash",
+    "@flashTooltip": {"description": "Tooltip of the scanner's flash mode button"},
+
+    "cameraPermissionTitle": "Camera access",
+    "@cameraPermissionTitle": {"description": "Title shown when the scanner has no camera permission"},
+
+    "cameraPermissionContent": "MIScan needs the camera to scan documents.",
+    "@cameraPermissionContent": {"description": "Explanation shown when camera permission was denied (can ask again)"},
+
+    "cameraPermissionDeniedContent": "Camera access is turned off for MIScan. You can turn it on in the app settings.",
+    "@cameraPermissionDeniedContent": {"description": "Explanation shown when camera permission was permanently denied"},
+
+    "cameraUnavailable": "The camera could not be started.",
+    "@cameraUnavailable": {"description": "Shown when the scanner camera fails to start"},
+
+    "captureFailed": "Could not take the picture. Please try again.",
+    "@captureFailed": {"description": "Shown when taking a picture fails"},
+
+    "imageLoadFailed": "Could not open this image.",
+    "@imageLoadFailed": {"description": "Shown when a picked or captured image cannot be decoded"}
 }

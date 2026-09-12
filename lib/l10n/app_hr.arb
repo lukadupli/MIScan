@@ -10,8 +10,6 @@
     "no": "Ne",
     "cancel": "Otkaži",
     "newScanTooltip": "Izradi novi sken",
-    "chooseSourceTitle": "Uvezi iz",
-    "imageSource": "{source, select, camera{Kamere} gallery{Galerije} other{Druga lokacija}}",
     "shareTooltip": "Dijeli",
     "deleteTooltip": "Izbriši",
     "galleryExportTooltip": "Izvezi u galeriju",
@@ -48,5 +46,16 @@
     "bookPageScanningContent1": "Kako biste skenirali stranicu knjige prvo odaberite kutove stranice te pritisnite gumb s ikonom knjige ...",
     "bookPageScanningContent2": "... zatim, povlačeći bijele kružiće, namjestite krivulju tako da se podudara s zakrivljenim rubom stranice te pritisnite gumb s kvačicom.",
     "next": "Sljedeće",
-    "done": "Gotovo"
+    "done": "Gotovo",
+    "newScanTitle": "Novi sken",
+    "scannerOption": "Skener",
+    "galleryOption": "Galerija",
+    "takePictureTooltip": "Snimi fotografiju",
+    "flashTooltip": "Bljeskalica",
+    "cameraPermissionTitle": "Pristup kameri",
+    "cameraPermissionContent": "MIScan treba kameru za skeniranje dokumenata.",
+    "cameraPermissionDeniedContent": "Pristup kameri za MIScan je isključen. Možete ga uključiti u postavkama aplikacije.",
+    "cameraUnavailable": "Kameru nije moguće pokrenuti.",
+    "captureFailed": "Fotografiranje nije uspjelo. Pokušajte ponovo.",
+    "imageLoadFailed": "Ovu sliku nije moguće otvoriti."
 }

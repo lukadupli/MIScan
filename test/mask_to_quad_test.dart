@@ -4,9 +4,9 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miscan/debug/mask_to_quad.dart';
+import 'package:miscan/detection/mask_to_quad.dart';
 
-/// Pins lib/debug/mask_to_quad.dart to ml/postprocess.py.
+/// Pins lib/detection/mask_to_quad.dart to ml/postprocess.py.
 ///
 /// The same mask->quad geometry exists in both, because eval.py has to score
 /// models in Python and the phone has to act on them in Dart with no OpenCV

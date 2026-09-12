@@ -53,12 +53,34 @@ class FrameController{
   Rect boundary = Rect.zero;
   var corners = <Offset>[Offset.zero, Offset.zero, Offset.zero, Offset.zero];
 
-  FrameController();
-  FrameController.from(FrameController other){
+  /// Where the corners start, as fractions of the child's size -- top left,
+  /// top right, bottom right, bottom left on screen, e.g. a detected page.
+  /// Applied at the first layout, once the child's size is known. Null, or
+  /// anything but four finite points, starts from the child's edges instead.
+  final List<Offset>? initialCorners;
+
+  FrameController({List<Offset>? initialCorners})
+      : initialCorners = initialCorners == null ? null : List.unmodifiable(initialCorners);
+  FrameController.from(FrameController other) : initialCorners = other.initialCorners {
     initialized = other.initialized;
     childSize = other.childSize;
     boundary = other.boundary;
     corners = List<Offset>.from(other.corners);
+  }
+
+  /// Corners for a child of [size] that has not been laid out before:
+  /// [initialCorners] clamped onto the child if they are usable, else the
+  /// child's own corners.
+  List<Offset> startingCorners(Size size){
+    final start = initialCorners;
+    final usable = start != null && start.length == 4 &&
+        start.every((p) => p.dx.isFinite && p.dy.isFinite);
+    if(!usable){
+      return [Offset.zero, Offset(size.width, 0), Offset(size.width, size.height), Offset(0, size.height)];
+    }
+    return [
+      for(final p in start) Offset(p.dx.clamp(0.0, 1.0) * size.width, p.dy.clamp(0.0, 1.0) * size.height),
+    ];
   }
 
   bool isConvex(){
@@ -119,19 +141,21 @@ class _FrameState extends State<Frame>{
     final newBound = widget.margin.topLeft & childBox.size;
 
     if(newBound != boundary){
-      if(!widget.controller.initialized){
-        widget.controller.initialized = true;
-
-        widget.controller.corners[0] = Offset.zero;
-        widget.controller.corners[1] = Offset(newBound.width, 0);
-        widget.controller.corners[2] = Offset(newBound.width, newBound.height);
-        widget.controller.corners[3] = Offset(0, newBound.height);
+      final controller = widget.controller;
+      if(!controller.initialized){
+        controller.initialized = true;
+        controller.corners = controller.startingCorners(newBound.size);
       }
-      else{
+      else if(!controller.boundary.isEmpty){
+        // Scale from the size the corners were placed for, which the
+        // controller knows. This State's own [boundary] is empty when the
+        // controller comes laid out from elsewhere, and scaling from an empty
+        // size divides by zero.
+        final old = controller.boundary;
         for(int i = 0; i < 4; i++){
-          widget.controller.corners[i] = Offset(
-            scale(widget.controller.corners[i].dx, 0, boundary.width, 0, newBound.width),
-            scale(widget.controller.corners[i].dy, 0, boundary.height, 0, newBound.height),
+          controller.corners[i] = Offset(
+            scale(controller.corners[i].dx, 0, old.width, 0, newBound.width),
+            scale(controller.corners[i].dy, 0, old.height, 0, newBound.height),
           );
         }
       }

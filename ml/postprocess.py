@@ -207,7 +207,7 @@ def mask_to_quad(
     sigmoid into nonsense.
 
     Pass a dict as `stats` to have the path taken recorded into it -- the same
-    fields lib/debug/mask_to_quad.dart's MaskToQuadStats records, so offline
+    fields lib/detection/mask_to_quad.dart's MaskToQuadStats records, so offline
     and on-device diagnostics mean the same thing. It observes only; the
     result is identical either way.
     """

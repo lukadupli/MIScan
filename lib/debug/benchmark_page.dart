@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:onnxruntime/onnxruntime.dart';
 
-import 'document_model.dart';
-import 'frame_math.dart';
-import 'ort_tensor_io.dart';
+import '../detection/document_model.dart';
+import '../detection/frame_math.dart';
+import '../detection/ort_tensor_io.dart';
 
 /// Debug-only: times the shipped segmentation model on this device under
 /// different ONNX Runtime execution providers, and checks they agree.

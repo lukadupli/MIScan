@@ -6,6 +6,11 @@ import 'first_launch_page.dart';
 
 /// Used for creating [AlertDialog]s
 final navigatorKey = GlobalKey<NavigatorState>();
+
+/// Tells pages when a route above them has been popped, so they can refresh
+/// what they show on the way back (see MyHomePage).
+final routeObserver = RouteObserver<ModalRoute<void>>();
+
 void main() {
   runApp(const MyApp());
 }
@@ -27,6 +32,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const FirstLaunchChecker(),
       navigatorKey: navigatorKey,
+      navigatorObservers: [routeObserver],
     );
   }
 }

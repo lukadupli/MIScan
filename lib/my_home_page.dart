@@ -1,15 +1,16 @@
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
-import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:miscan/l10n/app_localizations.dart';
 
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'debug/benchmark_page.dart';
 import 'debug/live_preview_page.dart';
 import 'helpers.dart';
+import 'main.dart' show routeObserver;
+import 'scan_camera_page.dart';
+import 'scan_input.dart';
 import 'transform_page.dart';
 import 'loading_page.dart';
 import 'listview_image.dart';
@@ -27,12 +28,39 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with RouteAware {
   List<(File, DateTime)>? files;
 
-  Future<ui.Image> crossFileToImage(XFile xfile) async{
-    final raw = await (await FlutterExifRotation.rotateImage(path: xfile.path)).readAsBytes();
-    return await bytesToImage(raw);
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route != null) routeObserver.subscribe(this, route);
+  }
+
+  // Scans are created, edited and renamed on pages pushed above this one, so
+  // coming back here is when the list can have changed. Listing it from
+  // build() instead re-listed on every frame: each listing's setState asked
+  // for another build, which started another listing, for as long as the
+  // page existed -- including while hidden under other pages.
+  @override
+  void didPopNext() => _refresh();
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  Future<void> _refresh() async {
+    final result = await _getImageFiles();
+    if (mounted) setState(() => files = result);
   }
 
   Future<List<(File, DateTime)>> _getImageFiles() async{
@@ -49,7 +77,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context){
     final apploc = AppLocalizations.of(context)!;
-    _getImageFiles().then((result) => setState(() => files = result));
     late Widget body;
     if(files == null){
       body = const Center(child: SizedBox(width: 60.0, height: 60.0, child: CircularProgressIndicator()));
@@ -141,46 +168,61 @@ class _MyHomePageState extends State<MyHomePage> {
         child: body,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _getImage,
+        onPressed: _newScan,
         tooltip: apploc.newScanTooltip,
         child: const Icon(Icons.add_a_photo),
       ),
     );
   }
 
-  void _getImage(){
+  void _newScan(){
     final apploc = AppLocalizations.of(context)!;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(apploc.chooseSourceTitle),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(apploc.newScanTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            importImageButton(source: ImageSource.camera, icon: const Icon(Icons.camera_alt), label: apploc.imageSource("camera")),
-            importImageButton(source: ImageSource.gallery, icon: const Icon(Icons.image), label: apploc.imageSource("gallery"))
+            _newScanOptionButton(
+              icon: const Icon(Icons.camera_alt),
+              label: apploc.scannerOption,
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ScanCameraPage()));
+              },
+            ),
+            _newScanOptionButton(
+              icon: const Icon(Icons.image),
+              label: apploc.galleryOption,
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _pickFromGallery();
+              },
+            ),
           ]
         )
       ),
     );
   }
 
-  Widget importImageButton({required ImageSource source, required Icon icon, required String label}) {
+  Widget _newScanOptionButton({required Icon icon, required String label, required VoidCallback onPressed}) {
     return ElevatedButton.icon(
       icon: icon,
       label: Text(label),
       style: IconButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
-      onPressed: () async {
-        final xfile = await ImagePicker().pickImage(source: source);
-        if (xfile != null && mounted) {
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) => FutureBuilder(
-              future: crossFileToImage(xfile),
-              builder: (context, snapshot) => snapshot.hasData ? TransformPage(image: snapshot.data!) : const LoadingPage(),
-            )
-          ));
-        }
-      },
+      onPressed: onPressed,
     );
+  }
+
+  Future<void> _pickFromGallery() async {
+    final xfile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (xfile == null || !mounted) return;
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => LoadingThen<ScanInput>(
+        future: prepareScanInput(xfile.path),
+        builder: (context, input) => TransformPage(image: input.image, initialCorners: input.corners),
+      ),
+    ));
   }
 }

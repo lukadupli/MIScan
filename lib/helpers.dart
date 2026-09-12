@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'dart:core';
@@ -26,6 +27,12 @@ Future<ui.Image> bytesToImage(Uint8List imgBytes) async{
     codec.dispose();
   }
   return frame.image;
+}
+
+/// Reads and decodes the image file at [path]. The engine applies its EXIF
+/// orientation itself, so the result is already upright.
+Future<ui.Image> loadImageFile(String path) async{
+  return bytesToImage(await File(path).readAsBytes());
 }
 
 /// Generates an image name in form *Scan_YYYYMMDD_HHMMSS.[format]*

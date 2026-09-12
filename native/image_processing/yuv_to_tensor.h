@@ -24,7 +24,7 @@ extern "C" {
     //                          whole planes: all R, then all G, then all B
     // norm                     6 doubles: per-channel mean then std, applied as
     //                          (value / 255 - mean) / std. Passed in rather than
-    //                          hard-coded so lib/debug/frame_math.dart stays the
+    //                          hard-coded so lib/detection/frame_math.dart stays the
     //                          one place those constants live on the app side.
     //
     // Pure function: no state, safe to call from any thread.

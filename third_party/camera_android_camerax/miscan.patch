@@ -1,0 +1,82 @@
+diff -ru camera_android_camerax-0.7.2/lib/src/android_camera_camerax.dart camera_android_camerax/lib/src/android_camera_camerax.dart
+--- camera_android_camerax-0.7.2/lib/src/android_camera_camerax.dart	2026-08-13 10:36:19
++++ camera_android_camerax/lib/src/android_camera_camerax.dart	2026-09-11 13:50:53
+@@ -282,6 +282,11 @@
+   /// The preset resolution selector for the camera.
+   ResolutionSelector? _presetResolutionSelector;
+ 
++  /// MIScan patch: per-use-case selectors for ResolutionPreset.max, so the
++  /// photo can be full resolution while the analysis stream stays small.
++  ResolutionSelector? _captureResolutionSelector;
++  ResolutionSelector? _analysisResolutionSelector;
++
+   /// The configured target FPS range for the camera.
+   CameraIntegerRange? _targetFpsRange;
+ 
+@@ -397,6 +402,31 @@
+     _presetResolutionSelector = _getResolutionSelectorFromPreset(
+       mediaSettings?.resolutionPreset,
+     );
++    _captureResolutionSelector = _presetResolutionSelector;
++    _analysisResolutionSelector = _presetResolutionSelector;
++    if (mediaSettings?.resolutionPreset == ResolutionPreset.max) {
++      final fourThree = AspectRatioStrategy(
++        preferredAspectRatio: AspectRatio.ratio4To3,
++        fallbackRule: AspectRatioStrategyFallbackRule.auto,
++      );
++      ResolutionSelector bounded(int width, int height) => ResolutionSelector(
++            resolutionStrategy: ResolutionStrategy(
++              boundSize: CameraSize(width: width, height: height),
++              fallbackRule:
++                  ResolutionStrategyFallbackRule.closestLowerThenHigher,
++            ),
++            aspectRatioStrategy: fourThree,
++          );
++      // Preview: as sharp as a phone screen needs. Photo: the full sensor
++      // (highestAvailableStrategy also unlocks the slow full-res sizes, see
++      // ResolutionSelectorProxyApi.java). Analysis: the detector's input size.
++      _presetResolutionSelector = bounded(1440, 1080);
++      _captureResolutionSelector = ResolutionSelector(
++        resolutionStrategy: ResolutionStrategy.highestAvailableStrategy,
++        aspectRatioStrategy: fourThree,
++      );
++      _analysisResolutionSelector = bounded(320, 240);
++    }
+ 
+     final int? targetFps = mediaSettings?.fps;
+     if (targetFps != null) {
+@@ -421,7 +451,7 @@
+ 
+     // Configure ImageCapture instance.
+     imageCapture = ImageCapture(
+-      resolutionSelector: _presetResolutionSelector,
++      resolutionSelector: _captureResolutionSelector,
+       /* use CameraX default target rotation */ targetRotation:
+           await deviceOrientationManager.getDefaultDisplayRotation(),
+     );
+@@ -477,7 +507,7 @@
+     _imageAnalysisOutputImageFormat =
+         _imageAnalysisOutputFormatFromImageFormatGroup(imageFormatGroup);
+     imageAnalysis = ImageAnalysis(
+-      resolutionSelector: _presetResolutionSelector,
++      resolutionSelector: _analysisResolutionSelector,
+       targetFpsRange: _targetFpsRange,
+       outputImageFormat: _imageAnalysisOutputImageFormat,
+     );
+diff -ru camera_android_camerax-0.7.2/android/src/main/java/io/flutter/plugins/camerax/ResolutionSelectorProxyApi.java camera_android_camerax/android/src/main/java/io/flutter/plugins/camerax/ResolutionSelectorProxyApi.java
+--- camera_android_camerax-0.7.2/android/src/main/java/io/flutter/plugins/camerax/ResolutionSelectorProxyApi.java	2026-08-13 10:36:19
++++ camera_android_camerax/android/src/main/java/io/flutter/plugins/camerax/ResolutionSelectorProxyApi.java	2026-09-11 13:50:46
+@@ -33,6 +33,13 @@
+     }
+     if (resolutionStrategy != null) {
+       builder.setResolutionStrategy(resolutionStrategy);
++      // MIScan patch: make "highest available" mean it. By default CameraX only
++      // picks from sizes that sustain 20 fps, which on burst-capable cameras hides
++      // the full-resolution sizes (4080x3060 runs at 15 fps on a SM-A137F).
++      if (resolutionStrategy == ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY) {
++        builder.setAllowedResolutionMode(
++            ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE);
++      }
+     }
+     if (resolutionFilter != null) {
+       builder.setResolutionFilter(resolutionFilter);
