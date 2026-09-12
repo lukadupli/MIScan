@@ -73,17 +73,16 @@ class DocSegNet(nn.Module):
         return self.net(x)["out"]
 
 if __name__ == "__main__":
-    net = CornerNet()
-    x = torch.zeros(3, 3, 224, 224)
+    net = DocSegNet()
+    x = torch.zeros(3, 3, 300, 300)
     t = x
     print("----SHAPES----")
     print("Shape: ", t.shape)
-    for l in chain(net.features.children(), net.head.children()):
+    for l in net.children():
         print(l)
         t = l(t)
-        print("Shape: ", t.shape)
 
     print("---I/O, PARAMS---")
     print("input: ", x.shape)
-    print("output: ", t.shape)
+    print("output: ", t["out"].shape)
     print("params: ", sum([p.numel() for p in net.parameters()]))
