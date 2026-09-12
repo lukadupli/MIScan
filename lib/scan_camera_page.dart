@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:native_device_orientation/native_device_orientation.dart';
+import 'package:native_exif/native_exif.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:miscan/l10n/app_localizations.dart';
 
@@ -13,6 +17,11 @@ import 'scan_input.dart';
 import 'transform_page.dart';
 
 enum _Permission { unknown, granted, denied, permanentlyDenied }
+
+/// The live detected-page overlay's colour. White reads poorly against a
+/// white/light page; this is Material Blue 900 -- dark enough to stay
+/// legible against paper, while still sitting in the app's blue theme.
+const _kOverlayColor = Color(0xFF0D47A1);
 
 /// In-app camera with a live document overlay. The shutter takes a
 /// full-resolution photo and opens [TransformPage] with the detected corners
@@ -40,6 +49,14 @@ class _ScanCameraPageState extends State<ScanCameraPage>
   _Permission _permission = _Permission.unknown;
   final _repaintNotifier = ValueNotifier<bool>(false);
 
+  /// Live device tilt from the raw accelerometer (useSensor: true),
+  /// independent of the window's own locked orientation -- see initState.
+  /// The camera plugin's own deviceOrientation can't be used for this: it is
+  /// derived from the Activity's Configuration/Display rotation, which never
+  /// changes while that's locked, so it would report portraitUp forever.
+  NativeDeviceOrientation _sensorOrientation = NativeDeviceOrientation.portraitUp;
+  StreamSubscription<NativeDeviceOrientation>? _sensorOrientationSubscription;
+
   // Every start and stop bumps this, and anything async checks it is still
   // current before touching state -- see LivePreviewPage, which this mirrors.
   int _generation = 0;
@@ -54,7 +71,19 @@ class _ScanCameraPageState extends State<ScanCameraPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Locked like a stock camera app: the window itself never rotates, so
+    // there is no OS rotation animation and controls never move on screen
+    // (see build -- only the flash icon's own glyph turns in place, driven
+    // by the independent sensor reading below, not by anything tied to this
+    // lock). didPushNext / didPopNext un/relock this around whichever route
+    // is actually showing the camera, so it doesn't leak into the editor
+    // pushed on top.
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    _sensorOrientationSubscription = NativeDeviceOrientationCommunicator()
+        .onOrientationChanged(useSensor: true)
+        .listen((orientation) {
+      if (mounted) setState(() => _sensorOrientation = orientation);
+    });
     _initModel();
     _checkPermissionAndStart();
   }
@@ -66,10 +95,18 @@ class _ScanCameraPageState extends State<ScanCameraPage>
     if (route != null) routeObserver.subscribe(this, route);
   }
 
+  // The corner editor was pushed on top -- let it (and the rest of the app)
+  // rotate freely again while the camera itself isn't what's on screen.
+  @override
+  void didPushNext() {
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+  }
+
   // Coming back from the corner editor: the camera was torn down while it was
   // open (see _capture), so this is a retake.
   @override
   void didPopNext() {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     if (_controller == null && _permission == _Permission.granted) {
       _startCamera();
     }
@@ -156,6 +193,16 @@ class _ScanCameraPageState extends State<ScanCameraPage>
 
     try {
       await controller.setFlashMode(_flashMode);
+    } catch (_) {}
+    try {
+      // deviceOrientation keeps updating from the accelerometer even though
+      // the window itself is locked (see initState) -- CameraPreview reacts
+      // to it regardless, rotating the live texture on every device tilt.
+      // This freezes that reaction too, so the preview matches the
+      // window: neither moves as the phone turns. Detection is unaffected:
+      // DocumentModel.predict already works from the sensor's fixed
+      // mounting angle, not live device rotation.
+      await controller.lockCaptureOrientation(DeviceOrientation.portraitUp);
     } catch (_) {}
 
     final previewSize = controller.value.previewSize!;
@@ -258,6 +305,26 @@ class _ScanCameraPageState extends State<ScanCameraPage>
     try {
       await controller.stopImageStream();
       path = (await controller.takePicture()).path;
+      // takePicture() tags the JPEG as if it were shot portraitUp --
+      // _startCamera locks capture orientation to that so the *preview*
+      // stays stable, which also freezes what every photo gets tagged with.
+      // Correct that here from the live sensor reading instead of
+      // re-locking right before capture: re-locking changes what
+      // CameraPreview itself renders too, which visibly rotated the
+      // still-live preview for a moment during capture.
+      final camera = _camera;
+      if (camera != null) {
+        try {
+          final exif = await Exif.fromPath(path);
+          await exif.writeAttribute(
+            'Orientation',
+            exifOrientationFor(
+              camera.sensorOrientation,
+              _sensorOrientation.deviceOrientation ?? DeviceOrientation.portraitUp,
+            ).toString(),
+          );
+        } catch (_) {}
+      }
     } catch (_) {
       if (gen == _generation &&
           !_disposed &&
@@ -329,6 +396,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
     WidgetsBinding.instance.removeObserver(this);
     routeObserver.unsubscribe(this);
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    _sensorOrientationSubscription?.cancel();
     _stopCamera();
     _repaintNotifier.dispose();
     super.dispose();
@@ -338,6 +406,21 @@ class _ScanCameraPageState extends State<ScanCameraPage>
         FlashMode.off => Icons.flash_off,
         FlashMode.auto => Icons.flash_auto,
         FlashMode.torch || FlashMode.always => Icons.flash_on,
+      };
+
+  /// Full turns to draw the flash icon's glyph at, given [orientation] (from
+  /// [_sensorOrientation]), so it stays upright to the eye: the window
+  /// itself never rotates (see initState), so a fixed-drawn icon turns with
+  /// the phone as the person turns it. Countering that needs the opposite
+  /// of the turn CameraPreview's own rotation compensation would use for the
+  /// same orientation -- see camera_preview.dart's _getQuarterTurns, which
+  /// this mirrors in spirit (RotatedBox turns clockwise for a positive
+  /// count; here, negative turns counter a clockwise device turn).
+  static double _iconTurns(DeviceOrientation orientation) => switch (orientation) {
+        DeviceOrientation.portraitUp => 0,
+        DeviceOrientation.landscapeRight => -0.25,
+        DeviceOrientation.portraitDown => 0.5,
+        DeviceOrientation.landscapeLeft => 0.25,
       };
 
   Widget _permissionScaffold(AppLocalizations apploc) {
@@ -435,8 +518,8 @@ class _ScanCameraPageState extends State<ScanCameraPage>
                     if (mapped.length == 4)
                       CustomPaint(
                         painter: BorderPainter(
-                          color: Colors.white,
-                          cornerSize: 28.0,
+                          color: _kOverlayColor,
+                          cornerSize: kFrameCornerVisualSize,
                           cornerLineThickness: 3.0,
                           points: mapped,
                           notifier: _repaintNotifier,
@@ -445,10 +528,15 @@ class _ScanCameraPageState extends State<ScanCameraPage>
                     Positioned(
                       top: 8,
                       right: 8,
-                      child: IconButton(
-                        tooltip: apploc.flashTooltip,
-                        icon: Icon(_flashIcon(), color: Colors.white),
-                        onPressed: _cycleFlash,
+                      child: AnimatedRotation(
+                        turns: _iconTurns(_sensorOrientation.deviceOrientation ?? DeviceOrientation.portraitUp),
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                        child: IconButton(
+                          tooltip: apploc.flashTooltip,
+                          icon: Icon(_flashIcon(), color: Colors.white),
+                          onPressed: _cycleFlash,
+                        ),
                       ),
                     ),
                     Positioned(
@@ -456,13 +544,10 @@ class _ScanCameraPageState extends State<ScanCameraPage>
                       right: 0,
                       bottom: 24,
                       child: Center(
-                        child: FloatingActionButton(
+                        child: _ShutterButton(
                           tooltip: apploc.takePictureTooltip,
+                          busy: _capturing,
                           onPressed: _capturing ? null : _capture,
-                          child: _capturing
-                              ? const SizedBox(
-                                  width: 24, height: 24, child: CircularProgressIndicator())
-                              : const Icon(Icons.camera),
                         ),
                       ),
                     ),
@@ -471,6 +556,77 @@ class _ScanCameraPageState extends State<ScanCameraPage>
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+/// A shutter button styled like a stock camera app's: a white ring around a
+/// solid white disc that shrinks slightly on press for tactile feedback.
+/// Shows a spinner in place of the disc while [busy].
+class _ShutterButton extends StatefulWidget {
+  final String tooltip;
+  final bool busy;
+  final VoidCallback? onPressed;
+
+  const _ShutterButton({required this.tooltip, required this.busy, required this.onPressed});
+
+  @override
+  State<_ShutterButton> createState() => _ShutterButtonState();
+}
+
+class _ShutterButtonState extends State<_ShutterButton> {
+  static const _diameter = 76.0;
+  static const _discDiameter = 60.0;
+
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed != value) setState(() => _pressed = value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: widget.tooltip,
+      child: GestureDetector(
+        onTapDown: widget.onPressed == null ? null : (_) => _setPressed(true),
+        onTapCancel: () => _setPressed(false),
+        onTapUp: (_) => _setPressed(false),
+        onTap: widget.onPressed,
+        child: SizedBox(
+          width: _diameter,
+          height: _diameter,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: _diameter,
+                height: _diameter,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 3),
+                ),
+              ),
+              AnimatedScale(
+                scale: _pressed ? 0.85 : 1.0,
+                duration: const Duration(milliseconds: 120),
+                curve: Curves.easeOut,
+                child: widget.busy
+                    ? const SizedBox(
+                        width: _discDiameter,
+                        height: _discDiameter,
+                        child: CircularProgressIndicator(strokeWidth: 3, color: Colors.white),
+                      )
+                    : Container(
+                        width: _discDiameter,
+                        height: _discDiameter,
+                        decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );

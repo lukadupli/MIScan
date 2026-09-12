@@ -117,7 +117,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get loading => 'Učitavanje';
 
   @override
-  String get transformPageTitle => 'Odaberi vrhove';
+  String get transformPageTitle => 'Povuci vrhove';
 
   @override
   String get bookTransformPageTitle => 'Odaberi krivulju';
@@ -173,7 +173,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get newScanTitle => 'Novi sken';
 
   @override
-  String get scannerOption => 'Skener';
+  String get scannerOption => 'Kamera';
 
   @override
   String get galleryOption => 'Galerija';

@@ -146,7 +146,7 @@
     "loading": "Loading",
     "@loading": {"description": "Loading page text"},
 
-    "transformPageTitle": "Select corners",
+    "transformPageTitle": "Drag corners",
     "@transformPageTitle": {"description": "Title of transform page"},
 
     "bookTransformPageTitle": "Select curve",
@@ -199,7 +199,7 @@
     "newScanTitle": "New scan",
     "@newScanTitle": {"description": "Title of the dialog for choosing how to start a new scan"},
 
-    "scannerOption": "Scanner",
+    "scannerOption": "Camera",
     "@scannerOption": {"description": "Option in the new scan dialog: take a picture with the in-app scanner camera"},
 
     "galleryOption": "Gallery",

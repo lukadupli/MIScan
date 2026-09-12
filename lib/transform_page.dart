@@ -77,7 +77,8 @@ class _TransformPageState extends State<TransformPage> {
                   children: [
                     Frame(
                       controller: fController,
-                      cornerSize: frameCornerDimension,
+                      cornerSize: kFrameCornerVisualSize,
+                      hitboxSize: frameCornerDimension,
                       margin: const EdgeInsets.all(frameCornerDimension / 4),
                       whenResized: () => ratio = widget.image.width / fController.childSize.width,
                       onDragStart: (index){

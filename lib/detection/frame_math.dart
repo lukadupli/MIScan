@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:ffi/ffi.dart' show malloc;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show DeviceOrientation;
 
 /// Contract enforced here has to match ml/common.py's INPUT_SIZE exactly, or
 /// the model sees input unlike anything it was trained on and returns garbage.
@@ -86,6 +87,38 @@ List<Offset> sensorToUpright(List<Offset> corners, int sensorOrientationDeg) {
     for (var i = 0; i < upright.length; i++)
       upright[(start + i) % upright.length],
   ];
+}
+
+/// EXIF Orientation tag (1/3/6/8: 0/180/90CW/270CW correction needed --
+/// EditPage's own turns<->Orientation convention, see its _turnsToOrient)
+/// for a photo from a camera whose sensor is mounted at
+/// [sensorOrientationDeg], taken while the phone was actually held at
+/// [orientation].
+///
+/// Standard Android camera formula: the file needs rotating
+/// (sensorOrientationDeg - targetRotationDeg) degrees clockwise to display
+/// correctly, where targetRotationDeg is how far the display is presumed
+/// already rotated for that device orientation -- the same mapping
+/// camera_android_camerax's lockCaptureOrientation uses internally
+/// (_getRotationConstantFromDeviceOrientation). ScanCameraPage locks
+/// capture orientation to portraitUp once, at camera start, to keep the
+/// live preview stable (re-locking per photo visibly rotates it instead),
+/// which freezes what every photo is tagged with; this recovers the
+/// correct tag from the live sensor reading afterwards, without touching
+/// the camera controller at all.
+int exifOrientationFor(int sensorOrientationDeg, DeviceOrientation orientation) {
+  final targetRotationDeg = switch (orientation) {
+    DeviceOrientation.portraitUp => 0,
+    DeviceOrientation.landscapeLeft => 90,
+    DeviceOrientation.portraitDown => 180,
+    DeviceOrientation.landscapeRight => 270,
+  };
+  return switch ((sensorOrientationDeg - targetRotationDeg + 360) % 360) {
+    90 => 6,
+    180 => 3,
+    270 => 8,
+    _ => 1,
+  };
 }
 
 typedef _YuvToChwNative = ffi.Void Function(

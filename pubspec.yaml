@@ -56,6 +56,7 @@ dependencies:
   saver_gallery: ^4.1.0
   camera: ^0.12.0+2
   onnxruntime: ^1.4.1
+  native_device_orientation: ^2.1.0
 
 dev_dependencies:
   flutter_test:

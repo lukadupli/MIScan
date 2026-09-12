@@ -117,7 +117,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loading => 'Loading';
 
   @override
-  String get transformPageTitle => 'Select corners';
+  String get transformPageTitle => 'Drag corners';
 
   @override
   String get bookTransformPageTitle => 'Select curve';
@@ -173,7 +173,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newScanTitle => 'New scan';
 
   @override
-  String get scannerOption => 'Scanner';
+  String get scannerOption => 'Camera';
 
   @override
   String get galleryOption => 'Gallery';

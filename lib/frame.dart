@@ -2,6 +2,10 @@ import 'glider.dart';
 import 'helpers.dart';
 import 'package:flutter/material.dart';
 
+/// Corner-circle diameter shared between the corner editor's [Frame] and the
+/// scanner's live overlay ([ScanCameraPage]), so the two visually match.
+const double kFrameCornerVisualSize = 28.0;
+
 class BorderPainter extends CustomPainter{
   final Color color;
   final List<Offset> points;
@@ -95,6 +99,11 @@ class FrameController{
 class Frame extends StatefulWidget{
   final FrameController controller;
   final double cornerSize, cornerLineThickness;
+
+  /// Diameter of each corner's draggable hit area. Defaults to [cornerSize],
+  /// but can be set larger so a corner stays easy to grab even when its
+  /// drawn circle ([cornerSize]) is small.
+  final double? hitboxSize;
   final Color color;
   final EdgeInsets margin;
   final void Function()? whenResized;
@@ -104,26 +113,27 @@ class Frame extends StatefulWidget{
   final Widget child;
 
   /// Creates a widget which shows a draggable frame with 4 corners around child widget
-  /// 
+  ///
   /// [controller] contains information about corner positions and child's size
-  /// 
-  /// Corners are indexed in counterclockwise order starting from bottom left 
+  ///
+  /// Corners are indexed in counterclockwise order starting from bottom left
   /// (note that on the screen they are actually in clockwise order starting from top left because (0, 0) coordinate is in upper left corner)
-  /// 
+  ///
   /// [onDragStart], [onPositionChange], [onDragEnd] are called with an index (from 0 to 3) to the corner whose position was altered
-  /// 
+  ///
   /// [whenResized] is called at first build and when child's size is changed
   const Frame({
-    super.key, 
-    required this.controller, 
-    this.cornerSize = 30.0, 
-    this.cornerLineThickness = 3.0, 
-    this.color = Colors.black, 
+    super.key,
+    required this.controller,
+    this.cornerSize = 30.0,
+    this.hitboxSize,
+    this.cornerLineThickness = 3.0,
+    this.color = Colors.black,
     this.margin = EdgeInsets.zero,
     this.whenResized,
     this.onDragStart,
     this.onPositionChange,
-    this.onDragEnd, 
+    this.onDragEnd,
     required this.child,
   });
 
@@ -169,12 +179,13 @@ class _FrameState extends State<Frame>{
   }
 
   Widget buildCorner(int index){
+    final hitbox = widget.hitboxSize ?? widget.cornerSize;
     final size = Size(boundary.right + widget.margin.right, boundary.bottom + widget.margin.bottom);
 
     return Glider(
       key: GlobalKey(),
       startPosition: widget.controller.corners[index],
-      positionOffset: Offset(widget.cornerSize / 2, widget.cornerSize / 2),
+      positionOffset: Offset(hitbox / 2, hitbox / 2),
       size: size,
       boundary: boundary,
       onDragStart: (pos){
@@ -189,8 +200,8 @@ class _FrameState extends State<Frame>{
         if(widget.onDragEnd != null) widget.onDragEnd!(index);
       },
       child: Container(
-        width: widget.cornerSize,
-        height: widget.cornerSize, 
+        width: hitbox,
+        height: hitbox,
         decoration: const BoxDecoration(shape: BoxShape.circle)
       )
     );

@@ -287,7 +287,7 @@ abstract class AppLocalizations {
   /// Title of transform page
   ///
   /// In en, this message translates to:
-  /// **'Select corners'**
+  /// **'Drag corners'**
   String get transformPageTitle;
 
   /// Title of book transform page
@@ -389,7 +389,7 @@ abstract class AppLocalizations {
   /// Option in the new scan dialog: take a picture with the in-app scanner camera
   ///
   /// In en, this message translates to:
-  /// **'Scanner'**
+  /// **'Camera'**
   String get scannerOption;
 
   /// Option in the new scan dialog: pick an existing image from the gallery

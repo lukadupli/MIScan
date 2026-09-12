@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' show Size;
 
 import 'package:ffi/ffi.dart' show malloc;
+import 'package:flutter/services.dart' show DeviceOrientation;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:miscan/detection/frame_math.dart';
 
@@ -150,6 +151,44 @@ void main() {
       ], 90);
       expect(p, contains(const Offset(1, 0)));
       expect(p.first, const Offset(0, 0)); // restarted at upright top-left
+    });
+  });
+
+  group('exifOrientationFor', () {
+    test('this app\'s known baseline: sensor 90, portraitUp -> EXIF 6', () {
+      // Measured and documented in CLAUDE.md: a portrait capture on this
+      // phone class (sensorOrientation 90) stores 4080x3060 with EXIF 6.
+      expect(exifOrientationFor(90, DeviceOrientation.portraitUp), 6);
+    });
+
+    test('sensor 90: the other three device orientations', () {
+      expect(exifOrientationFor(90, DeviceOrientation.landscapeLeft), 1);
+      expect(exifOrientationFor(90, DeviceOrientation.portraitDown), 8);
+      expect(exifOrientationFor(90, DeviceOrientation.landscapeRight), 3);
+    });
+
+    test('only ever returns a value EditPage\'s own convention understands', () {
+      // EditPage._orientToTurns only recognises 1, 3, 6 and 8.
+      for (final sensorDeg in [0, 90, 180, 270]) {
+        for (final orientation in DeviceOrientation.values) {
+          expect(
+            [1, 3, 6, 8],
+            contains(exifOrientationFor(sensorDeg, orientation)),
+            reason: 'sensor $sensorDeg, $orientation',
+          );
+        }
+      }
+    });
+
+    test('a full device rotation cycles through all four values once', () {
+      const cycle = [
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.landscapeRight,
+      ];
+      final seen = cycle.map((o) => exifOrientationFor(90, o)).toSet();
+      expect(seen, {6, 1, 8, 3});
     });
   });
 }
