@@ -48,30 +48,58 @@ class BookFrameController {
   }*/
 }
 
-/// [splineSelectorDelta] determines how much is draggable part of a spline selector moved down from the actual curve
-/// every other spline selector's delta is multiplied by [splineSelectorUpDownMul] so that draggable parts don't collide (they go in a zig-zag pattern)
+/// How far below curve point [index]'s own y to draw/drag its handle:
+/// [nominalDelta] normally, or however much room is actually left within
+/// [boundaryHeight] when that's less -- never negative, so the handle
+/// always stays below the curve. A book page's detected top edge is
+/// ordinarily well up in the frame, leaving room to spare; the shrink only
+/// bites when it isn't, e.g. a landscape-captured photo (wide and short on
+/// screen regardless of how the phone is held to view it) with the curve
+/// dragged down toward the bottom. [curveY] is the curve point's own y, in
+/// the same boundary-relative coordinates as [boundaryHeight].
+///
+/// Deliberately never flips the handle above the curve: [BookFramePainter]
+/// recomputes this from the *live* curve point on every repaint (the
+/// controller's notifier fires continuously while dragging), but each
+/// handle's own Glider -- built once per widget build, not once per
+/// repaint -- keeps whatever position that build gave it. A sign flip
+/// crossing mid-drag would move where the handle is drawn without moving
+/// where it's actually draggable; shrinking the same fixed side never
+/// changes the handle's side, only how far along it, which the drag itself
+/// already tracks. Even so, [_BookFrameState.build] computes this once per
+/// build and hands the same value to both the painter and the handle it
+/// draws, rather than letting each recompute it independently, so the two
+/// can never disagree even on magnitude.
+double splineHandleDelta(double curveY, double boundaryHeight, double nominalDelta) =>
+    (boundaryHeight - curveY).clamp(0.0, nominalDelta);
+
+/// Draws the frame, the curve, and each handle at its own [handleDeltas] offset.
 class BookFramePainter extends CustomPainter{
   final BookFrameController controller;
   final double cornerSize;
   final double cornerThickness;
   final Color mainFrameColor;
-  final double splineSelectorDelta;
-  final double splineSelectorUpDownMul;
+
+  /// Each curve point's [splineHandleDelta], one per [BookFrameController.curvePointsUp]
+  /// entry, computed once by [_BookFrameState.build] and shared with the
+  /// Gliders it builds alongside this painter -- see [splineHandleDelta]'s
+  /// doc for why this can't just be recomputed here from the live curve
+  /// point on every repaint.
+  final List<double> handleDeltas;
   final double splineSelectorSize;
   final Color splineSelectorEdgeColor;
   final Color splineSelectorFillColor;
   final Color splineLineColor;
   final Offset offset;
-  
+
   BookFramePainter({
-    required this.controller, 
-    required this.cornerSize, 
+    required this.controller,
+    required this.cornerSize,
     required this.cornerThickness,
-    required this.mainFrameColor, 
-    required this.splineSelectorDelta,
-    required this.splineSelectorSize, 
+    required this.mainFrameColor,
+    required this.handleDeltas,
+    required this.splineSelectorSize,
     required this.splineSelectorEdgeColor,
-    required this.splineSelectorUpDownMul,
     required this.splineSelectorFillColor,
     required this.splineLineColor,
     this.offset = const Offset(0, 0)}) : super(repaint: controller.notifier);
@@ -86,12 +114,13 @@ class BookFramePainter extends CustomPainter{
 
     for(int i = 0; i < controller.curvePointsUp.length; i++){
       Offset p = controller.curvePointsUp[i];
-      Offset np = p + Offset(0.0, i % 2 == 0 ? splineSelectorDelta : splineSelectorUpDownMul * splineSelectorDelta);
+      final delta = handleDeltas[i];
+      Offset np = p + Offset(0.0, delta);
       canvas.drawCircle(np + offset, splineSelectorSize / 2, Paint()..color = splineSelectorEdgeColor..style = PaintingStyle.stroke);
       canvas.drawCircle(np + offset, splineSelectorSize / 2, Paint()..color = splineSelectorFillColor..style = PaintingStyle.fill);
 
       canvas.drawLine(p + offset, np + offset - Offset(0, splineSelectorSize / 2), Paint()..color = splineLineColor);
-      
+
       canvas.drawCircle(p + offset, 2.5, Paint()..color = splineLineColor..style = PaintingStyle.fill);
     }
 
@@ -185,25 +214,29 @@ class _BookFrameState extends State<BookFrame>{
     }
   }
 
-  Widget buildSplineSelector(int index){
-    final size = Size(widget.controller.boundary.right + widget.margin.right, widget.controller.boundary.bottom + widget.margin.bottom);
+  /// [delta]: this handle's [splineHandleDelta], computed once by [build]
+  /// and shared with [BookFramePainter] -- see that function's doc.
+  Widget buildSplineSelector(int index, double delta){
+    final boundary = widget.controller.boundary;
+    final size = Size(boundary.right + widget.margin.right, boundary.bottom + widget.margin.bottom);
     const hitboxMul = 1.5;
 
-    double delta = widget.splineSelectorDelta;
-    if(index % 2 == 1) delta *= widget.splineSelectorUpDownMul;
+    final curvePoint = widget.controller.curvePointsUp[index];
 
-    final bound = widget.controller.boundary.topLeft & Size(widget.controller.boundary.width, widget.controller.boundary.height - delta);
+    // Caps how far down the curve point can be dragged, so its handle --
+    // delta further down still -- doesn't go past the bottom.
+    final bound = boundary.topLeft & Size(boundary.width, boundary.height - delta);
 
     return Glider(
       key: GlobalKey(),
-      startPosition: widget.controller.curvePointsUp[index],
+      startPosition: curvePoint,
       positionOffset: Offset(widget.splineSelectorSize / 2, widget.splineSelectorSize / 2) * hitboxMul - Offset(0.0, delta),
       size: size,
       boundary: bound,
       onPositionChange: (pos) => widget.controller.setCurvePointUp(index, pos),
       child: Container(
         width: widget.splineSelectorSize * hitboxMul,
-        height: widget.splineSelectorSize * hitboxMul, 
+        height: widget.splineSelectorSize * hitboxMul,
         decoration: const BoxDecoration(shape: BoxShape.circle)
       )
     );
@@ -212,6 +245,20 @@ class _BookFrameState extends State<BookFrame>{
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => handleChildSizeChange());
+
+    // Computed once per build, not once per repaint (the controller's
+    // notifier fires continuously while dragging) -- see splineHandleDelta's
+    // doc for why the painter and each handle's Glider must share these
+    // exact values rather than each recomputing its own.
+    final handleDeltas = [
+      for(int i = 0; i < widget.controller.curvePointsUp.length; i++)
+        splineHandleDelta(
+          widget.controller.curvePointsUp[i].dy,
+          widget.controller.boundary.height,
+          i % 2 == 0 ? widget.splineSelectorDelta : widget.splineSelectorUpDownMul * widget.splineSelectorDelta,
+        ),
+    ];
+
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (sizeNotification) {
         WidgetsBinding.instance.addPostFrameCallback((_) => handleChildSizeChange());
@@ -223,8 +270,7 @@ class _BookFrameState extends State<BookFrame>{
           cornerSize: widget.cornerSize,
           cornerThickness: widget.cornerThickness,
           mainFrameColor: widget.mainFrameColor,
-          splineSelectorDelta: widget.splineSelectorDelta,
-          splineSelectorUpDownMul: widget.splineSelectorUpDownMul,
+          handleDeltas: handleDeltas,
           splineSelectorSize: widget.splineSelectorSize,
           splineSelectorEdgeColor: widget.splineSelectorEdgeColor,
           splineSelectorFillColor: widget.splineSelectorFillColor,
@@ -237,7 +283,7 @@ class _BookFrameState extends State<BookFrame>{
               margin: widget.margin,
               child: SizeChangedLayoutNotifier(key: childKey, child: widget.child),
             ),
-            for(int i = 0; i < widget.controller.curvePointsUp.length; i++) buildSplineSelector(i),
+            for(int i = 0; i < widget.controller.curvePointsUp.length; i++) buildSplineSelector(i, handleDeltas[i]),
           ]
         ),
       ),
